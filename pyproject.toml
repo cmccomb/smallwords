@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "smallwords"
+version = "0.1.0"
+description = "Controlled-vocabulary prompts and llama.cpp grammars for small-word English generation."
+readme = "README.md"
+authors = [{name = "Christopher McComb"}]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["llama.cpp", "llama-cpp-python", "grammar", "gbnf", "controlled-language", "simple-english"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+llama-cpp = ["llama-cpp-python>=0.2.90"]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
