@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,18 +8,31 @@ version = "0.1.0"
 description = "Controlled-vocabulary prompts plus portable GBNF and JSON Schema resources for small-word English generation."
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [{name = "Christopher McComb"}]
 requires-python = ">=3.10"
 dependencies = []
 keywords = ["grammar", "gbnf", "json-schema", "structured-output", "controlled-language", "simple-english"]
 classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
+[project.urls]
+Homepage = "https://github.com/cmccomb/smallwords"
+Repository = "https://github.com/cmccomb/smallwords.git"
+Issues = "https://github.com/cmccomb/smallwords/issues"
+
 [project.optional-dependencies]
-dev = ["build>=1.2", "pytest>=8.0", "ruff>=0.11"]
+dev = ["build>=1.2", "pytest>=8.0", "ruff>=0.11", "twine>=6.1"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

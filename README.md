@@ -77,27 +77,34 @@ via
 The second block is the compliant `common_250` reference answer used by the
 package examples.
 
-Reproduce that comparison locally with:
+Reproduce that comparison from a clone of the repository with:
 
 ```bash
-.venv/bin/python examples/readme_bridge_contrast.py
+python examples/readme_bridge_contrast.py
 ```
 
 ## Examples
 
-See [`examples/README.md`](examples/README.md) for the runnable examples. The
-bridge, neighbor, and customer-support scripts all print prompts, resources,
-and compliant sample outputs built from the bundled wordlists.
+See the repository's
+[`examples/README.md`](https://github.com/cmccomb/smallwords/blob/main/examples/README.md)
+for the runnable examples. The bridge, neighbor, and customer-support scripts
+all print prompts, resources, and compliant sample outputs built from the
+bundled wordlists.
 
 ## Development
 
 ```bash
+python -m pip install -e ".[dev]"
 ruff check .
 ruff format .
 pytest
 python scripts/check_documentation.py
 python -m build
+python -m twine check --strict dist/*
 ```
 
 CI runs tests, the documentation policy check, and a package build on GitHub
 Actions.
+
+For release steps and Trusted Publishing setup, see
+[`RELEASING.md`](https://github.com/cmccomb/smallwords/blob/main/RELEASING.md).

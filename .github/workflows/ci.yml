@@ -80,3 +80,6 @@ jobs:
 
       - name: Build distributions
         run: python -m build
+
+      - name: Validate distributions
+        run: python -m twine check --strict dist/*
