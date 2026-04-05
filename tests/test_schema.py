@@ -33,6 +33,7 @@ def test_json_schema_supports_custom_key_and_thinking_mode() -> None:
         "basic_850",
         key="answer",
         thinking_mode="plan_final",
+        min_words_per_line=2,
         max_words_per_line=2,
         max_lines=1,
     )
@@ -56,8 +57,18 @@ def test_inline_constraints_stay_aligned_between_gbnf_and_schema() -> None:
         line_prefixes=(),
     )
 
-    resources = make_resources(spec, max_words_per_line=2, max_lines=3)
-    schema = make_json_schema(spec, max_words_per_line=2, max_lines=3)
+    resources = make_resources(
+        spec,
+        min_words_per_line=2,
+        max_words_per_line=2,
+        max_lines=3,
+    )
+    schema = make_json_schema(
+        spec,
+        min_words_per_line=2,
+        max_words_per_line=2,
+        max_lines=3,
+    )
     pattern = schema["properties"]["text"]["pattern"]
 
     # This test guards the shared constraint logic rather than either builder alone.
@@ -65,6 +76,8 @@ def test_inline_constraints_stay_aligned_between_gbnf_and_schema() -> None:
     assert "line-prefix" not in resources.gbnf
     assert "punct ::=" not in resources.gbnf
     assert re.fullmatch(pattern, "one two")
+    assert schema["properties"]["text"]["minLength"] == len("one two")
+    assert not re.fullmatch(pattern, "one")
     assert not re.fullmatch(pattern, "- one")
     assert not re.fullmatch(pattern, "one\ntwo")
     assert not re.fullmatch(pattern, "one.")

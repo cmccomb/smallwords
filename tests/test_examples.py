@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # These are the shipped live-model examples.
 EXAMPLES = [
     ROOT / "examples" / "readme_bridge_contrast.py",
-    ROOT / "examples" / "eclectic_welcomes.py",
+    ROOT / "examples" / "pirate_greeting.py",
     ROOT / "examples" / "rewrite_technical_passage.py",
 ]
 

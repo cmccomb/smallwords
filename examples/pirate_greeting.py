@@ -1,4 +1,4 @@
-"""Rewrite a technical passage with a live llama.cpp model and grammar."""
+"""Generate one pirate-style greeting with a live llama.cpp model."""
 
 # ruff: noqa: E402
 
@@ -24,77 +24,62 @@ from smallwords import (
 )
 from smallwords.integrations import generate_text, server_base_url
 
-# This expected model keeps the example aligned with the README contrast.
+# This expected model keeps the example aligned with the other live examples.
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
     "bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m",
 )
 # This server URL points the example at a running llama-server instance.
 BASE_URL = server_base_url()
-# This source-backed base list anchors the focused rewrite vocabulary below.
-BASE_WORDLIST = get_wordlist("basic_850")
-# This passage stays technical while leaving room for a simpler paraphrase.
-SOURCE_PASSAGE = (
-    "The thermal controller derates propulsion output after the sensor array "
-    "reports an overtemperature fault."
-)
-# This compact canonical set is selected from `basic_850` for a focused rewrite demo.
-FOCUSED_CANONICAL_WORDS = tuple(
+# This built-in themed list anchors the focused pirate greeting vocabulary below.
+BASE_WORDLIST = get_wordlist("pirate_898")
+# This compact surface-word set is selected from `pirate_898` for a quick live demo.
+FOCUSED_SURFACE_WORDS = tuple(
     word
-    for word in BASE_WORDLIST.canonical_words()
-    if word
-    in {
-        "be",
-        "cut",
-        "engine",
-        "heat",
-        "high",
-        "if",
-        "power",
-        "system",
-        "this",
-        "very",
-        "when",
-    }
+    for word in ("ahoy", "matey", "good", "to", "meet", "you")
+    if word in BASE_WORDLIST.allowed_words()
 )
-# This focused spec keeps the rewrite task small enough for a live example.
-WORDLIST = WordlistSpec(
-    name="basic_850_rewrite_focus",
-    words=FOCUSED_CANONICAL_WORDS,
-    description="A focused rewrite vocabulary selected from basic_850 for the example script.",
-    source_name="Selected from basic_850 for the rewrite example",
+# This focused spec keeps the pirate example playful without a giant word block.
+PIRATE_WORDLIST = WordlistSpec(
+    name="pirate_898_greeting_focus",
+    words=FOCUSED_SURFACE_WORDS,
+    description="A focused pirate greeting vocabulary selected from pirate_898 for the example script.",
+    source_name="Selected surface forms from pirate_898 for the pirate greeting example",
     source_urls=BASE_WORDLIST.source_urls,
     license_name=BASE_WORDLIST.license_name,
     allowed_punctuation=(".",),
+    variant_mode="surface_only",
 )
-# This resource bundle leaves room for one fuller simplified sentence.
+# This task asks for a complete pirate greeting instead of a clipped phrase.
+TASK = (
+    "A pirate meets a new friend on a ship. Write one short friendly greeting "
+    "sentence. Use exactly 6 words and make it sound complete."
+)
+# This prompt spells out the allowed words so the model can see the constraint directly.
+PROMPT = (
+    f"{TASK}\n\n"
+    f"Allowed words ({PIRATE_WORDLIST.name}): {', '.join(PIRATE_WORDLIST.allowed_words())}\n"
+)
+# This resource bundle keeps the response to one compact sentence.
 RESOURCES = make_resources(
-    WORDLIST,
-    min_words_per_line=10,
-    max_words_per_line=10,
+    PIRATE_WORDLIST,
+    min_words_per_line=6,
+    max_words_per_line=6,
     max_lines=1,
 )
-# This prompt asks for a simpler restatement without copying source terms.
-PROMPT = (
-    "Rewrite the source text in simpler everyday English. Keep the meaning. "
-    "Do not use words from the source text in the rewrite. "
-    "Write one short complete sentence of exactly 10 words.\n\n"
-    f"Allowed words ({WORDLIST.name}): {', '.join(WORDLIST.allowed_words())}\n\n"
-    f"Source text:\n{SOURCE_PASSAGE}\n"
-)
-# This token budget leaves room for one complete simplified sentence.
-MAX_TOKENS = 96
-# This deterministic temperature keeps the rewrite example reproducible.
+# This token budget leaves room for one short pirate greeting sentence.
+MAX_TOKENS = 24
+# This deterministic temperature keeps the example reproducible.
 TEMPERATURE = 0.0
 # This deterministic seed keeps the example reproducible.
 SEED = 7
 # This key names the single response field in the matching JSON Schema.
-SCHEMA_KEY = "rewrite"
+SCHEMA_KEY = "reply"
 # This schema mirrors the same output limits as the grammar.
-SCHEMA = RESOURCES.json_schema(key=SCHEMA_KEY, title="technical_rewrite")
+SCHEMA = RESOURCES.json_schema(key=SCHEMA_KEY, title="pirate_greeting")
 # This compact summary shows the combined request shape without extra helper code.
 REQUEST_SUMMARY = {
-    "wordlist": WORDLIST.name,
+    "wordlist": PIRATE_WORDLIST.name,
     "prompt": PROMPT,
     "seed": SEED,
     "temperature": TEMPERATURE,
@@ -105,7 +90,7 @@ REQUEST_SUMMARY = {
 
 
 def main() -> None:
-    """Print the rewrite prompt, resources, and a live constrained response.
+    """Print the pirate prompt, resources, and a live constrained response.
 
     Returns:
         None.
@@ -124,8 +109,8 @@ def main() -> None:
     print(BASE_URL)
     print("=== Expected Model ===")
     print(MODEL_REPO)
-    print("=== Source Passage ===")
-    print(SOURCE_PASSAGE)
+    print("=== Wordlist ===")
+    print(PIRATE_WORDLIST.name)
     print("=== Generation Request ===")
     print(json.dumps(REQUEST_SUMMARY, indent=2))
     print("=== Prompt ===")
@@ -137,12 +122,12 @@ def main() -> None:
     print("=== Model Response ===")
     print(response)
     print("=== Model Compliance ===")
-    print(is_compliant(response, WORDLIST))
+    print(is_compliant(response, PIRATE_WORDLIST))
     print("=== Model Schema Match ===")
     # The schema pattern is derived from the same limits as the bundled grammar.
     print(re.fullmatch(pattern, response) is not None)
     print("=== Model Out Of Vocab ===")
-    print(out_of_vocab(response, WORDLIST))
+    print(out_of_vocab(response, PIRATE_WORDLIST))
 
 
 if __name__ == "__main__":

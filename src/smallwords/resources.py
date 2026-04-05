@@ -33,12 +33,14 @@ class OutputResources:
     Attributes:
         spec: Wordlist specification used for every generated resource.
         thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        min_words_per_line: Minimum number of tokens required on one line.
         max_words_per_line: Maximum number of tokens allowed on one line.
         max_lines: Maximum number of lines allowed in the response body.
     """
 
     spec: WordlistSpec
     thinking_mode: ThinkingMode = "none"
+    min_words_per_line: int = 1
     max_words_per_line: int = 40
     max_lines: int = 8
 
@@ -53,6 +55,7 @@ class OutputResources:
         return build_gbnf(
             self.spec,
             thinking_mode=self.thinking_mode,
+            min_words_per_line=self.min_words_per_line,
             max_words_per_line=self.max_words_per_line,
             max_lines=self.max_lines,
         )
@@ -81,6 +84,7 @@ class OutputResources:
             title=title,
             description=description,
             thinking_mode=self.thinking_mode,
+            min_words_per_line=self.min_words_per_line,
             max_words_per_line=self.max_words_per_line,
             max_lines=self.max_lines,
         )
@@ -138,6 +142,7 @@ def make_resources(
     wordlist: str | WordlistSpec,
     *,
     thinking_mode: ThinkingMode = "none",
+    min_words_per_line: int = 1,
     max_words_per_line: int = 40,
     max_lines: int = 8,
 ) -> OutputResources:
@@ -146,6 +151,7 @@ def make_resources(
     Args:
         wordlist: Built-in wordlist name or inline wordlist specification.
         thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        min_words_per_line: Minimum number of tokens required on one line.
         max_words_per_line: Maximum number of tokens allowed on one line.
         max_lines: Maximum number of lines allowed in the response body.
 
@@ -158,6 +164,7 @@ def make_resources(
     return OutputResources(
         spec=spec,
         thinking_mode=thinking_mode,
+        min_words_per_line=min_words_per_line,
         max_words_per_line=max_words_per_line,
         max_lines=max_lines,
     )
@@ -170,6 +177,7 @@ def make_json_schema(
     title: str | None = None,
     description: str | None = None,
     thinking_mode: ThinkingMode = "none",
+    min_words_per_line: int = 1,
     max_words_per_line: int = 40,
     max_lines: int = 8,
 ) -> dict[str, Any]:
@@ -181,6 +189,7 @@ def make_json_schema(
         title: Optional schema title override.
         description: Optional schema description override for the value field.
         thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        min_words_per_line: Minimum number of tokens required on one line.
         max_words_per_line: Maximum number of tokens allowed on one line.
         max_lines: Maximum number of lines allowed in the response body.
 
@@ -191,6 +200,7 @@ def make_json_schema(
     return make_resources(
         wordlist,
         thinking_mode=thinking_mode,
+        min_words_per_line=min_words_per_line,
         max_words_per_line=max_words_per_line,
         max_lines=max_lines,
     ).json_schema(key=key, title=title, description=description)
@@ -200,6 +210,7 @@ def make_gbnf(
     wordlist: str | WordlistSpec,
     *,
     thinking_mode: ThinkingMode = "none",
+    min_words_per_line: int = 1,
     max_words_per_line: int = 40,
     max_lines: int = 8,
 ) -> str:
@@ -208,6 +219,7 @@ def make_gbnf(
     Args:
         wordlist: Built-in wordlist name or inline wordlist specification.
         thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        min_words_per_line: Minimum number of tokens required on one line.
         max_words_per_line: Maximum number of tokens allowed on one line.
         max_lines: Maximum number of lines allowed in the response body.
 
@@ -219,6 +231,7 @@ def make_gbnf(
     return make_resources(
         wordlist,
         thinking_mode=thinking_mode,
+        min_words_per_line=min_words_per_line,
         max_words_per_line=max_words_per_line,
         max_lines=max_lines,
     ).gbnf

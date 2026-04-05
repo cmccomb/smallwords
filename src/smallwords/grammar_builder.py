@@ -34,6 +34,7 @@ def build_gbnf(
     spec: WordlistSpec,
     *,
     thinking_mode: ThinkingMode = "none",
+    min_words_per_line: int = 1,
     max_words_per_line: int = 40,
     max_lines: int = 8,
 ) -> str:
@@ -42,6 +43,7 @@ def build_gbnf(
     Args:
         spec: Wordlist specification that defines the allowed tokens.
         thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        min_words_per_line: Minimum number of tokens required on one line.
         max_words_per_line: Maximum number of tokens allowed on one line.
         max_lines: Maximum number of lines allowed in the response body.
 
@@ -52,8 +54,12 @@ def build_gbnf(
         ValueError: If the limits are invalid, the wordlist is empty, or the
             thinking mode is unsupported.
     """
+    if min_words_per_line < 1:
+        raise ValueError("min_words_per_line must be >= 1")
     if max_words_per_line < 1:
         raise ValueError("max_words_per_line must be >= 1")
+    if min_words_per_line > max_words_per_line:
+        raise ValueError("min_words_per_line must be <= max_words_per_line")
     if max_lines < 1:
         raise ValueError("max_lines must be >= 1")
 
@@ -80,12 +86,11 @@ def build_gbnf(
     else:
         raise ValueError(f"Unsupported thinking_mode: {thinking_mode}")
 
+    repeat_range = f"{{{min_words_per_line - 1},{max_words_per_line - 1}}}"
     if spec.line_prefixes:
-        line_rule = (
-            f"line ::= line-prefix? word (space word){{0,{max_words_per_line - 1}}}"
-        )
+        line_rule = f"line ::= line-prefix? word (space word){repeat_range}"
     else:
-        line_rule = f"line ::= word (space word){{0,{max_words_per_line - 1}}}"
+        line_rule = f"line ::= word (space word){repeat_range}"
     if spec.allowed_punctuation:
         line_rule += " punct?"
 

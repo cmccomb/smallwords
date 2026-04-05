@@ -3,13 +3,13 @@
 This directory now keeps just three examples:
 
 - `readme_bridge_contrast.py`: the live bridge comparison used in the root README
-- `eclectic_welcomes.py`: a live caveman-versus-pirate welcome comparison built from `caveman_898` and `pirate_898`
-- `rewrite_technical_passage.py`: a live technical-to-simple rewrite built from `special_english_1475` plus the source passage words
+- `pirate_greeting.py`: a live pirate greeting built from a focused vocabulary selected from `pirate_898`
+- `rewrite_technical_passage.py`: a live technical-to-simple rewrite built from a focused vocabulary selected from `basic_850`
 
 Run them from the project root with the local virtualenv:
 
 ```bash
-.venv/bin/python examples/eclectic_welcomes.py
+.venv/bin/python examples/pirate_greeting.py
 .venv/bin/python examples/rewrite_technical_passage.py
 .venv/bin/python examples/readme_bridge_contrast.py
 ```

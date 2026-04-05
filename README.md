@@ -133,8 +133,9 @@ python examples/readme_bridge_contrast.py
 See the repository's
 [`examples/README.md`](https://github.com/cmccomb/smallwords/blob/main/examples/README.md)
 for the runnable examples. The current example set is live-model based:
-eclectic themed welcomes, a technical rewrite, and the README bridge contrast
-all call a live `llama-server` model with a prompt plus generated grammar.
+the README bridge contrast, a focused pirate greeting, and a focused technical
+rewrite all call a live `llama-server` model with a prompt plus generated
+grammar.
 Start a server once, then run whichever example you want. If your server is not
 on `http://127.0.0.1:8080`, set `SMALLWORDS_LLAMA_BASE_URL`.
 

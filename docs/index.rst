@@ -101,26 +101,35 @@ Constrained result:
 
 See ``examples/readme_bridge_contrast.py`` for the full prompt-plus-grammar run.
 
-Pirate Welcome
-~~~~~~~~~~~~~~
+Pirate Greeting
+~~~~~~~~~~~~~~~
 
-This example addresses a different problem: themed language usually depends on
-small lexical choices rather than a large prompt scaffold. The pirate remix
-keeps the base vocabulary compact, adds task words back in, and then constrains
-generation through the same resource bundle.
+This example addresses a different problem: themed language depends on small
+lexical choices, but a large themed vocabulary can still give the model too
+many awkward legal paths. The response here is narrower. It starts from the
+built-in ``pirate_898`` list, selects a tiny greeting-focused surface
+vocabulary, and then applies a matching grammar. That change keeps the example
+playful while making the live behavior cleaner and faster.
 
 .. code-block:: python
 
-   from smallwords import allow_input_words, make_resources, prompt_answer_simply
+   from smallwords import WordlistSpec, get_wordlist, make_resources
 
-   question = "Give a short pirate-style greeting for a new friend."
-   spec = allow_input_words("pirate_898", question)
-   prompt = prompt_answer_simply(question, wordlist=spec)
-   resources = make_resources(spec, max_words_per_line=12, max_lines=1)
+   base = get_wordlist("pirate_898")
+   spec = WordlistSpec(
+       name="pirate_898_greeting_focus",
+       words=("ahoy", "good", "matey", "meet", "to", "you"),
+       source_name="Selected surface forms from pirate_898 for the pirate greeting example",
+       source_urls=base.source_urls,
+       license_name=base.license_name,
+       allowed_punctuation=(".",),
+       variant_mode="surface_only",
+   )
+   resources = make_resources(spec, min_words_per_line=6, max_words_per_line=6, max_lines=1)
 
 Constrained result:
 
-   Ahoy,
+   Ahoy matey good to meet you.
 
 The pirate example is intentionally playful, which makes it a useful check on
 whether a themed remix remains usable rather than merely novel.
@@ -130,26 +139,34 @@ Technical Rewrite
 
 Rewriting technical text introduces another bottleneck. The system must retain
 the source meaning while moving into a simpler vocabulary. A broad prompt can
-request that shift, but it does not define which words remain available. This
-example uses ``special_english_1475`` plus the source passage terms so the
-rewrite stays interpretable and inspectable.
+request that shift, but it does not define which words remain available. A very
+large allowed-word block can also leave too much room for weak paraphrases. The
+example below responds by selecting a compact rewrite vocabulary from
+``basic_850`` that excludes the source terminology altogether. That makes the
+rewrite narrower, but also much easier to inspect.
 
 .. code-block:: python
 
-   from smallwords import allow_input_words, make_resources, prompt_rewrite_simply
+   from smallwords import WordlistSpec, get_wordlist, make_resources
 
+   base = get_wordlist("basic_850")
    text = (
-       "The navigation stack estimates the robot position by combining wheel "
-       "encoder readings, inertial measurements, and camera landmarks several "
-       "times each second."
+       "The thermal controller derates propulsion output after the sensor array "
+       "reports an overtemperature fault."
    )
-   spec = allow_input_words("special_english_1475", text)
-   prompt = prompt_rewrite_simply(text, wordlist=spec)
-   resources = make_resources(spec, max_words_per_line=16, max_lines=1)
+   spec = WordlistSpec(
+       name="basic_850_rewrite_focus",
+       words=("be", "cut", "engine", "heat", "high", "if", "power", "system", "this", "very", "when"),
+       source_name="Selected from basic_850 for the rewrite example",
+       source_urls=base.source_urls,
+       license_name=base.license_name,
+       allowed_punctuation=(".",),
+   )
+   resources = make_resources(spec, min_words_per_line=10, max_words_per_line=10, max_lines=1)
 
 Constrained result:
 
-   The navigation stack finds where the robot is by using wheel encoder readings,
+   When engine heat is very high this system cuts power.
 
 The live scripts in ``examples/`` print the full prompt, grammar, schema, and
 validation details. That fuller output matters because it lets a reader inspect
