@@ -37,19 +37,35 @@ pip install -e ".[dev]"
 ## Quick Start
 
 ```python
-from smallwords import allow_input_words, is_compliant, make_gbnf, make_resources, out_of_vocab, prompt_explain_simply
+from smallwords import (
+    allow_input_words,
+    is_compliant,
+    make_gbnf,
+    make_json_schema,
+    prompt_explain_simply,
+)
 
-spec = allow_input_words("basic_850", "How can a neighbor help?")
-prompt = prompt_explain_simply("How can a neighbor help?", wordlist=spec)
-resources = make_resources(spec, max_words_per_line=9, max_lines=3)
+plain_prompt = "Explain what a bridge does in one short sentence."
 
-gbnf = make_gbnf(spec, max_words_per_line=9, max_lines=3)
-schema = resources.json_schema(key="answer")
+spec = allow_input_words("basic_850", "How does a bridge work?")
+smallwords_prompt = prompt_explain_simply("How does a bridge work?", wordlist=spec)
+gbnf = make_gbnf(spec, max_words_per_line=24, max_lines=1)
+schema = make_json_schema(
+    spec,
+    key="answer",
+    title="bridge_explanation",
+    max_words_per_line=24,
+    max_lines=1,
+)
 
-text = "A neighbor can help."
+text = "A bridge is a structure that helps people and things move across a river or a deep place."
 ok = is_compliant(text, spec)
-missing = out_of_vocab("A robot can help.", spec)
 ```
+
+The contrast is the point. `plain_prompt` is the soft instruction you would use
+for an unconstrained run. `smallwords_prompt + gbnf` is the tighter version:
+the model sees the same task, an explicit allowed vocabulary block, and a hard
+output constraint that another runtime can reuse.
 
 The prompt helpers include the full allowed vocabulary block, including
 expanded forms such as `go`, `goes`, and `going`, so the model sees the soft
