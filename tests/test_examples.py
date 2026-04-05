@@ -25,4 +25,5 @@ def test_examples_run() -> None:
             text=True,
         )
         # Each example prints the same headings, which makes this a stable check.
+        assert "=== Generation Request ===" in completed.stdout
         assert "=== Prompt ===" in completed.stdout

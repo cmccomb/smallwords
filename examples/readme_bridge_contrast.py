@@ -2,13 +2,20 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import shutil
 import subprocess
 import sys
 
-from smallwords import is_compliant, out_of_vocab, prompt_explain_simply
+from _shared import assert_response_matches_request, build_example_request
+from smallwords import (
+    is_compliant,
+    make_resources,
+    out_of_vocab,
+    prompt_explain_simply,
+)
 
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
@@ -17,7 +24,14 @@ MODEL_REPO = os.environ.get(
 
 STANDARD_PROMPT = "Explain how a bridge works in exactly three short sentences."
 WORDLIST = "common_250"
+SMALLWORDS_RESOURCES = make_resources(WORDLIST, max_words_per_line=9, max_lines=3)
 SMALLWORDS_PROMPT = prompt_explain_simply("How does a bridge work?", wordlist=WORDLIST)
+SMALLWORDS_REQUEST = build_example_request(
+    SMALLWORDS_PROMPT,
+    SMALLWORDS_RESOURCES,
+    key="answer",
+    title="bridge_explanation",
+)
 SMALLWORDS_REFERENCE = (
     "A way can go over water.\n"
     "Each part hold people up.\n"
@@ -96,6 +110,8 @@ def _run_prompt(prompt: str, *, seed: int) -> str:
 
 def main() -> None:
     """Print the README's model-vs-wordlist bridge comparison."""
+    assert_response_matches_request(SMALLWORDS_REQUEST, SMALLWORDS_REFERENCE)
+
     print("=== Model ===")
     print(MODEL_REPO)
 
@@ -107,8 +123,12 @@ def main() -> None:
 
     print("=== Smallwords Wordlist ===")
     print(WORDLIST)
+    print("=== Smallwords Generation Request ===")
+    print(json.dumps(SMALLWORDS_REQUEST.summary(), indent=2))
     print("=== Smallwords Prompt ===")
-    print(SMALLWORDS_PROMPT)
+    print(SMALLWORDS_REQUEST.prompt)
+    print("=== Smallwords GBNF ===")
+    print(SMALLWORDS_REQUEST.grammar)
     print("=== Smallwords Reference Response ===")
     print(SMALLWORDS_REFERENCE)
     print("=== Reference Compliance ===")
