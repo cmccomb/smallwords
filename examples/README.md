@@ -4,7 +4,7 @@ This directory now keeps just three examples:
 
 - `readme_bridge_contrast.py`: the live bridge comparison used in the root README
 - `eclectic_welcomes.py`: a live caveman-versus-pirate welcome comparison built from `caveman_898` and `pirate_898`
-- `rewrite_technical_passage.py`: a live technical-to-simple rewrite built from `common_250` plus the source passage words
+- `rewrite_technical_passage.py`: a live technical-to-simple rewrite built from `special_english_1475` plus the source passage words
 
 Run them from the project root with the local virtualenv:
 

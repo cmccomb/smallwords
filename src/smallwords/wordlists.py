@@ -42,7 +42,7 @@ MOBY_FREQ_WORDS = _load_bundled_words("moby_freq_alpha_898.txt")
 # This bundled list provides the permissive Basic English preset.
 BASIC_850_WORDS = _load_bundled_words("basic_english_850.txt")
 # This bundled list provides the Special English preset.
-SPECIAL_ENGLISH_WORDS = _load_bundled_words("special_english_1477.txt")
+SPECIAL_ENGLISH_WORDS = _load_bundled_words("special_english_1475.txt")
 
 # This bundled spec exposes the full normalized Moby frequency list.
 MOBY_898_SPEC = WordlistSpec(

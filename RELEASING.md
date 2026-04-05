@@ -16,6 +16,7 @@ ruff check .
 ruff format --check .
 pytest
 python scripts/check_documentation.py
+python -m sphinx -W --keep-going -b html docs docs/_build/html
 python -m build
 python -m twine check --strict dist/*
 python -m venv /tmp/smallwords-release-check
@@ -32,4 +33,5 @@ Then:
 4. Publish a GitHub release from that tag.
 
 The `Publish` workflow builds the distributions, validates them with `twine`,
-and uploads them to PyPI through Trusted Publishing.
+and uploads them to PyPI through Trusted Publishing. The separate `Docs`
+workflow builds the Sphinx site and deploys it to GitHub Pages from `main`.

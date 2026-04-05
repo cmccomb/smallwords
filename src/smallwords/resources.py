@@ -194,3 +194,31 @@ def make_json_schema(
         max_words_per_line=max_words_per_line,
         max_lines=max_lines,
     ).json_schema(key=key, title=title, description=description)
+
+
+def make_gbnf(
+    wordlist: str | WordlistSpec,
+    *,
+    thinking_mode: ThinkingMode = "none",
+    max_words_per_line: int = 40,
+    max_lines: int = 8,
+) -> str:
+    """Build GBNF directly from a named or inline word list spec.
+
+    Args:
+        wordlist: Built-in wordlist name or inline wordlist specification.
+        thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        A GBNF string aligned with the selected wordlist.
+    """
+    # This helper mirrors ``make_json_schema`` so direct-export callers get a
+    # consistent top-level API across both portable resource formats.
+    return make_resources(
+        wordlist,
+        thinking_mode=thinking_mode,
+        max_words_per_line=max_words_per_line,
+        max_lines=max_lines,
+    ).gbnf

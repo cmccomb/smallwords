@@ -16,7 +16,13 @@ SRC_ROOT = Path(__file__).resolve().parents[1] / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from smallwords import is_compliant, make_resources, out_of_vocab, prompt_answer_simply
+from smallwords import (
+    allow_input_words,
+    is_compliant,
+    make_resources,
+    out_of_vocab,
+    prompt_answer_simply,
+)
 from smallwords.integrations import generate_text, server_base_url
 
 # This expected model keeps the example aligned with the other live examples.
@@ -71,14 +77,17 @@ def print_variant(variant: WelcomeVariant) -> None:
     Returns:
         None.
     """
-    resources = make_resources(variant.wordlist, max_words_per_line=12, max_lines=1)
-    prompt = prompt_answer_simply(variant.question, wordlist=variant.wordlist)
+    # Add the task words back in so the themed vocab can echo the question naturally.
+    spec = allow_input_words(variant.wordlist, variant.question)
+    resources = make_resources(spec, max_words_per_line=12, max_lines=1)
+    prompt = prompt_answer_simply(variant.question, wordlist=spec)
     schema = resources.json_schema(
         key=SCHEMA_KEY,
-        title=f"{variant.wordlist}_welcome",
+        title=f"{spec.name}_welcome",
     )
     request_summary = {
-        "wordlist": variant.wordlist,
+        "wordlist": spec.name,
+        "task_words_added": True,
         "prompt": prompt,
         "seed": SEED,
         "temperature": TEMPERATURE,
@@ -97,7 +106,7 @@ def print_variant(variant: WelcomeVariant) -> None:
     )
 
     print(f"=== {variant.label} Wordlist ===")
-    print(variant.wordlist)
+    print(f"{spec.name} + question words")
     print("=== Generation Request ===")
     print(json.dumps(request_summary, indent=2))
     print("=== Prompt ===")
@@ -109,12 +118,12 @@ def print_variant(variant: WelcomeVariant) -> None:
     print("=== Model Response ===")
     print(response)
     print("=== Model Compliance ===")
-    print(is_compliant(response, variant.wordlist))
+    print(is_compliant(response, spec))
     print("=== Model Schema Match ===")
     # The schema pattern is derived from the same limits as the bundled grammar.
     print(re.fullmatch(pattern, response) is not None)
     print("=== Model Out Of Vocab ===")
-    print(out_of_vocab(response, variant.wordlist))
+    print(out_of_vocab(response, spec))
 
 
 def main() -> None:

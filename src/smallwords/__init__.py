@@ -24,6 +24,7 @@ from .resources import (
     PIRATE_898,
     SPECIAL_ENGLISH_1475,
     OutputResources,
+    make_gbnf,
     make_json_schema,
     make_resources,
 )
@@ -53,6 +54,7 @@ __all__ = [
     "allow_input_words",
     "get_wordlist",
     "list_wordlists",
+    "make_gbnf",
     "make_json_schema",
     "make_resources",
     "prompt_answer_simply",

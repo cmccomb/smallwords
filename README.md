@@ -5,6 +5,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/smallwords)](https://pypi.org/project/smallwords/)
 [![Python versions](https://img.shields.io/pypi/pyversions/smallwords)](https://pypi.org/project/smallwords/)
 [![License](https://img.shields.io/github/license/cmccomb/smallwords)](https://github.com/cmccomb/smallwords/blob/main/LICENSE)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-4c1)](https://cmccomb.github.io/smallwords/)
 
 `smallwords` is a tiny Python package for controlled-vocabulary prompting plus
 portable output resources. It helps you generate GBNF and JSON Schema artifacts
@@ -17,6 +18,9 @@ couple of intentionally themed remixes. By default, the built-ins also allow
 slight family variants such as `go`, `goes`, and `going`.
 
 It supports Python 3.10 and newer.
+
+The hosted API-and-examples docs live at
+[`cmccomb.github.io/smallwords`](https://cmccomb.github.io/smallwords/).
 
 ## Installation
 
@@ -33,13 +37,13 @@ pip install -e ".[dev]"
 ## Quick Start
 
 ```python
-from smallwords import allow_input_words, is_compliant, make_resources, out_of_vocab, prompt_explain_simply
+from smallwords import allow_input_words, is_compliant, make_gbnf, make_resources, out_of_vocab, prompt_explain_simply
 
 spec = allow_input_words("basic_850", "How can a neighbor help?")
 prompt = prompt_explain_simply("How can a neighbor help?", wordlist=spec)
 resources = make_resources(spec, max_words_per_line=9, max_lines=3)
 
-gbnf = resources.gbnf
+gbnf = make_gbnf(spec, max_words_per_line=9, max_lines=3)
 schema = resources.json_schema(key="answer")
 
 text = "A neighbor can help."
@@ -127,12 +131,13 @@ ruff format .
 pytest
 pytest --cov=smallwords --cov-report=term-missing
 python scripts/check_documentation.py
+python -m sphinx -W --keep-going -b html docs docs/_build/html
 python -m build
 python -m twine check --strict dist/*
 ```
 
-CI runs tests, the documentation policy check, a `>=90%` coverage gate, and a
-package build on GitHub Actions.
+CI runs linting, tests, the documentation policy check, a `>=90%` coverage
+gate, a Sphinx docs build, and a package build on GitHub Actions.
 
 For release steps and Trusted Publishing setup, see
 [`RELEASING.md`](https://github.com/cmccomb/smallwords/blob/main/RELEASING.md).

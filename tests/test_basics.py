@@ -6,6 +6,8 @@ from smallwords import (
     WordlistSpec,
     allow_input_words,
     is_compliant,
+    make_gbnf,
+    make_resources,
     out_of_vocab,
     prompt_explain_simply,
 )
@@ -30,6 +32,16 @@ def test_allow_input_words_adds_question_terms() -> None:
 def test_gbnf_has_root() -> None:
     """Ensure prebuilt resources expose a top-level GBNF root rule."""
     assert BASIC_850.gbnf.startswith("root ::= text")
+
+
+def test_make_gbnf_matches_resource_bundle() -> None:
+    """Ensure the direct helper mirrors the resource bundle grammar output."""
+    spec = allow_input_words("basic_850", "How can a neighbor help?")
+    assert make_gbnf(spec, max_words_per_line=9, max_lines=3) == make_resources(
+        spec,
+        max_words_per_line=9,
+        max_lines=3,
+    ).gbnf
 
 
 def test_validation() -> None:

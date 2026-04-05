@@ -30,13 +30,21 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/cmccomb/smallwords"
-Documentation = "https://github.com/cmccomb/smallwords#readme"
+Documentation = "https://cmccomb.github.io/smallwords/"
 Repository = "https://github.com/cmccomb/smallwords.git"
 Issues = "https://github.com/cmccomb/smallwords/issues"
 Changelog = "https://github.com/cmccomb/smallwords/releases"
 
 [project.optional-dependencies]
-dev = ["build>=1.2", "pytest>=8.0", "pytest-cov>=7.1", "ruff>=0.11", "twine>=6.1"]
+dev = [
+  "build>=1.2",
+  "pydata-sphinx-theme>=0.16",
+  "pytest>=8.0",
+  "pytest-cov>=7.1",
+  "ruff>=0.11",
+  "sphinx>=8.2",
+  "twine>=6.1",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
