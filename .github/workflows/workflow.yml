@@ -1,0 +1,66 @@
+# GitHub Actions workflow to publish `smallwords` to PyPI.
+#
+# Goals:
+# - Build sdist + wheel deterministically on a clean runner.
+# - Validate artifacts before upload so packaging problems fail early.
+# - Publish via trusted publishing (OIDC), avoiding long-lived PyPI tokens.
+# - Allow both release-driven publishes and manual reruns.
+#
+# Assumptions:
+# - PyPI trusted publishing is configured for this repository and the `pypi` environment.
+# - The `pypi` environment can enforce approvals or deployment protection rules.
+
+name: Publish
+
+# Triggers:
+# - On GitHub Release publish events for the normal release flow.
+# - Manual trigger for reruns or recovery from transient PyPI failures.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# Default permissions stay read-only unless a job needs more.
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Build and publish distribution
+
+    # Use a clean GitHub-hosted runner for reproducible builds.
+    runs-on: ubuntu-latest
+
+    # Attach the job to the `pypi` environment so deploy rules and the
+    # published package link live in one obvious place.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/smallwords
+
+    # OIDC trusted publishing requires an ID token, while checkout only needs read access.
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      # Fetch the repository contents for the build.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Pin the Python runtime used for the release build.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # Build both distributions, then validate their metadata strictly.
+      - name: Build distribution artifacts
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+          python -m twine check --strict dist/*
+
+      # Publish to PyPI using GitHub OIDC and PyPI trusted publishing.
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
