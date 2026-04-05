@@ -37,11 +37,14 @@ def test_gbnf_has_root() -> None:
 def test_make_gbnf_matches_resource_bundle() -> None:
     """Ensure the direct helper mirrors the resource bundle grammar output."""
     spec = allow_input_words("basic_850", "How can a neighbor help?")
-    assert make_gbnf(spec, max_words_per_line=9, max_lines=3) == make_resources(
-        spec,
-        max_words_per_line=9,
-        max_lines=3,
-    ).gbnf
+    assert (
+        make_gbnf(spec, max_words_per_line=9, max_lines=3)
+        == make_resources(
+            spec,
+            max_words_per_line=9,
+            max_lines=3,
+        ).gbnf
+    )
 
 
 def test_validation() -> None:

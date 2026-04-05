@@ -50,9 +50,7 @@ MOBY_898_SPEC = WordlistSpec(
     words=MOBY_FREQ_WORDS,
     description="The full normalized alpha-only Moby Words II frequency list bundled with the package.",
     source_name="Project Gutenberg Moby Words II freq.txt normalized to alpha-only tokens",
-    source_urls=(
-        "https://www.gutenberg.org/files/3201/files/freq.txt",
-    ),
+    source_urls=("https://www.gutenberg.org/files/3201/files/freq.txt",),
     license_name="Public domain",
 )
 

@@ -261,7 +261,7 @@ def test_llama_server_helpers_cover_success_and_error_paths(
     generated = generate_text(
         "http://example.test/root",
         "Say hello.",
-        grammar="root ::= \"hello\"",
+        grammar='root ::= "hello"',
         max_tokens=7,
         temperature=0.2,
         seed=11,
