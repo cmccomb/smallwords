@@ -1,3 +1,5 @@
+"""Prompt templates that mirror the package's controlled-language modes."""
+
 from __future__ import annotations
 
 from .types import WordlistSpec
@@ -5,10 +7,12 @@ from .wordlists import get_wordlist
 
 
 def _resolve_name(wordlist: str | WordlistSpec) -> str:
+    """Normalize a wordlist argument into the name referenced in prompts."""
     return wordlist if isinstance(wordlist, str) else wordlist.name
 
 
 def prompt_explain_simply(topic: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+    """Build an explanation prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (
         f"Explain the topic in plain English. Use only words from the {name} word list. "
@@ -22,6 +26,7 @@ def prompt_explain_simply(topic: str, *, wordlist: str | WordlistSpec = "common_
 
 
 def prompt_summarize_simply(text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+    """Build a summarization prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (
         f"Summarize the text in plain English. Use only words from the {name} word list. "
@@ -35,6 +40,7 @@ def prompt_summarize_simply(text: str, *, wordlist: str | WordlistSpec = "common
 
 
 def prompt_rewrite_simply(text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+    """Build a rewriting prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (
         f"Rewrite the text in plain English. Use only words from the {name} word list. "
@@ -48,6 +54,7 @@ def prompt_rewrite_simply(text: str, *, wordlist: str | WordlistSpec = "common_2
 
 
 def prompt_answer_simply(question: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+    """Build a QA prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (
         f"Answer the question in plain English. Use only words from the {name} word list. "

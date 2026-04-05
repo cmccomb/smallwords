@@ -1,3 +1,5 @@
+"""Helpers for turning a word list specification into a GBNF grammar."""
+
 from __future__ import annotations
 
 from functools import lru_cache
@@ -9,6 +11,7 @@ ThinkingMode = Literal["none", "plan_final", "thinking_answer"]
 
 
 def _esc(text: str) -> str:
+    """Escape characters that need quoting inside a GBNF string literal."""
     return text.replace("\\", "\\\\").replace('"', '\\"')
 
 
@@ -33,6 +36,8 @@ def build_gbnf(
     common_word_alts = " |\n  ".join(f'"{_esc(word)}"' for word in words)
 
     rules: list[str] = []
+    # The root rule determines whether the caller wants a plain response or a
+    # two-block format that exposes a short planning/thinking section first.
     if thinking_mode == "none":
         rules.append('root ::= text')
     elif thinking_mode == "plan_final":
@@ -42,34 +47,47 @@ def build_gbnf(
     else:
         raise ValueError(f"Unsupported thinking_mode: {thinking_mode}")
 
+    if spec.line_prefixes:
+        line_rule = f'line ::= line-prefix? word (space word){{0,{max_words_per_line - 1}}}'
+    else:
+        line_rule = f'line ::= word (space word){{0,{max_words_per_line - 1}}}'
+    if spec.allowed_punctuation:
+        line_rule += ' punct?'
+
+    word_rules = ["common-word"]
+    if spec.allow_capitalized_words:
+        word_rules.append("capitalized-word")
+    if spec.allow_numbers:
+        word_rules.append("number")
+
+    word_rule = " |\n  ".join(word_rules)
+
     rules.extend(
         [
-            f'text ::= line (newline line){{0,{max_lines - 1}}}',
-            f'line ::= [line_prefix] word (space word){{0,{max_words_per_line - 1}}} [punct]',
+            f'text ::= line (newline line){{0,{max_lines - 1}}}' if spec.allow_newlines else 'text ::= line',
+            line_rule,
             'space ::= " "',
             'newline ::= "\\n"',
-            'word ::= common_word | capitalized_word' if spec.allow_capitalized_words else 'word ::= common_word',
-            f'common_word ::=\n  {common_word_alts}',
+            f'word ::=\n  {word_rule}',
+            f'common-word ::=\n  {common_word_alts}',
         ]
     )
 
     if spec.allow_capitalized_words:
         cap_alts = " |\n  ".join(f'"{_esc(word.capitalize())}"' for word in words)
-        rules.append(f'capitalized_word ::=\n  {cap_alts}')
+        rules.append(f'capitalized-word ::=\n  {cap_alts}')
+
+    if spec.allow_numbers:
+        rules.append('number ::= [0-9]+')
 
     if spec.allowed_punctuation:
         punct_alts = " | ".join(f'"{_esc(ch)}"' for ch in spec.allowed_punctuation)
         rules.append(f'punct ::= {punct_alts}')
-    else:
-        rules.append('punct ::= "."')
 
+    # Prefixes stay optional in `line`, but defining the rule keeps the grammar
+    # shape consistent for callers that want bullets or numbered steps.
     if spec.line_prefixes:
         prefix_alts = " | ".join(f'"{_esc(prefix)}"' for prefix in spec.line_prefixes)
-        rules.append(f'line_prefix ::= {prefix_alts}')
-    else:
-        rules.append('line_prefix ::= "- "')
-
-    if spec.allow_numbers:
-        rules.append('number ::= [0-9]+')
+        rules.append(f'line-prefix ::= {prefix_alts}')
 
     return "\n\n".join(rules) + "\n"

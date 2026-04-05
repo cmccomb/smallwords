@@ -13,5 +13,5 @@ def test_gbnf_has_root() -> None:
 
 
 def test_validation() -> None:
-    assert is_compliant("The man can help.", "common_50")
-    assert "bridge" in out_of_vocab("The man can help with a bridge.", "common_50")
+    assert is_compliant("The man can make it.", "common_50")
+    assert "bridge" in out_of_vocab("The man can make a bridge.", "common_50")
