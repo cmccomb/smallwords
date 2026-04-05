@@ -86,13 +86,12 @@ COMMON_50 = OutputResources(COMMON_50_SPEC)
 COMMON_100 = OutputResources(COMMON_100_SPEC)
 COMMON_250 = OutputResources(COMMON_250_SPEC)
 BASIC_850 = OutputResources(BASIC_850_SPEC)
+REASONING_250 = OutputResources(REASONING_250_SPEC)
 SPECIAL_ENGLISH = OutputResources(SPECIAL_ENGLISH_SPEC)
 
-COMMON_50_THINKING = OutputResources(REASONING_250_SPEC, thinking_mode="plan_final")
-COMMON_100_THINKING = OutputResources(REASONING_250_SPEC, thinking_mode="plan_final")
-COMMON_250_THINKING = OutputResources(
-    REASONING_250_SPEC, thinking_mode="thinking_answer"
-)
+COMMON_50_THINKING = OutputResources(COMMON_50_SPEC, thinking_mode="plan_final")
+COMMON_100_THINKING = OutputResources(COMMON_100_SPEC, thinking_mode="plan_final")
+COMMON_250_THINKING = OutputResources(COMMON_250_SPEC, thinking_mode="thinking_answer")
 
 
 def make_resources(

@@ -1,6 +1,13 @@
-"""Tests for the bundled source-backed wordlist catalog."""
+"""Tests for the bundled source-backed wordlist catalog and presets."""
 
-from smallwords import WORDLISTS, get_wordlist
+from smallwords import (
+    COMMON_50_THINKING,
+    COMMON_100_THINKING,
+    COMMON_250_THINKING,
+    REASONING_250,
+    WORDLISTS,
+    get_wordlist,
+)
 
 
 def test_source_backed_wordlists_are_available() -> None:
@@ -34,3 +41,12 @@ def test_wordlist_provenance_and_sizes() -> None:
     assert len(special.words) == 1475
     assert special.source_name.startswith("Voice of America Special English")
     assert special.license_name == "MIT"
+
+
+def test_prebuilt_resource_presets_match_their_names() -> None:
+    """Ensure exported resource presets line up with their documented wordlists."""
+    # The thinking presets should keep their named base vocabularies.
+    assert COMMON_50_THINKING.spec.name == "common_50"
+    assert COMMON_100_THINKING.spec.name == "common_100"
+    assert COMMON_250_THINKING.spec.name == "common_250"
+    assert REASONING_250.spec.name == "reasoning_250"
