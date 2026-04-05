@@ -2,6 +2,7 @@
 
 # Re-export the common entry points so callers can stay on the package root.
 from .grammar_builder import build_gbnf
+from .input_words import allow_input_words
 from .json_schema import build_json_schema
 from .prompts import (
     TEMPLATE_PROMPTS,
@@ -48,6 +49,7 @@ __all__ = [
     "WordFamily",
     "WordlistSpec",
     "WORDLISTS",
+    "allow_input_words",
     "build_gbnf",
     "build_json_schema",
     "get_wordlist",

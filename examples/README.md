@@ -16,7 +16,7 @@ Run them from the project root with the local virtualenv:
 
 Included scenarios:
 
-- `customer_support_chat.py`: a short support-style reply built with `reasoning_250`
-- `neighbor_intro_chat.py`: a friendly small-talk response built with `common_250`
-- `bridge_explain.py`: a plain bridge explanation built with `common_250`
-- `readme_bridge_contrast.py`: compares a real local Qwen bridge answer with the README's compliant `common_250` prompt-plus-grammar example
+- `customer_support_chat.py`: a short support-style reply built with `reasoning_250` plus the question word `order`
+- `neighbor_intro_chat.py`: a friendly small-talk response built with `common_250` plus the question word `neighbor`
+- `bridge_explain.py`: a plain bridge explanation built with `common_250` plus the topic word `bridge`
+- `readme_bridge_contrast.py`: compares a real local Qwen bridge answer with the README's constrained `basic_850 + topic words` example

@@ -25,18 +25,27 @@ pip install -e ".[dev]"
 ## Quick Start
 
 ```python
-from smallwords import COMMON_250, is_compliant, make_resources, out_of_vocab, prompt_explain_simply
+from smallwords import allow_input_words, is_compliant, make_resources, out_of_vocab, prompt_explain_simply
 
-prompt = prompt_explain_simply("How does a bridge work?", wordlist="common_250")
-resources = make_resources("common_250", max_words_per_line=9, max_lines=3)
+spec = allow_input_words("common_250", "How does a bridge work?")
+prompt = prompt_explain_simply("How does a bridge work?", wordlist=spec)
+resources = make_resources(spec, max_words_per_line=9, max_lines=3)
 
 gbnf = resources.gbnf
 schema = resources.json_schema(key="answer")
 
-text = "A way goes over water."
-ok = is_compliant(text, "common_250")
-missing = out_of_vocab("A bridge goes over water.", "common_250")
+text = "A bridge goes over water."
+ok = is_compliant(text, spec)
+missing = out_of_vocab("A bridge goes over water.", spec)
 ```
+
+The prompt helpers include the full allowed vocabulary block, including
+expanded forms such as `go`, `goes`, and `going`, so the model sees the soft
+instruction as well as the hard grammar or schema.
+
+If you want the model to be able to repeat topic or question terms such as
+`bridge`, `neighbor`, or `order`, use `allow_input_words(...)` once and pass
+that derived spec into the prompt, resources, and validation helpers together.
 
 ## Built-In Wordlists
 
@@ -60,30 +69,24 @@ The themed remixes live in `src/smallwords/caveman.py` and
 
 ## Contrastive Example
 
-This is the clearest way to see what `smallwords` is trying to do.
+This is the clearest way to see what `smallwords` is trying to do. Both blocks
+below are genuine local Qwen outputs from April 4, 2026. The first uses a plain
+prompt. The second uses the same base prompt plus an explicit `basic_850`
+vocabulary list, the topic word `bridge`, and the generated GBNF.
 
-A real local Qwen response to a normal prompt is still fairly technical:
+A plain prompt stays fairly natural:
 
-> A bridge is a structure built to span a physical obstacle like a river or
-> valley, providing a path for people, vehicles, or trains to cross. It works
-> by transferring the weight of the load and its own structure through beams,
-> arches, or suspension cables to the supports on either side. This distribution
-> of forces ensures stability and safety, allowing the bridge to carry weight
-> without collapsing.
+> A bridge provides a structure that spans a gap, such as a river or valley,
+> to allow safe passage over it.
 
-A `smallwords`-style `common_250` target for the same idea is much plainer:
+A constrained `basic_850 + topic words` run is simpler, though still stiffer:
 
-> A way goes over water.
-> Each part hold people up.
-> The force move down through each side.
+> A bridge is a structure that goes across a river or road to connection.
 
-The first block is a genuine local Qwen output from April 4, 2026 using
-`llama.cpp` and
+These runs use `llama.cpp` and
 [`Qwen/Qwen3-4B-Instruct-2507`](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507)
 via
 [`bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF`](https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF).
-The second block is the compliant `common_250` reference answer used by the
-package examples.
 
 Reproduce that comparison from a clone of the repository with:
 
@@ -97,7 +100,7 @@ See the repository's
 [`examples/README.md`](https://github.com/cmccomb/smallwords/blob/main/examples/README.md)
 for the runnable examples. The bridge, neighbor, and customer-support scripts
 all print prompts, resources, and compliant sample outputs built from the
-bundled wordlists.
+bundled wordlists, with optional task-word expansion where it helps.
 
 ## Development
 

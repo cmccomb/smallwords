@@ -50,13 +50,10 @@ def build_example_request(
     )
 
 
-def assert_response_matches_request(request: ExampleRequest, text: str) -> None:
-    """Ensure a sample response matches the bundled constraint resources."""
+def response_matches_request(request: ExampleRequest, text: str) -> bool:
+    """Return True when a response matches the bundled constraint resources."""
     key = next(iter(request.schema["properties"]))
     pattern = request.schema["properties"][key]["pattern"]
 
     # The schema pattern is derived from the same limits as the bundled grammar.
-    if re.fullmatch(pattern, text) is None:
-        raise AssertionError(
-            "Sample response does not match the bundled prompt-and-grammar constraints."
-        )
+    return re.fullmatch(pattern, text) is not None

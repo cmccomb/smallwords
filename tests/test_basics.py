@@ -4,6 +4,7 @@ from smallwords import (
     COMMON_50,
     WordFamily,
     WordlistSpec,
+    allow_input_words,
     is_compliant,
     out_of_vocab,
     prompt_explain_simply,
@@ -11,9 +12,19 @@ from smallwords import (
 
 
 def test_prompt_mentions_wordlist() -> None:
-    """Ensure the prompt text names the selected built-in wordlist."""
+    """Ensure the prompt text names the selected wordlist and lists allowed words."""
     prompt = prompt_explain_simply("How does rain work?", wordlist="common_50")
     assert "common_50" in prompt
+    assert "Allowed words (common_50):" in prompt
+    assert "goes" in prompt
+
+
+def test_allow_input_words_adds_question_terms() -> None:
+    """Ensure task words can be added to the allowed vocabulary on demand."""
+    spec = allow_input_words("common_50", "How does a bridge work?")
+    prompt = prompt_explain_simply("How does a bridge work?", wordlist=spec)
+    assert "bridge" in prompt
+    assert is_compliant("A bridge does work.", spec)
 
 
 def test_gbnf_has_root() -> None:
