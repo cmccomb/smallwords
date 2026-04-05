@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from ._spec_utils import resolve_wordlist_spec
 from .remix import remix_wordlist
 from .types import WordlistSpec
 from .validation import normalize_tokens
-from .wordlists import get_wordlist
 
 
 def allow_input_words(
@@ -14,8 +14,18 @@ def allow_input_words(
     name: str | None = None,
     description: str | None = None,
 ) -> WordlistSpec:
-    """Return a derived spec that also permits normalized words from task text."""
-    base = get_wordlist(wordlist) if isinstance(wordlist, str) else wordlist
+    """Return a derived spec that also permits normalized words from task text.
+
+    Args:
+        wordlist: Built-in wordlist name or inline wordlist specification.
+        texts: One or more task strings whose normalized words should be allowed.
+        name: Optional replacement name for the derived specification.
+        description: Optional replacement description for the derived specification.
+
+    Returns:
+        A derived wordlist specification that includes the task words.
+    """
+    base = resolve_wordlist_spec(wordlist)
     allowed = set(base.allowed_words())
     extra_words: list[str] = []
 

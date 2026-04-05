@@ -1,11 +1,8 @@
 """Public package exports for the smallwords API."""
 
-# Re-export the common entry points so callers can stay on the package root.
-from .grammar_builder import build_gbnf
+# Re-export the small, high-level entry points so callers can stay on the package root.
 from .input_words import allow_input_words
-from .json_schema import build_json_schema
 from .prompts import (
-    TEMPLATE_PROMPTS,
     prompt_answer_simply,
     prompt_explain_simply,
     prompt_rewrite_simply,
@@ -30,7 +27,7 @@ from .resources import (
 )
 from .types import WordFamily, WordlistSpec
 from .validation import is_compliant, out_of_vocab
-from .wordlists import WORDLISTS, get_wordlist
+from .wordlists import get_wordlist, list_wordlists
 
 # Keep the export list explicit so generated docs and editors stay predictable.
 __all__ = [
@@ -48,11 +45,9 @@ __all__ = [
     "SPECIAL_ENGLISH",
     "WordFamily",
     "WordlistSpec",
-    "WORDLISTS",
     "allow_input_words",
-    "build_gbnf",
-    "build_json_schema",
     "get_wordlist",
+    "list_wordlists",
     "make_json_schema",
     "make_resources",
     "prompt_answer_simply",
@@ -60,7 +55,6 @@ __all__ = [
     "prompt_rewrite_simply",
     "prompt_summarize_simply",
     "remix_wordlist",
-    "TEMPLATE_PROMPTS",
     "is_compliant",
     "out_of_vocab",
 ]

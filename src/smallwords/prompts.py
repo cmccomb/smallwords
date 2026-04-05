@@ -2,17 +2,31 @@
 
 from __future__ import annotations
 
+from ._spec_utils import resolve_wordlist_spec
 from .types import WordlistSpec
-from .wordlists import get_wordlist
 
 
 def _resolve_spec(wordlist: str | WordlistSpec) -> WordlistSpec:
-    """Normalize a wordlist argument into the full spec used by prompt builders."""
-    return get_wordlist(wordlist) if isinstance(wordlist, str) else wordlist
+    """Normalize a prompt wordlist argument into a full specification.
+
+    Args:
+        wordlist: Built-in wordlist name or inline wordlist specification.
+
+    Returns:
+        The resolved wordlist specification object.
+    """
+    return resolve_wordlist_spec(wordlist)
 
 
 def _allowed_words_block(wordlist: str | WordlistSpec) -> str:
-    """Render the explicit vocabulary block the model should stay inside."""
+    """Render the explicit vocabulary block the model should stay inside.
+
+    Args:
+        wordlist: Built-in wordlist name or inline wordlist specification.
+
+    Returns:
+        A prompt-ready line that lists every allowed word.
+    """
     spec = _resolve_spec(wordlist)
     words = ", ".join(spec.allowed_words())
     # Spell out the available words so the prompt still helps without a grammar.
@@ -22,7 +36,16 @@ def _allowed_words_block(wordlist: str | WordlistSpec) -> str:
 def prompt_explain_simply(
     topic: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
 ) -> str:
-    """Build an explanation prompt constrained to a named or inline word list."""
+    """Build an explanation prompt constrained to a named or inline word list.
+
+    Args:
+        topic: Topic the model should explain.
+        wordlist: Built-in wordlist name or inline wordlist specification.
+        thinking: Whether to ask for a visible planning step before the answer.
+
+    Returns:
+        A prompt string that includes both instructions and the allowed words.
+    """
     spec = _resolve_spec(wordlist)
     # Keep the prompt text explicit about the wordlist name so it can be reused
     # even when the caller is not also passing a grammar or schema.
@@ -39,7 +62,16 @@ def prompt_explain_simply(
 def prompt_summarize_simply(
     text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
 ) -> str:
-    """Build a summarization prompt constrained to a named or inline word list."""
+    """Build a summarization prompt constrained to a named or inline word list.
+
+    Args:
+        text: Source text to summarize.
+        wordlist: Built-in wordlist name or inline wordlist specification.
+        thinking: Whether to ask for a visible planning step before the summary.
+
+    Returns:
+        A prompt string that includes both instructions and the allowed words.
+    """
     spec = _resolve_spec(wordlist)
     prompt = (
         f"Summarize the text in plain English. Use only words from the {spec.name} word list. "
@@ -54,7 +86,16 @@ def prompt_summarize_simply(
 def prompt_rewrite_simply(
     text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
 ) -> str:
-    """Build a rewriting prompt constrained to a named or inline word list."""
+    """Build a rewriting prompt constrained to a named or inline word list.
+
+    Args:
+        text: Source text to rewrite.
+        wordlist: Built-in wordlist name or inline wordlist specification.
+        thinking: Whether to ask for a visible planning step before the rewrite.
+
+    Returns:
+        A prompt string that includes both instructions and the allowed words.
+    """
     spec = _resolve_spec(wordlist)
     prompt = (
         f"Rewrite the text in plain English. Use only words from the {spec.name} word list. "
@@ -72,7 +113,16 @@ def prompt_answer_simply(
     wordlist: str | WordlistSpec = "common_250",
     thinking: bool = False,
 ) -> str:
-    """Build a QA prompt constrained to a named or inline word list."""
+    """Build a QA prompt constrained to a named or inline word list.
+
+    Args:
+        question: Question the model should answer.
+        wordlist: Built-in wordlist name or inline wordlist specification.
+        thinking: Whether to ask for a visible planning step before the answer.
+
+    Returns:
+        A prompt string that includes both instructions and the allowed words.
+    """
     spec = _resolve_spec(wordlist)
     prompt = (
         f"Answer the question in plain English. Use only words from the {spec.name} word list. "

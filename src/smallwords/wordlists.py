@@ -12,7 +12,14 @@ _DATA_ROOT = files("smallwords").joinpath("data")
 
 
 def _load_bundled_words(filename: str) -> tuple[str, ...]:
-    """Load a normalized one-word-per-line resource file from the package."""
+    """Load a normalized one-word-per-line resource file from the package.
+
+    Args:
+        filename: Resource filename inside the bundled data directory.
+
+    Returns:
+        The normalized words found in the resource file.
+    """
     words: list[str] = []
     for raw_line in (
         _DATA_ROOT.joinpath(filename).read_text(encoding="utf-8").splitlines()
@@ -141,10 +148,29 @@ WORDLISTS: dict[str, WordlistSpec] = {
 
 
 def get_wordlist(name: str) -> WordlistSpec:
-    """Return a named bundled wordlist or raise a helpful KeyError."""
+    """Return a named bundled wordlist or raise a helpful KeyError.
+
+    Args:
+        name: Built-in wordlist name.
+
+    Returns:
+        The matching bundled wordlist specification.
+
+    Raises:
+        KeyError: If the requested name is not registered.
+    """
     try:
         return WORDLISTS[name]
     except KeyError as exc:
         raise KeyError(
             f"Unknown wordlist: {name!r}. Available: {sorted(WORDLISTS)}"
         ) from exc
+
+
+def list_wordlists() -> tuple[str, ...]:
+    """Return the bundled wordlist names in stable sorted order.
+
+    Returns:
+        The available bundled wordlist names.
+    """
+    return tuple(sorted(WORDLISTS))

@@ -6,7 +6,6 @@ from smallwords import (
     COMMON_50,
     OutputResources,
     WordlistSpec,
-    build_json_schema,
     make_json_schema,
     make_resources,
 )
@@ -58,7 +57,7 @@ def test_inline_constraints_stay_aligned_between_gbnf_and_schema() -> None:
     )
 
     resources = make_resources(spec, max_words_per_line=2, max_lines=3)
-    schema = build_json_schema(spec, max_words_per_line=2, max_lines=3)
+    schema = make_json_schema(spec, max_words_per_line=2, max_lines=3)
     pattern = schema["properties"]["text"]["pattern"]
 
     # This test guards the shared constraint logic rather than either builder alone.
@@ -75,7 +74,7 @@ def test_allow_numbers_are_supported_in_both_builders() -> None:
     """Ensure numeric tokens propagate through both constraint builders."""
     spec = WordlistSpec(name="count", words=("one",), allow_numbers=True)
     resources = make_resources(spec, max_words_per_line=1, max_lines=1)
-    schema = build_json_schema(spec, max_words_per_line=1, max_lines=1)
+    schema = make_json_schema(spec, max_words_per_line=1, max_lines=1)
 
     assert "number ::= [0-9]+" in resources.gbnf
     assert re.fullmatch(schema["properties"]["text"]["pattern"], "123")
@@ -84,6 +83,6 @@ def test_allow_numbers_are_supported_in_both_builders() -> None:
 def test_schema_can_match_generated_family_variants() -> None:
     """Ensure regex schemas accept expanded word-family variants."""
     spec = WordlistSpec(name="places", words=("city",))
-    schema = build_json_schema(spec, max_words_per_line=1, max_lines=1)
+    schema = make_json_schema(spec, max_words_per_line=1, max_lines=1)
 
     assert re.fullmatch(schema["properties"]["text"]["pattern"], "cities")

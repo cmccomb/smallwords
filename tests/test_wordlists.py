@@ -7,8 +7,8 @@ from smallwords import (
     COMMON_250_THINKING,
     PIRATE_250,
     REASONING_250,
-    WORDLISTS,
     get_wordlist,
+    list_wordlists,
 )
 
 
@@ -23,7 +23,7 @@ def test_source_backed_wordlists_are_available() -> None:
         "reasoning_250",
         "caveman_250",
         "pirate_250",
-    } <= WORDLISTS.keys()
+    } <= set(list_wordlists())
 
 
 def test_wordlist_provenance_and_sizes() -> None:
