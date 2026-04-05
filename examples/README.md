@@ -19,4 +19,4 @@ Included scenarios:
 - `customer_support_chat.py`: a short support-style reply built with `reasoning_250`
 - `neighbor_intro_chat.py`: a friendly small-talk response built with `common_250`
 - `bridge_explain.py`: a plain bridge explanation built with `common_250`
-- `readme_bridge_contrast.py`: reruns the real local `llama.cpp` + Qwen bridge comparison used in the README
+- `readme_bridge_contrast.py`: compares a real local Qwen bridge answer with the README's compliant `common_250` reference answer

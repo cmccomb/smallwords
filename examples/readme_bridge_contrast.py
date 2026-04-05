@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import sys
 
+from smallwords import is_compliant, out_of_vocab, prompt_explain_simply
+
 
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
@@ -15,7 +17,13 @@ MODEL_REPO = os.environ.get(
 )
 
 STANDARD_PROMPT = "Explain how a bridge works in exactly three short sentences."
-SIMPLE_PROMPT = "Explain how a bridge works to a kid in exactly three short sentences."
+WORDLIST = "common_250"
+SMALLWORDS_PROMPT = prompt_explain_simply("How does a bridge work?", wordlist=WORDLIST)
+SMALLWORDS_REFERENCE = (
+    "A way can go over water.\n"
+    "Each part hold people up.\n"
+    "The force move down through each side."
+)
 
 
 def _clean_terminal_output(text: str) -> str:
@@ -86,7 +94,7 @@ def _run_prompt(prompt: str, *, seed: int) -> str:
 
 
 def main() -> None:
-    """Print the README's standard-vs-simple bridge comparison."""
+    """Print the README's model-vs-wordlist bridge comparison."""
     print("=== Model ===")
     print(MODEL_REPO)
 
@@ -96,11 +104,16 @@ def main() -> None:
     print("=== Standard Response ===")
     print(standard_answer)
 
-    print("=== Simple Prompt ===")
-    print(SIMPLE_PROMPT)
-    simple_answer = _run_prompt(SIMPLE_PROMPT, seed=11)
-    print("=== Simple Response ===")
-    print(simple_answer)
+    print("=== Smallwords Wordlist ===")
+    print(WORDLIST)
+    print("=== Smallwords Prompt ===")
+    print(SMALLWORDS_PROMPT)
+    print("=== Smallwords Reference Response ===")
+    print(SMALLWORDS_REFERENCE)
+    print("=== Reference Compliance ===")
+    print(is_compliant(SMALLWORDS_REFERENCE, WORDLIST))
+    print("=== Reference Out Of Vocab ===")
+    print(out_of_vocab(SMALLWORDS_REFERENCE, WORDLIST))
 
 
 if __name__ == "__main__":
