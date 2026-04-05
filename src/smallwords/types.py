@@ -1,10 +1,4 @@
-"""Define the shared vocabulary data structures used across the package.
-
-These types intentionally stay lightweight because they are threaded through the
-prompt builders, grammar generation, schema generation, and validation layers.
-Keeping the model simple makes it easier for both humans and tools to trace how
-a controlled vocabulary flows through the system.
-"""
+"""Define the public data structures used across the package."""
 
 from __future__ import annotations
 
@@ -15,6 +9,8 @@ from typing import Literal
 VariantMode = Literal["surface_only", "english_inflections"]
 # Family kinds let callers opt into explicit noun- or verb-style behavior.
 FamilyKind = Literal["custom", "noun", "verb"]
+# Thinking modes describe whether a response includes an explicit planning block.
+ThinkingMode = Literal["none", "plan_final", "thinking_answer"]
 
 
 @dataclass(frozen=True)
@@ -30,6 +26,29 @@ class WordFamily:
     headword: str
     kind: FamilyKind = "custom"
     forms: tuple[str, ...] = field(default_factory=tuple)
+
+
+@dataclass(frozen=True)
+class OutputShape:
+    """Describe the serialized response shape shared by every output resource.
+
+    Attributes:
+        thinking_mode: Wrapper mode for plain text or plan/final style responses.
+        min_words_per_line: Minimum number of tokens required on one line.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+    """
+
+    thinking_mode: ThinkingMode = "none"
+    min_words_per_line: int = 1
+    max_words_per_line: int = 40
+    max_lines: int = 8
+
+    def __post_init__(self) -> None:
+        """Reject invalid output limits as soon as a shape is constructed."""
+        from ._constraints import validate_output_shape
+
+        validate_output_shape(self)
 
 
 @dataclass(frozen=True)
@@ -74,9 +93,9 @@ class WordlistSpec:
         Returns:
             The canonical words from the specification in normalized sort order.
         """
-        # Stable ordering keeps generated grammars and schemas reproducible.
-        # Canonical words are the provenance source of truth for the wordlist.
-        return tuple(sorted({w.strip().lower() for w in self.words if w.strip()}))
+        from .variants import canonical_words
+
+        return canonical_words(self)
 
     def allowed_words(self) -> tuple[str, ...]:
         """Return the expanded set of allowed surface forms for this spec.
@@ -84,16 +103,6 @@ class WordlistSpec:
         Returns:
             The allowed surface forms after applying the variant policy.
         """
-        # Expansion is delegated so every caller shares the same family logic.
         from .variants import expand_allowed_words
 
         return expand_allowed_words(self)
-
-    def normalized_words(self) -> tuple[str, ...]:
-        """Return normalized allowed words for backward compatibility.
-
-        Returns:
-            The normalized allowed words used by older call sites.
-        """
-        # Historically callers used `normalized_words()` for the grammar surface.
-        return self.allowed_words()

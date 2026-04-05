@@ -1,29 +1,35 @@
 # Examples
 
-This directory now keeps just three examples:
+This directory keeps three live llama.cpp examples:
 
-- `readme_bridge_contrast.py`: the live bridge comparison used in the root README
-- `pirate_greeting.py`: a live pirate greeting built from a focused vocabulary selected from `pirate_898`
-- `rewrite_technical_passage.py`: a live technical-to-simple rewrite built from a focused vocabulary selected from `basic_850`
+- `readme_bridge_contrast.py`: the bridge comparison used in the root README
+- `pirate_greeting.py`: a focused pirate greeting built from `pirate_898`
+- `rewrite_technical_passage.py`: a focused technical rewrite built from `basic_850`
 
-Run them from the project root with the local virtualenv:
+Create and activate a virtualenv first:
 
 ```bash
-.venv/bin/python examples/pirate_greeting.py
-.venv/bin/python examples/rewrite_technical_passage.py
-.venv/bin/python examples/readme_bridge_contrast.py
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
 ```
 
-All three examples use a live `llama.cpp` model through `llama-server`. Start a
-server first, for example:
+Then start a server, for example:
 
 ```bash
 llama-server -hf bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m --host 127.0.0.1 --port 8080 --reasoning-budget 0 --log-disable
 ```
 
+Run the examples from the project root:
+
+```bash
+python examples/pirate_greeting.py
+python examples/rewrite_technical_passage.py
+python examples/readme_bridge_contrast.py
+```
+
 If your server uses a different address, set `SMALLWORDS_LLAMA_BASE_URL`.
 
-Each script prints the prompt, matching grammar and schema resources, the
-generated response, and whether the response stayed inside the chosen
-vocabulary. The bridge contrast example is the heaviest because it also runs an
-unconstrained comparison prompt for the README.
+Each script prints the prompt, output shape, matching grammar and schema
+resources, the generated response, and whether the response stayed inside the
+chosen vocabulary.

@@ -1,62 +1,48 @@
-"""Basic smoke tests for prompts, grammars, and validation helpers."""
+"""Behavior tests for the main constrained-text workflow."""
 
 from smallwords import (
-    BASIC_850,
+    OutputResources,
+    OutputShape,
     WordFamily,
     WordlistSpec,
     allow_input_words,
     is_compliant,
-    make_gbnf,
-    make_resources,
     out_of_vocab,
-    prompt_explain_simply,
 )
+from smallwords.prompts import build_prompt
 
 
-def test_prompt_mentions_wordlist() -> None:
+def test_build_prompt_mentions_wordlist_and_task_text() -> None:
     """Ensure the prompt text names the selected wordlist and lists allowed words."""
-    prompt = prompt_explain_simply("How does rain work?", wordlist="basic_850")
+    prompt = build_prompt("explain", "How does rain work?", wordlist="basic_850")
     assert "basic_850" in prompt
     assert "Allowed words (basic_850):" in prompt
     assert "goes" in prompt
+    assert "Topic: How does rain work?" in prompt
 
 
 def test_allow_input_words_adds_question_terms() -> None:
     """Ensure task words can be added to the allowed vocabulary on demand."""
     spec = allow_input_words("basic_850", "How can a neighbor help?")
-    prompt = prompt_explain_simply("How can a neighbor help?", wordlist=spec)
+    prompt = build_prompt("explain", "How can a neighbor help?", wordlist=spec)
     assert "neighbor" in prompt
     assert is_compliant("A neighbor can help.", spec)
 
 
-def test_gbnf_has_root() -> None:
-    """Ensure prebuilt resources expose a top-level GBNF root rule."""
-    assert BASIC_850.gbnf.startswith("root ::= text")
+def test_output_resources_from_wordlist_exposes_gbnf_root() -> None:
+    """Ensure resource bundles expose a top-level GBNF root rule."""
+    resources = OutputResources.from_wordlist("basic_850")
+    assert resources.gbnf.startswith("root ::= text")
 
 
-def test_make_gbnf_matches_resource_bundle() -> None:
-    """Ensure the direct helper mirrors the resource bundle grammar output."""
-    spec = allow_input_words("basic_850", "How can a neighbor help?")
-    assert (
-        make_gbnf(spec, min_words_per_line=2, max_words_per_line=9, max_lines=3)
-        == make_resources(
-            spec,
-            min_words_per_line=2,
-            max_words_per_line=9,
-            max_lines=3,
-        ).gbnf
-    )
-
-
-def test_validation() -> None:
+def test_validation_distinguishes_compliant_and_out_of_vocab_text() -> None:
     """Ensure compliant and out-of-vocabulary text are distinguished."""
-    # The `basic_850` list is still constrained enough that `neighbor` stays out.
     assert is_compliant("The answer is clear.", "basic_850")
     assert "neighbor" in out_of_vocab("The neighbor can help.", "basic_850")
 
 
 def test_inflected_variants_are_allowed_by_default() -> None:
-    """Ensure built-ins accept family variants like `goes` and `made`."""
+    """Ensure built-ins accept family variants like ``goes`` and ``made``."""
     assert is_compliant("He goes out.", "basic_850")
     assert is_compliant("The boy made the bridge.", "basic_850")
 
@@ -76,3 +62,12 @@ def test_explicit_word_family_can_extend_custom_specs() -> None:
         word_families=(WordFamily("try", kind="verb"),),
     )
     assert is_compliant("tries tried trying", spec)
+
+
+def test_resources_reuse_inline_shapes() -> None:
+    """Ensure resource bundles preserve the selected output shape."""
+    shape = OutputShape(min_words_per_line=2, max_words_per_line=9, max_lines=3)
+    spec = allow_input_words("basic_850", "How can a neighbor help?")
+    resources = OutputResources.from_wordlist(spec, shape=shape)
+    assert resources.shape == shape
+    assert "text ::= line (newline line){0,2}" in resources.gbnf

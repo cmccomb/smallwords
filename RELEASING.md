@@ -11,10 +11,12 @@ Before the first release:
 Recommended release flow:
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -e ".[dev]"
-ruff check .
-ruff format --check .
-pytest
+python -m ruff check .
+python -m ruff format --check .
+python -m pytest
 python scripts/check_documentation.py
 python -m sphinx -W --keep-going -b html docs docs/_build/html
 python -m build

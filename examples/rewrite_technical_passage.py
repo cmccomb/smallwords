@@ -8,37 +8,34 @@ import json
 import os
 import re
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
-# This source path keeps the example runnable from a fresh clone before install.
 SRC_ROOT = Path(__file__).resolve().parents[1] / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+from _shared import generate_text, server_base_url
 from smallwords import (
+    OutputResources,
+    OutputShape,
     WordlistSpec,
     get_wordlist,
     is_compliant,
-    make_resources,
     out_of_vocab,
 )
-from smallwords.integrations import generate_text, server_base_url
+from smallwords.prompts import build_prompt
 
-# This expected model keeps the example aligned with the README contrast.
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
     "bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m",
 )
-# This server URL points the example at a running llama-server instance.
 BASE_URL = server_base_url()
-# This source-backed base list anchors the focused rewrite vocabulary below.
 BASE_WORDLIST = get_wordlist("basic_850")
-# This passage stays technical while leaving room for a simpler paraphrase.
 SOURCE_PASSAGE = (
     "The thermal controller derates propulsion output after the sensor array "
     "reports an overtemperature fault."
 )
-# This compact canonical set is selected from `basic_850` for a focused rewrite demo.
 FOCUSED_CANONICAL_WORDS = tuple(
     word
     for word in BASE_WORDLIST.canonical_words()
@@ -57,7 +54,6 @@ FOCUSED_CANONICAL_WORDS = tuple(
         "when",
     }
 )
-# This focused spec keeps the rewrite task small enough for a live example.
 WORDLIST = WordlistSpec(
     name="basic_850_rewrite_focus",
     words=FOCUSED_CANONICAL_WORDS,
@@ -67,35 +63,17 @@ WORDLIST = WordlistSpec(
     license_name=BASE_WORDLIST.license_name,
     allowed_punctuation=(".",),
 )
-# This resource bundle leaves room for one fuller simplified sentence.
-RESOURCES = make_resources(
-    WORDLIST,
-    min_words_per_line=10,
-    max_words_per_line=10,
-    max_lines=1,
-)
-# This prompt asks for a simpler restatement without copying source terms.
-PROMPT = (
-    "Rewrite the source text in simpler everyday English. Keep the meaning. "
-    "Do not use words from the source text in the rewrite. "
-    "Write one short complete sentence of exactly 10 words.\n\n"
-    f"Allowed words ({WORDLIST.name}): {', '.join(WORDLIST.allowed_words())}\n\n"
-    f"Source text:\n{SOURCE_PASSAGE}\n"
-)
-# This token budget leaves room for one complete simplified sentence.
+SHAPE = OutputShape(min_words_per_line=10, max_words_per_line=10, max_lines=1)
+RESOURCES = OutputResources.from_wordlist(WORDLIST, shape=SHAPE)
+PROMPT = build_prompt("rewrite", SOURCE_PASSAGE, wordlist=WORDLIST)
 MAX_TOKENS = 96
-# This deterministic temperature keeps the rewrite example reproducible.
 TEMPERATURE = 0.0
-# This deterministic seed keeps the example reproducible.
 SEED = 7
-# This key names the single response field in the matching JSON Schema.
 SCHEMA_KEY = "rewrite"
-# This schema mirrors the same output limits as the grammar.
 SCHEMA = RESOURCES.json_schema(key=SCHEMA_KEY, title="technical_rewrite")
-# This compact summary shows the combined request shape without extra helper code.
 REQUEST_SUMMARY = {
     "wordlist": WORDLIST.name,
-    "prompt": PROMPT,
+    "shape": asdict(SHAPE),
     "seed": SEED,
     "temperature": TEMPERATURE,
     "n_predict": MAX_TOKENS,
@@ -105,11 +83,7 @@ REQUEST_SUMMARY = {
 
 
 def main() -> None:
-    """Print the rewrite prompt, resources, and a live constrained response.
-
-    Returns:
-        None.
-    """
+    """Print the rewrite prompt, resources, and a live constrained response."""
     pattern = SCHEMA["properties"][SCHEMA_KEY]["pattern"]
     response = generate_text(
         BASE_URL,
@@ -126,6 +100,8 @@ def main() -> None:
     print(MODEL_REPO)
     print("=== Source Passage ===")
     print(SOURCE_PASSAGE)
+    print("=== Resource Shape ===")
+    print(json.dumps(REQUEST_SUMMARY["shape"], indent=2))
     print("=== Generation Request ===")
     print(json.dumps(REQUEST_SUMMARY, indent=2))
     print("=== Prompt ===")
@@ -139,7 +115,6 @@ def main() -> None:
     print("=== Model Compliance ===")
     print(is_compliant(response, WORDLIST))
     print("=== Model Schema Match ===")
-    # The schema pattern is derived from the same limits as the bundled grammar.
     print(re.fullmatch(pattern, response) is not None)
     print("=== Model Out Of Vocab ===")
     print(out_of_vocab(response, WORDLIST))
@@ -149,6 +124,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
-        # Keep failures concise when the script is used in docs or CI logs.
         print(f"error: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc

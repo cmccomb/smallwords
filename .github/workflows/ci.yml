@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-    paths-ignore:
-      - ".github/badges/**"
   pull_request:
 
 jobs:
@@ -64,8 +62,6 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Check out repository
@@ -84,21 +80,6 @@ jobs:
 
       - name: Run tests with coverage
         run: pytest --cov=smallwords --cov-report=term-missing --cov-report=xml --cov-report=json --cov-fail-under=90
-
-      - name: Update coverage badge JSON
-        run: python scripts/update_coverage_badge.py coverage.json .github/badges/coverage.json
-
-      - name: Commit refreshed coverage badge
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          if git diff --quiet -- .github/badges/coverage.json; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/badges/coverage.json
-          git commit -m "Update coverage badge"
-          git push origin HEAD:${GITHUB_REF_NAME}
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4

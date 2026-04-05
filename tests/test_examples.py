@@ -9,9 +9,7 @@ from pathlib import Path
 
 import pytest
 
-# This root path lets the smoke test execute the examples from the repo root.
 ROOT = Path(__file__).resolve().parents[1]
-# These are the shipped live-model examples.
 EXAMPLES = [
     ROOT / "examples" / "readme_bridge_contrast.py",
     ROOT / "examples" / "pirate_greeting.py",
@@ -23,6 +21,7 @@ def test_example_files_exist() -> None:
     """Ensure the expected example files stay present in the repository."""
     for example in EXAMPLES:
         assert example.exists()
+    assert (ROOT / "examples" / "_shared.py").exists()
 
 
 @pytest.mark.skipif(
@@ -39,7 +38,6 @@ def test_examples_run() -> None:
             capture_output=True,
             text=True,
         )
-        # Each example prints the same top-level headings, which keeps this stable.
         assert "=== Server ===" in completed.stdout
         assert (
             "=== Generation Request ===" in completed.stdout

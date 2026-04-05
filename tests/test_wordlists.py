@@ -2,15 +2,7 @@
 
 import pytest
 
-from smallwords import (
-    BASIC_850,
-    CAVEMAN_898,
-    MOBY_898,
-    PIRATE_898,
-    SPECIAL_ENGLISH_1475,
-    get_wordlist,
-    list_wordlists,
-)
+from smallwords import OutputResources, get_wordlist, list_wordlists
 
 
 def test_documented_wordlists_are_available() -> None:
@@ -30,7 +22,6 @@ def test_wordlist_provenance_and_sizes() -> None:
     basic = get_wordlist("basic_850")
     special = get_wordlist("special_english_1475")
 
-    # Provenance metadata is part of the public contract for bundled lists now.
     assert len(moby.words) == 898
     assert moby.source_name.startswith("Project Gutenberg Moby Words II")
     assert len(moby.source_urls) == 1
@@ -45,13 +36,10 @@ def test_wordlist_provenance_and_sizes() -> None:
     assert special.license_name == "MIT"
 
 
-def test_prebuilt_resource_presets_match_their_names() -> None:
-    """Ensure exported resource presets line up with their documented wordlists."""
-    assert BASIC_850.spec.name == "basic_850"
-    assert MOBY_898.spec.name == "moby_898"
-    assert CAVEMAN_898.spec.name == "caveman_898"
-    assert PIRATE_898.spec.name == "pirate_898"
-    assert SPECIAL_ENGLISH_1475.spec.name == "special_english_1475"
+def test_output_resources_build_from_catalog_names() -> None:
+    """Ensure named wordlists resolve cleanly into resource bundles."""
+    resources = OutputResources.from_wordlist("basic_850")
+    assert resources.spec.name == "basic_850"
 
 
 def test_themed_wordlists_are_size_neutral_moby_remixes() -> None:
