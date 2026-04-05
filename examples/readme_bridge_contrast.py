@@ -18,25 +18,37 @@ from smallwords import (
     out_of_vocab,
 )
 
+# This Hugging Face model reference powers the live README comparison.
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
     "bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF:q4_k_m",
 )
 
+# This is the shared plain-language bridge prompt used in both runs.
 BASE_PROMPT = "Explain what a bridge does in one short sentence."
+# This plain prompt drives the unconstrained comparison run.
 STANDARD_PROMPT = BASE_PROMPT
+# This topic feeds the opt-in task-word expansion helper.
 TOPIC = "How does a bridge work?"
+# This more expressive preset keeps the constrained answer readable.
 BASE_WORDLIST = "basic_850"
+# This derived spec adds the topic words back into the constrained vocabulary.
 WORDLIST = allow_input_words(BASE_WORDLIST, TOPIC)
+# This deterministic temperature keeps the README example reproducible.
 TEMPERATURE = 0.0
+# This token budget leaves room for the full one-sentence answer.
 MAX_TOKENS = 96
+# This resource bundle drives the constrained README example.
 SMALLWORDS_RESOURCES = make_resources(WORDLIST, max_words_per_line=24, max_lines=1)
+# This rendered word list is shown to the model inside the prompt.
 SMALLWORDS_WORDS = ", ".join(WORDLIST.allowed_words())
+# This constrained prompt keeps the wording close to the plain comparison prompt.
 SMALLWORDS_PROMPT = (
     BASE_PROMPT
     + f" Use only words from the {BASE_WORDLIST} word list and the topic words shown below.\n"
     + f"Allowed words ({BASE_WORDLIST} + topic): {SMALLWORDS_WORDS}"
 )
+# This bundle is the exact prompt-plus-grammar request shown in the README.
 SMALLWORDS_REQUEST = build_example_request(
     SMALLWORDS_PROMPT,
     SMALLWORDS_RESOURCES,
@@ -46,7 +58,14 @@ SMALLWORDS_REQUEST = build_example_request(
 
 
 def _clean_terminal_output(text: str) -> str:
-    """Strip terminal control noise from llama.cpp output."""
+    """Strip terminal control noise from llama.cpp output.
+
+    Args:
+        text: Raw llama.cpp console output.
+
+    Returns:
+        Console output with ANSI and backspace redraw noise removed.
+    """
     text = text.replace("\r", "")
     text = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", text)
 
@@ -62,7 +81,19 @@ def _clean_terminal_output(text: str) -> str:
 def _extract_answer(
     raw_output: str, prompt: str, *, preserve_newlines: bool = False
 ) -> str:
-    """Extract the generated answer body from a llama.cpp transcript."""
+    """Extract the generated answer body from a llama.cpp transcript.
+
+    Args:
+        raw_output: Raw llama.cpp console output.
+        prompt: Prompt text that was sent to the model.
+        preserve_newlines: Whether to keep output newlines instead of joining lines.
+
+    Returns:
+        The cleaned generated answer text.
+
+    Raises:
+        RuntimeError: If the example cannot isolate the answer block.
+    """
     text = _clean_terminal_output(raw_output)
     anchor = f"> {prompt}"
     if anchor in text:
@@ -103,7 +134,22 @@ def _run_prompt(
     temperature: float = 0.0,
     preserve_newlines: bool = False,
 ) -> str:
-    """Run one prompt through llama.cpp and return the cleaned answer text."""
+    """Run one prompt through llama.cpp and return the cleaned answer text.
+
+    Args:
+        prompt: Prompt text that should be sent to the model.
+        seed: Deterministic seed for reproducible generation.
+        grammar: Optional GBNF grammar string to constrain the response.
+        max_tokens: Maximum tokens to generate.
+        temperature: Sampling temperature for the generation run.
+        preserve_newlines: Whether to keep output newlines instead of joining lines.
+
+    Returns:
+        The cleaned generated answer text.
+
+    Raises:
+        RuntimeError: If ``llama-cli`` is not available on ``PATH``.
+    """
     llama_cli = shutil.which("llama-cli")
     if not llama_cli:
         raise RuntimeError("llama-cli is not installed or not on PATH.")

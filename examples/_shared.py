@@ -19,14 +19,24 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class ExampleRequest:
-    """Bundle the prompt and constraint resources a runtime would use together."""
+    """Bundle the prompt and constraint resources a runtime would use together.
+
+    Attributes:
+        prompt: Prompt text that should be sent to the model.
+        grammar: GBNF grammar string that constrains the response.
+        schema: JSON Schema object aligned with the same response limits.
+    """
 
     prompt: str
     grammar: str
     schema: dict[str, Any]
 
     def summary(self) -> dict[str, Any]:
-        """Return a compact summary of the bundled prompt-and-grammar request."""
+        """Return a compact summary of the bundled prompt-and-grammar request.
+
+        Returns:
+            A small dictionary with the most relevant request metadata.
+        """
         schema_key = next(iter(self.schema["properties"]))
         return {
             "prompt": self.prompt,
@@ -42,7 +52,17 @@ def build_example_request(
     key: str,
     title: str,
 ) -> ExampleRequest:
-    """Bundle a prompt with the grammar and schema from the same resources."""
+    """Bundle a prompt with the grammar and schema from the same resources.
+
+    Args:
+        prompt: Prompt text that should be sent to the model.
+        resources: Output resources that define the grammar and schema.
+        key: Property name for the generated single-key object schema.
+        title: Schema title for the generated single-key object schema.
+
+    Returns:
+        A request bundle that keeps the prompt and constraints together.
+    """
     return ExampleRequest(
         prompt=prompt,
         grammar=resources.gbnf,
@@ -51,7 +71,15 @@ def build_example_request(
 
 
 def response_matches_request(request: ExampleRequest, text: str) -> bool:
-    """Return True when a response matches the bundled constraint resources."""
+    """Return True when a response matches the bundled constraint resources.
+
+    Args:
+        request: Prompt-plus-constraint bundle to validate against.
+        text: Response text to validate.
+
+    Returns:
+        True when the response matches the bundled schema pattern.
+    """
     key = next(iter(request.schema["properties"]))
     pattern = request.schema["properties"][key]["pattern"]
 

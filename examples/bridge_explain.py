@@ -13,7 +13,9 @@ from smallwords import (
     prompt_explain_simply,
 )
 
+# This example starts from the compact common-word preset.
 BASE_WORDLIST = "common_250"
+# This topic is also added back into the allowed vocabulary for clarity.
 TOPIC = "How does a bridge work?"
 
 

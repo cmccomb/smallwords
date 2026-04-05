@@ -10,14 +10,31 @@ from .types import WordlistSpec
 
 
 def _pattern_alt(parts: list[str]) -> str:
-    """Join already-escaped alternatives into a non-capturing group."""
+    """Join already-escaped alternatives into a non-capturing group.
+
+    Args:
+        parts: Already-escaped regex fragments to join.
+
+    Returns:
+        A regex fragment that matches any of the supplied parts.
+    """
     if len(parts) == 1:
         return parts[0]
     return "(?:" + "|".join(parts) + ")"
 
 
 def _word_pattern(spec: WordlistSpec) -> str:
-    """Build the regex fragment for a single allowed token."""
+    """Build the regex fragment for a single allowed token.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+
+    Returns:
+        A regex fragment for one allowed token.
+
+    Raises:
+        ValueError: If the wordlist does not contain any words.
+    """
     words = spec.allowed_words()
     if not words:
         raise ValueError("Wordlist must contain at least one word")
@@ -35,7 +52,15 @@ def _word_pattern(spec: WordlistSpec) -> str:
 
 
 def _line_pattern(spec: WordlistSpec, *, max_words_per_line: int) -> str:
-    """Build the regex fragment for one constrained output line."""
+    """Build the regex fragment for one constrained output line.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+
+    Returns:
+        A regex fragment for one constrained output line.
+    """
     word = _word_pattern(spec)
     line = word + f"(?: {word}){{0,{max_words_per_line - 1}}}"
 
@@ -53,7 +78,16 @@ def _line_pattern(spec: WordlistSpec, *, max_words_per_line: int) -> str:
 def _text_pattern(
     spec: WordlistSpec, *, max_words_per_line: int, max_lines: int
 ) -> str:
-    """Build the regex fragment for the full text block."""
+    """Build the regex fragment for the full text block.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        A regex fragment for the full constrained text block.
+    """
     line = _line_pattern(spec, max_words_per_line=max_words_per_line)
     if spec.allow_newlines:
         return line + f"(?:\\n{line}){{0,{max_lines - 1}}}"
@@ -67,7 +101,20 @@ def _response_pattern(
     max_words_per_line: int,
     max_lines: int,
 ) -> str:
-    """Wrap the text pattern for the selected thinking mode."""
+    """Wrap the text pattern for the selected thinking mode.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        A full anchored regex pattern for the serialized response body.
+
+    Raises:
+        ValueError: If the thinking mode is unsupported.
+    """
     text = _text_pattern(
         spec, max_words_per_line=max_words_per_line, max_lines=max_lines
     )
@@ -85,7 +132,19 @@ def _response_pattern(
 def _max_text_length(
     spec: WordlistSpec, *, max_words_per_line: int, max_lines: int
 ) -> int | None:
-    """Compute a finite maximum length when the word set is finite."""
+    """Compute a finite maximum length when the word set is finite.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        The maximum text length, or ``None`` when the grammar is unbounded.
+
+    Raises:
+        ValueError: If the wordlist does not contain any words.
+    """
     if spec.allow_numbers:
         return None
 
@@ -117,7 +176,20 @@ def _max_response_length(
     max_words_per_line: int,
     max_lines: int,
 ) -> int | None:
-    """Compute the maximum serialized response length for the selected mode."""
+    """Compute the maximum serialized response length for the selected mode.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        The maximum serialized response length, or ``None`` when unbounded.
+
+    Raises:
+        ValueError: If the thinking mode is unsupported.
+    """
     text_max = _max_text_length(
         spec, max_words_per_line=max_words_per_line, max_lines=max_lines
     )
@@ -142,7 +214,23 @@ def build_json_schema(
     max_words_per_line: int = 40,
     max_lines: int = 8,
 ) -> dict[str, Any]:
-    """Build a strict single-key JSON Schema mirroring the grammar constraints."""
+    """Build a strict single-key JSON Schema mirroring the grammar constraints.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        key: Property name for the generated single-key object schema.
+        title: Optional schema title override.
+        description: Optional schema description override for the value field.
+        thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        A strict single-key JSON Schema aligned with the grammar constraints.
+
+    Raises:
+        ValueError: If the key or limits are invalid.
+    """
     if not key:
         raise ValueError("key must be a non-empty string")
     if max_words_per_line < 1:

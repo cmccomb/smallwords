@@ -38,17 +38,29 @@ class WordlistSpec:
     blocked_forms: tuple[str, ...] = field(default_factory=tuple)
 
     def canonical_words(self) -> tuple[str, ...]:
-        """Return the normalized canonical word list as authored in the spec."""
+        """Return the normalized canonical word list as authored in the spec.
+
+        Returns:
+            The canonical words from the specification in normalized sort order.
+        """
         # Stable ordering keeps generated grammars and schemas reproducible.
         return tuple(sorted({w.strip().lower() for w in self.words if w.strip()}))
 
     def allowed_words(self) -> tuple[str, ...]:
-        """Return the expanded set of allowed surface forms for this spec."""
+        """Return the expanded set of allowed surface forms for this spec.
+
+        Returns:
+            The allowed surface forms after applying the variant policy.
+        """
         from .variants import expand_allowed_words
 
         return expand_allowed_words(self)
 
     def normalized_words(self) -> tuple[str, ...]:
-        """Return normalized allowed words for backward compatibility."""
+        """Return normalized allowed words for backward compatibility.
+
+        Returns:
+            The normalized allowed words used by older call sites.
+        """
         # Historically callers used `normalized_words()` for the grammar surface.
         return self.allowed_words()

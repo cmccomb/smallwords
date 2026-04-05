@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .types import WordFamily, WordlistSpec
 
+# This map covers the common irregular verb families allowed by default.
 _IRREGULAR_FAMILIES: dict[str, tuple[str, ...]] = {
     "be": ("am", "is", "are", "was", "were", "being", "been"),
     "become": ("becomes", "becoming", "became"),
@@ -63,6 +64,7 @@ _IRREGULAR_FAMILIES: dict[str, tuple[str, ...]] = {
     "write": ("writes", "writing", "wrote", "written"),
 }
 
+# This map covers the irregular noun plurals allowed by default.
 _IRREGULAR_NOUNS: dict[str, tuple[str, ...]] = {
     "child": ("children",),
     "foot": ("feet",),
@@ -73,6 +75,7 @@ _IRREGULAR_NOUNS: dict[str, tuple[str, ...]] = {
     "woman": ("women",),
 }
 
+# These regular verbs get conservative automatic inflection support.
 _AUTO_VERB_BASES = {
     "accept",
     "act",
@@ -151,6 +154,7 @@ _AUTO_VERB_BASES = {
     "work",
 }
 
+# These regular nouns get conservative plural support.
 _AUTO_NOUN_BASES = {
     "area",
     "body",
@@ -216,6 +220,7 @@ _AUTO_NOUN_BASES = {
     "year",
 }
 
+# These verbs double the final consonant in the derived regular forms.
 _DOUBLE_FINAL_CONSONANT_VERBS = {
     "drop",
     "plan",
@@ -227,6 +232,7 @@ _DOUBLE_FINAL_CONSONANT_VERBS = {
     "trip",
 }
 
+# These words should never receive automatic noun-style pluralization.
 _NON_INFLECTING_WORDS = {
     "a",
     "all",
@@ -287,12 +293,26 @@ _NON_INFLECTING_WORDS = {
 
 
 def _normalize(words: tuple[str, ...] | list[str] | set[str]) -> tuple[str, ...]:
-    """Lowercase, trim, and sort words for deterministic output resources."""
+    """Lowercase, trim, and sort words for deterministic output resources.
+
+    Args:
+        words: Candidate words to normalize.
+
+    Returns:
+        The normalized words in stable sorted order.
+    """
     return tuple(sorted({word.strip().lower() for word in words if word.strip()}))
 
 
 def _plural_like(word: str) -> str:
-    """Build a conservative plural or third-person-singular form."""
+    """Build a conservative plural or third-person-singular form.
+
+    Args:
+        word: Canonical base word to inflect.
+
+    Returns:
+        A conservative plural-like or third-person-singular form.
+    """
     if word.endswith(("s", "sh", "ch", "x", "z", "o")):
         return word + "es"
     if len(word) > 1 and word.endswith("y") and word[-2] not in "aeiou":
@@ -301,7 +321,14 @@ def _plural_like(word: str) -> str:
 
 
 def _gerund(word: str) -> str:
-    """Build a regular English `-ing` form without broad doubling heuristics."""
+    """Build a regular English ``-ing`` form without broad doubling heuristics.
+
+    Args:
+        word: Canonical base word to inflect.
+
+    Returns:
+        The regular gerund form for the supplied word.
+    """
     if word in _DOUBLE_FINAL_CONSONANT_VERBS:
         return word + word[-1] + "ing"
     if len(word) > 2 and word.endswith("ie"):
@@ -312,7 +339,14 @@ def _gerund(word: str) -> str:
 
 
 def _past(word: str) -> str:
-    """Build a regular English past-tense or participle form."""
+    """Build a regular English past-tense or participle form.
+
+    Args:
+        word: Canonical base word to inflect.
+
+    Returns:
+        The regular past-tense or participle form for the supplied word.
+    """
     if word in _DOUBLE_FINAL_CONSONANT_VERBS:
         return word + word[-1] + "ed"
     if len(word) > 1 and word.endswith("y") and word[-2] not in "aeiou":
@@ -323,7 +357,14 @@ def _past(word: str) -> str:
 
 
 def _regular_noun_forms(word: str) -> set[str]:
-    """Generate safe noun-style variants for a canonical headword."""
+    """Generate safe noun-style variants for a canonical headword.
+
+    Args:
+        word: Canonical base word to inflect.
+
+    Returns:
+        Conservative noun-style variants for the supplied word.
+    """
     if word in _NON_INFLECTING_WORDS or len(word) < 2:
         return set()
     # Noun plurals are the broadest useful expansion and keep `city -> cities`.
@@ -331,12 +372,26 @@ def _regular_noun_forms(word: str) -> set[str]:
 
 
 def _regular_verb_forms(word: str) -> set[str]:
-    """Generate regular verb variants for curated base verbs only."""
+    """Generate regular verb variants for curated base verbs only.
+
+    Args:
+        word: Canonical base word to inflect.
+
+    Returns:
+        Conservative regular verb variants for the supplied word.
+    """
     return {_plural_like(word), _gerund(word), _past(word)}
 
 
 def _family_forms(family: WordFamily) -> set[str]:
-    """Expand one explicit family annotation into allowed surface forms."""
+    """Expand one explicit family annotation into allowed surface forms.
+
+    Args:
+        family: Explicit word-family metadata to expand.
+
+    Returns:
+        The allowed surface forms implied by the family annotation.
+    """
     word = family.headword.strip().lower()
     forms = {word, *(form.strip().lower() for form in family.forms if form.strip())}
 
@@ -349,7 +404,15 @@ def _family_forms(family: WordFamily) -> set[str]:
 
 
 def _auto_forms(word: str, *, variant_mode: str) -> set[str]:
-    """Generate built-in English family forms for one canonical word."""
+    """Generate built-in English family forms for one canonical word.
+
+    Args:
+        word: Canonical base word to expand.
+        variant_mode: Variant expansion mode to apply.
+
+    Returns:
+        The automatically generated surface forms for the supplied word.
+    """
     if variant_mode != "english_inflections":
         return {word}
 
@@ -368,7 +431,14 @@ def _auto_forms(word: str, *, variant_mode: str) -> set[str]:
 
 
 def expand_allowed_words(spec: WordlistSpec) -> tuple[str, ...]:
-    """Expand a spec's canonical words into the surface forms callers may emit."""
+    """Expand a spec's canonical words into the surface forms callers may emit.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+
+    Returns:
+        The full allowed surface-form set for the supplied specification.
+    """
     families = {
         family.headword.strip().lower(): family for family in spec.word_families
     }

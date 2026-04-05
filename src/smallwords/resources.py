@@ -116,16 +116,26 @@ class OutputResources:
 
 # These shared presets cover the named built-ins most callers reach for first.
 COMMON_50 = OutputResources(COMMON_50_SPEC)
+# This preset bundles resources for the 100-word common vocabulary.
 COMMON_100 = OutputResources(COMMON_100_SPEC)
+# This preset bundles resources for the 250-word common vocabulary.
 COMMON_250 = OutputResources(COMMON_250_SPEC)
+# This preset bundles resources for the Basic English vocabulary.
 BASIC_850 = OutputResources(BASIC_850_SPEC)
+# This preset bundles resources for the caveman remix vocabulary.
 CAVEMAN_250 = OutputResources(CAVEMAN_250_SPEC)
+# This preset bundles resources for the pirate remix vocabulary.
 PIRATE_250 = OutputResources(PIRATE_250_SPEC)
+# This preset bundles resources for the reasoning-friendly vocabulary.
 REASONING_250 = OutputResources(REASONING_250_SPEC)
+# This preset bundles resources for the Special English vocabulary.
 SPECIAL_ENGLISH = OutputResources(SPECIAL_ENGLISH_SPEC)
 
+# This preset adds a visible plan/final wrapper to the 50-word common vocabulary.
 COMMON_50_THINKING = OutputResources(COMMON_50_SPEC, thinking_mode="plan_final")
+# This preset adds a visible plan/final wrapper to the 100-word common vocabulary.
 COMMON_100_THINKING = OutputResources(COMMON_100_SPEC, thinking_mode="plan_final")
+# This preset adds a visible thinking/answer wrapper to the 250-word common vocabulary.
 COMMON_250_THINKING = OutputResources(COMMON_250_SPEC, thinking_mode="thinking_answer")
 
 

@@ -11,7 +11,14 @@ ThinkingMode = Literal["none", "plan_final", "thinking_answer"]
 
 
 def _esc(text: str) -> str:
-    """Escape characters that need quoting inside a GBNF string literal."""
+    """Escape characters that need quoting inside a GBNF string literal.
+
+    Args:
+        text: Literal text that will be inserted into the grammar.
+
+    Returns:
+        The escaped literal text ready for inclusion in GBNF quotes.
+    """
     return text.replace("\\", "\\\\").replace('"', '\\"')
 
 
@@ -23,7 +30,21 @@ def build_gbnf(
     max_words_per_line: int = 40,
     max_lines: int = 8,
 ) -> str:
-    """Build a GBNF grammar string for a controlled-vocabulary output mode."""
+    """Build a GBNF grammar string for a controlled-vocabulary output mode.
+
+    Args:
+        spec: Wordlist specification that defines the allowed tokens.
+        thinking_mode: Optional wrapper mode for plan/final or thinking/answer output.
+        max_words_per_line: Maximum number of tokens allowed on one line.
+        max_lines: Maximum number of lines allowed in the response body.
+
+    Returns:
+        The generated GBNF grammar string.
+
+    Raises:
+        ValueError: If the limits are invalid, the wordlist is empty, or the
+            thinking mode is unsupported.
+    """
     if max_words_per_line < 1:
         raise ValueError("max_words_per_line must be >= 1")
     if max_lines < 1:

@@ -13,7 +13,9 @@ from smallwords import (
     prompt_answer_simply,
 )
 
+# This example starts from the compact common-word preset.
 BASE_WORDLIST = "common_250"
+# This small-talk question is also added back into the allowed vocabulary.
 QUESTION = "Write a short friendly reply when you meet a new neighbor."
 
 

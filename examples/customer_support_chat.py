@@ -13,7 +13,9 @@ from smallwords import (
     prompt_answer_simply,
 )
 
+# This example starts from the reasoning-oriented preset.
 BASE_WORDLIST = "reasoning_250"
+# This support question is also added back into the allowed vocabulary.
 QUESTION = "My order is late. What can I do now?"
 
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from .remix import remix_wordlist
 from .types import WordlistSpec
 
+# These additions give the pirate remix its playful nautical vocabulary.
 PIRATE_EXTRA_WORDS = (
     "ahoy",
     "anchor",
@@ -24,7 +25,14 @@ PIRATE_EXTRA_WORDS = (
 
 
 def build_pirate_spec(base: WordlistSpec) -> WordlistSpec:
-    """Remix a base wordlist into a pirate-flavored playful variant."""
+    """Remix a base wordlist into a pirate-flavored playful variant.
+
+    Args:
+        base: Base wordlist specification to remix.
+
+    Returns:
+        A derived pirate-flavored wordlist specification.
+    """
     # Pirate mode keeps inflections so the speech stays lively instead of clipped.
     return remix_wordlist(
         base,

@@ -8,6 +8,7 @@ from .caveman import build_caveman_spec
 from .pirate import build_pirate_spec
 from .types import WordlistSpec
 
+# This resource root holds the bundled wordlist text files shipped with the package.
 _DATA_ROOT = files("smallwords").joinpath("data")
 
 
@@ -31,21 +32,29 @@ def _load_bundled_words(filename: str) -> tuple[str, ...]:
     return tuple(words)
 
 
+# This frequency-ranked source list anchors the short common-word presets.
 MOBY_FREQ_WORDS = _load_bundled_words("moby_freq_alpha_898.txt")
+# This bundled list provides the permissive Basic English preset.
 BASIC_850_WORDS = _load_bundled_words("basic_english_850.txt")
+# This bundled list provides the Special English preset and common-word filter.
 SPECIAL_ENGLISH_WORDS = _load_bundled_words("special_english_1477.txt")
 
 # The short `common_*` tiers keep the broad frequency ordering from Moby while
 # filtering through Special English so the built-ins stay simple and general.
 SPECIAL_ENGLISH_SET = set(SPECIAL_ENGLISH_WORDS)
+# This filtered sequence is the source for the short common-word tiers.
 COMMON_SOURCE_WORDS = tuple(
     word for word in MOBY_FREQ_WORDS if word in SPECIAL_ENGLISH_SET
 )
 
+# This tier exposes the smallest bundled common-word vocabulary.
 COMMON_50_WORDS = COMMON_SOURCE_WORDS[:50]
+# This tier exposes the medium bundled common-word vocabulary.
 COMMON_100_WORDS = COMMON_SOURCE_WORDS[:100]
+# This tier exposes the largest bundled common-word vocabulary.
 COMMON_250_WORDS = COMMON_SOURCE_WORDS[:250]
 
+# This supplement makes the reasoning preset better suited to visible plans.
 REASONING_SUPPLEMENT = (
     "answer",
     "check",
@@ -62,8 +71,10 @@ REASONING_SUPPLEMENT = (
     "why",
 )
 
+# This derived list backs the reasoning-oriented bundled preset.
 SIMPLE_REASONING_WORDS = tuple(dict.fromkeys(COMMON_250_WORDS + REASONING_SUPPLEMENT))
 
+# This bundled spec exposes the 50-word common preset.
 COMMON_50_SPEC = WordlistSpec(
     name="common_50",
     words=COMMON_50_WORDS,
@@ -76,6 +87,7 @@ COMMON_50_SPEC = WordlistSpec(
     license_name="Public domain + MIT",
 )
 
+# This bundled spec exposes the 100-word common preset.
 COMMON_100_SPEC = WordlistSpec(
     name="common_100",
     words=COMMON_100_WORDS,
@@ -88,6 +100,7 @@ COMMON_100_SPEC = WordlistSpec(
     license_name="Public domain + MIT",
 )
 
+# This bundled spec exposes the 250-word common preset.
 COMMON_250_SPEC = WordlistSpec(
     name="common_250",
     words=COMMON_250_WORDS,
@@ -100,6 +113,7 @@ COMMON_250_SPEC = WordlistSpec(
     license_name="Public domain + MIT",
 )
 
+# This bundled spec exposes the Basic English preset.
 BASIC_850_SPEC = WordlistSpec(
     name="basic_850",
     words=BASIC_850_WORDS,
@@ -111,6 +125,7 @@ BASIC_850_SPEC = WordlistSpec(
     license_name="MIT",
 )
 
+# This bundled spec exposes the Special English preset.
 SPECIAL_ENGLISH_SPEC = WordlistSpec(
     name="special_english",
     words=SPECIAL_ENGLISH_WORDS,
@@ -122,6 +137,7 @@ SPECIAL_ENGLISH_SPEC = WordlistSpec(
     license_name="MIT",
 )
 
+# This bundled spec exposes the planning-friendly reasoning preset.
 REASONING_250_SPEC = WordlistSpec(
     name="reasoning_250",
     words=SIMPLE_REASONING_WORDS,
@@ -132,9 +148,12 @@ REASONING_250_SPEC = WordlistSpec(
     line_prefixes=("- ", "1. ", "2. ", "3. "),
 )
 
+# This bundled spec exposes the caveman remix preset.
 CAVEMAN_250_SPEC = build_caveman_spec(COMMON_250_SPEC)
+# This bundled spec exposes the pirate remix preset.
 PIRATE_250_SPEC = build_pirate_spec(COMMON_250_SPEC)
 
+# This catalog maps every bundled wordlist name to its specification.
 WORDLISTS: dict[str, WordlistSpec] = {
     COMMON_50_SPEC.name: COMMON_50_SPEC,
     COMMON_100_SPEC.name: COMMON_100_SPEC,

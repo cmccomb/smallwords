@@ -15,4 +15,5 @@ def resolve_wordlist_spec(wordlist: str | WordlistSpec) -> WordlistSpec:
     Returns:
         The resolved wordlist specification object.
     """
+    # Accepting both names and inline specs keeps the public API ergonomic.
     return get_wordlist(wordlist) if isinstance(wordlist, str) else wordlist

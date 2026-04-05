@@ -6,7 +6,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+# This root path lets the smoke test execute the examples from the repo root.
 ROOT = Path(__file__).resolve().parents[1]
+# These are the lightweight examples that should always stay runnable.
 EXAMPLES = [
     ROOT / "examples" / "customer_support_chat.py",
     ROOT / "examples" / "neighbor_intro_chat.py",
