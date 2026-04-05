@@ -1,5 +1,10 @@
 # smallwords
 
+[![CI](https://github.com/cmccomb/smallwords/actions/workflows/ci.yml/badge.svg)](https://github.com/cmccomb/smallwords/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/smallwords)](https://pypi.org/project/smallwords/)
+[![Python versions](https://img.shields.io/pypi/pyversions/smallwords)](https://pypi.org/project/smallwords/)
+[![License](https://img.shields.io/github/license/cmccomb/smallwords)](https://github.com/cmccomb/smallwords/blob/main/LICENSE)
+
 `smallwords` is a tiny Python package for controlled-vocabulary prompting plus
 portable output resources. It helps you generate GBNF and JSON Schema artifacts
 for small-word English responses, then validate text after generation if you
