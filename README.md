@@ -11,10 +11,10 @@ portable output resources. It helps you generate GBNF and JSON Schema artifacts
 for small-word English responses, then validate text after generation if you
 want an extra offline check.
 
-The package ships with bundled source-backed wordlists, including short
-frequency-based lists plus fuller `basic_850` and `special_english` presets.
-By default, the built-ins also allow slight family variants such as `go`,
-`goes`, and `going`.
+The package ships with a small set of bundled wordlists: direct source-backed
+lists such as `moby_898`, `basic_850`, and `special_english_1475`, plus a
+couple of intentionally themed remixes. By default, the built-ins also allow
+slight family variants such as `go`, `goes`, and `going`.
 
 It supports Python 3.10 and newer.
 
@@ -35,16 +35,16 @@ pip install -e ".[dev]"
 ```python
 from smallwords import allow_input_words, is_compliant, make_resources, out_of_vocab, prompt_explain_simply
 
-spec = allow_input_words("common_250", "How does a bridge work?")
-prompt = prompt_explain_simply("How does a bridge work?", wordlist=spec)
+spec = allow_input_words("basic_850", "How can a neighbor help?")
+prompt = prompt_explain_simply("How can a neighbor help?", wordlist=spec)
 resources = make_resources(spec, max_words_per_line=9, max_lines=3)
 
 gbnf = resources.gbnf
 schema = resources.json_schema(key="answer")
 
-text = "A bridge goes over water."
+text = "A neighbor can help."
 ok = is_compliant(text, spec)
-missing = out_of_vocab("A bridge goes over water.", spec)
+missing = out_of_vocab("A robot can help.", spec)
 ```
 
 The prompt helpers include the full allowed vocabulary block, including
@@ -57,19 +57,17 @@ that derived spec into the prompt, resources, and validation helpers together.
 
 ## Built-In Wordlists
 
-- `common_50`: 50 high-frequency words from Moby `freq.txt`, filtered to Special English
-- `common_100`: 100 high-frequency words from Moby `freq.txt`, filtered to Special English
-- `common_250`: 250 high-frequency words from Moby `freq.txt`, filtered to Special English
+- `moby_898`: the full normalized alpha-only Moby Words II frequency list
 - `basic_850`: Charles Ogden's Basic English 850
-- `special_english`: Voice of America Special English
-- `reasoning_250`: `common_250` plus a small planning supplement for visible plan blocks
-- `caveman_250`: a surface-only `common_250` remix with caveman extras and fewer helper words
-- `pirate_250`: a playful `common_250` remix with pirate extras
+- `special_english_1475`: Voice of America Special English
+- `caveman_898`: a size-neutral surface-only `moby_898` remix with caveman adjustments
+- `pirate_898`: a size-neutral `moby_898` remix with pirate adjustments
 
-The bundled text files live in `src/smallwords/data/`. The `common_*` lists are
-derived from Project Gutenberg's Moby Words II frequency list and filtered
-through Special English. `basic_850` and `special_english` are bundled from the
-MIT-licensed J. Burkardt dataset mirror.
+The bundled text files live in `src/smallwords/data/`. `moby_898`,
+`basic_850`, and `special_english_1475` are direct source-backed lists.
+`caveman_898` and `pirate_898` are derived size-neutral remixes built on top of
+`moby_898`. Output formatting modes such as visible planning blocks are
+configured through `thinking_mode`; they are not separate wordlists.
 
 The themed remixes live in `src/smallwords/caveman.py` and
 `src/smallwords/pirate.py`. If you want to build your own, use
@@ -93,7 +91,7 @@ reasonably natural:
 > A bridge is a structure that helps people and things move across a river or a
 > deep place.
 
-These runs use `llama.cpp` and
+These runs use `llama-server` from `llama.cpp` and
 [`Qwen/Qwen3-8B-GGUF`](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
 via
 [`bartowski/Qwen_Qwen3-8B-GGUF`](https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF).
@@ -101,6 +99,7 @@ via
 Reproduce that comparison from a clone of the repository with:
 
 ```bash
+llama-server -hf bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m --host 127.0.0.1 --port 8080 --reasoning-budget 0 --log-disable
 python examples/readme_bridge_contrast.py
 ```
 
@@ -108,9 +107,11 @@ python examples/readme_bridge_contrast.py
 
 See the repository's
 [`examples/README.md`](https://github.com/cmccomb/smallwords/blob/main/examples/README.md)
-for the runnable examples. The bridge, neighbor, and customer-support scripts
-all print prompts, resources, and compliant sample outputs built from the
-bundled wordlists, with optional task-word expansion where it helps.
+for the runnable examples. The current example set is live-model based:
+eclectic themed welcomes, a technical rewrite, and the README bridge contrast
+all call a live `llama-server` model with a prompt plus generated grammar.
+Start a server once, then run whichever example you want. If your server is not
+on `http://127.0.0.1:8080`, set `SMALLWORDS_LLAMA_BASE_URL`.
 
 ## Development
 

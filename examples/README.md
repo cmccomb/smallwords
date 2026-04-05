@@ -1,22 +1,29 @@
 # Examples
 
-Most of these examples stay runtime-agnostic on purpose and use the package's
-built-in, source-backed wordlists. Each resource-building script prints a
-prompt-plus-grammar request, its generated output resources, and a sample
-response that is validated against the chosen word list.
+This directory now keeps just three examples:
+
+- `readme_bridge_contrast.py`: the live bridge comparison used in the root README
+- `eclectic_welcomes.py`: a live caveman-versus-pirate welcome comparison built from `caveman_898` and `pirate_898`
+- `rewrite_technical_passage.py`: a live technical-to-simple rewrite built from `common_250` plus the source passage words
 
 Run them from the project root with the local virtualenv:
 
 ```bash
-.venv/bin/python examples/customer_support_chat.py
-.venv/bin/python examples/neighbor_intro_chat.py
-.venv/bin/python examples/bridge_explain.py
+.venv/bin/python examples/eclectic_welcomes.py
+.venv/bin/python examples/rewrite_technical_passage.py
 .venv/bin/python examples/readme_bridge_contrast.py
 ```
 
-Included scenarios:
+All three examples use a live `llama.cpp` model through `llama-server`. Start a
+server first, for example:
 
-- `customer_support_chat.py`: a short support-style reply built with `reasoning_250` plus the question word `order`
-- `neighbor_intro_chat.py`: a friendly small-talk response built with `common_250` plus the question word `neighbor`
-- `bridge_explain.py`: a plain bridge explanation built with `common_250` plus the topic word `bridge`
-- `readme_bridge_contrast.py`: compares a real local Qwen bridge answer with the README's constrained `basic_850 + topic words` example
+```bash
+llama-server -hf bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m --host 127.0.0.1 --port 8080 --reasoning-budget 0 --log-disable
+```
+
+If your server uses a different address, set `SMALLWORDS_LLAMA_BASE_URL`.
+
+Each script prints the prompt, matching grammar and schema resources, the
+generated response, and whether the response stayed inside the chosen
+vocabulary. The bridge contrast example is the heaviest because it also runs an
+unconstrained comparison prompt for the README.
