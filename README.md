@@ -15,6 +15,8 @@ frequency-based lists plus fuller `basic_850` and `special_english` presets.
 By default, the built-ins also allow slight family variants such as `go`,
 `goes`, and `going`.
 
+It supports Python 3.10 and newer.
+
 ## Installation
 
 ```bash

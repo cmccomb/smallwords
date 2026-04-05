@@ -6,6 +6,8 @@ internal utilities stay in their home modules so the root namespace remains
 predictable for people, editors, and future AI agents.
 """
 
+from importlib.metadata import PackageNotFoundError, version
+
 # Re-export the small, high-level entry points so callers can stay on the package root.
 from .input_words import allow_input_words
 from .prompts import (
@@ -35,6 +37,13 @@ from .types import WordFamily, WordlistSpec
 from .validation import is_compliant, out_of_vocab
 from .wordlists import get_wordlist, list_wordlists
 
+# Re-export the installed package version for lightweight diagnostics and UIs.
+try:
+    __version__ = version("smallwords")
+except PackageNotFoundError:
+    # Source-tree imports can happen before packaging metadata has been installed.
+    __version__ = "0+unknown"
+
 # Keep low-level builders off the package root so the top-level API stays clean.
 # Keep the export list explicit so generated docs and editors stay predictable.
 __all__ = [
@@ -50,6 +59,7 @@ __all__ = [
     "PIRATE_250",
     "REASONING_250",
     "SPECIAL_ENGLISH",
+    "__version__",
     "WordFamily",
     "WordlistSpec",
     "allow_input_words",

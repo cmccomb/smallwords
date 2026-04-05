@@ -18,6 +18,10 @@ pytest
 python scripts/check_documentation.py
 python -m build
 python -m twine check --strict dist/*
+python -m venv /tmp/smallwords-release-check
+/tmp/smallwords-release-check/bin/python -m pip install --upgrade pip
+/tmp/smallwords-release-check/bin/python -m pip install dist/*.whl
+/tmp/smallwords-release-check/bin/python -c "import smallwords; print(smallwords.__version__)"
 ```
 
 Then:
