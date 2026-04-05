@@ -1,6 +1,7 @@
 # smallwords
 
 [![CI](https://github.com/cmccomb/smallwords/actions/workflows/ci.yml/badge.svg)](https://github.com/cmccomb/smallwords/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/badge/coverage-%E2%89%A590%25-brightgreen)](https://github.com/cmccomb/smallwords/actions/workflows/ci.yml)
 [![PyPI version](https://img.shields.io/pypi/v/smallwords)](https://pypi.org/project/smallwords/)
 [![Python versions](https://img.shields.io/pypi/pyversions/smallwords)](https://pypi.org/project/smallwords/)
 [![License](https://img.shields.io/github/license/cmccomb/smallwords)](https://github.com/cmccomb/smallwords/blob/main/LICENSE)
@@ -118,13 +119,14 @@ python -m pip install -e ".[dev]"
 ruff check .
 ruff format .
 pytest
+pytest --cov=smallwords --cov-report=term-missing
 python scripts/check_documentation.py
 python -m build
 python -m twine check --strict dist/*
 ```
 
-CI runs tests, the documentation policy check, and a package build on GitHub
-Actions.
+CI runs tests, the documentation policy check, a `>=90%` coverage gate, and a
+package build on GitHub Actions.
 
 For release steps and Trusted Publishing setup, see
 [`RELEASING.md`](https://github.com/cmccomb/smallwords/blob/main/RELEASING.md).

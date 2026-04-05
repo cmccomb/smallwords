@@ -36,7 +36,7 @@ Issues = "https://github.com/cmccomb/smallwords/issues"
 Changelog = "https://github.com/cmccomb/smallwords/releases"
 
 [project.optional-dependencies]
-dev = ["build>=1.2", "pytest>=8.0", "ruff>=0.11", "twine>=6.1"]
+dev = ["build>=1.2", "pytest>=8.0", "pytest-cov>=7.1", "ruff>=0.11", "twine>=6.1"]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -49,6 +49,13 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["smallwords"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
 
 [tool.ruff]
 target-version = "py310"
