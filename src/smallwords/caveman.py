@@ -1,9 +1,9 @@
 """Define the bundled caveman-themed remix.
 
-This module is intentionally small and discoverable so future maintainers can
-see exactly how the playful preset differs from its base vocabulary. The style
-leans clipped and telegraphic, so it both adds themed words and removes some of
-the helper words that make ordinary English sound polished.
+This module stays intentionally small and discoverable so future maintainers
+can see exactly how the caveman preset differs from its base vocabulary.
+Caveman mode is designed as a size-neutral remix: it makes equal-sized
+additions and deletions while also tightening inflection behavior.
 """
 
 from __future__ import annotations
@@ -11,58 +11,37 @@ from __future__ import annotations
 from .remix import remix_wordlist
 from .types import WordlistSpec
 
-# These additions give the caveman remix a small themed vocabulary bump.
+# These additions give the caveman remix its rougher themed vocabulary.
 CAVEMAN_EXTRA_WORDS = (
-    "big",
     "bone",
-    "club",
-    "fire",
-    "food",
+    "cave",
+    "grub",
     "hunt",
+    "meat",
     "rock",
-    "strong",
-    "tribe",
+    "smash",
+    "spear",
+    "stone",
     "ugh",
 )
 
-# These drops remove helper words so the remix sounds clipped and telegraphic.
-CAVEMAN_DROP_WORDS = (
-    "a",
-    "all",
-    "also",
-    "and",
-    "as",
-    "at",
-    "be",
-    "but",
-    "by",
-    "for",
-    "from",
-    "have",
-    "if",
-    "in",
-    "it",
-    "of",
-    "on",
-    "or",
-    "so",
-    "than",
-    "that",
-    "the",
-    "there",
-    "these",
-    "they",
-    "this",
-    "through",
-    "to",
-    "we",
-    "which",
-    "with",
+# These deletions balance the caveman additions so the remix stays size-neutral.
+CAVEMAN_SWAP_OUT_WORDS = (
+    "about",
+    "among",
+    "between",
+    "during",
+    "however",
+    "include",
+    "only",
+    "several",
+    "toward",
+    "without",
 )
 
 
 def build_caveman_spec(base: WordlistSpec) -> WordlistSpec:
-    """Remix a base wordlist into a clipped, telegraphic caveman variant.
+    """Build a size-neutral caveman remix from a base vocabulary.
 
     Args:
         base: Base wordlist specification to remix.
@@ -70,15 +49,25 @@ def build_caveman_spec(base: WordlistSpec) -> WordlistSpec:
     Returns:
         A derived caveman-flavored wordlist specification.
     """
+    base_canonical = set(base.canonical_words())
+    additions = tuple(
+        word for word in CAVEMAN_EXTRA_WORDS if word not in base_canonical
+    )
+    removals = tuple(word for word in CAVEMAN_SWAP_OUT_WORDS if word in base_canonical)
+    if len(additions) != len(removals):
+        raise ValueError(
+            "caveman remix must keep equal effective additions and deletions"
+        )
+
     # Surface-only forms keep the output choppy and intentionally less polished.
     # A few blocked inflections keep the voice from drifting back toward ordinary prose.
     return remix_wordlist(
         base,
-        name="caveman_250",
-        description="A clipped base-vocabulary remix with caveman-style extras and fewer helper words.",
-        add_words=CAVEMAN_EXTRA_WORDS,
-        remove_words=CAVEMAN_DROP_WORDS,
-        source_name="Derived from the bundled common_250 wordlist with caveman-style additions/removals",
+        name=f"caveman_{len(base.words)}",
+        description="A size-neutral base-vocabulary remix with caveman-style adjustments and rougher surface forms.",
+        add_words=additions,
+        remove_words=removals,
+        source_name=f"Derived from the bundled {base.name} wordlist with size-neutral caveman-style adjustments",
         variant_mode="surface_only",
         blocked_forms=("goes", "going", "made", "running"),
     )

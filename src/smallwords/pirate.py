@@ -1,8 +1,9 @@
 """Define the bundled pirate-themed remix.
 
-Like the caveman preset, this module stays intentionally compact so the themed
-edits are easy to audit. Pirate mode keeps regular inflections enabled because
-the goal is playful speech, not broken or ultra-telegraphic language.
+This module keeps the themed adjustments intentionally compact so the pirate
+vocabulary is easy to audit. Pirate mode is designed as a size-neutral remix:
+it makes equal-sized additions and deletions while preserving the base
+word-count and ordinary English inflection behavior.
 """
 
 from __future__ import annotations
@@ -15,22 +16,40 @@ PIRATE_EXTRA_WORDS = (
     "ahoy",
     "anchor",
     "aye",
-    "captain",
     "crew",
     "deck",
-    "gold",
     "harbor",
     "matey",
+    "parrot",
+    "plunder",
     "rum",
     "sail",
     "sea",
-    "ship",
     "shore",
+    "booty",
+)
+
+# These deletions balance the pirate additions so the remix stays size-neutral.
+PIRATE_SWAP_OUT_WORDS = (
+    "authority",
+    "publish",
+    "settle",
+    "marriage",
+    "fiscal",
+    "interact",
+    "democratic",
+    "generally",
+    "select",
+    "importance",
+    "march",
+    "forget",
+    "bank",
+    "finish",
 )
 
 
 def build_pirate_spec(base: WordlistSpec) -> WordlistSpec:
-    """Remix a base wordlist into a pirate-flavored playful variant.
+    """Build a size-neutral pirate remix from a base vocabulary.
 
     Args:
         base: Base wordlist specification to remix.
@@ -38,12 +57,20 @@ def build_pirate_spec(base: WordlistSpec) -> WordlistSpec:
     Returns:
         A derived pirate-flavored wordlist specification.
     """
+    base_canonical = set(base.canonical_words())
+    additions = tuple(word for word in PIRATE_EXTRA_WORDS if word not in base_canonical)
+    removals = tuple(word for word in PIRATE_SWAP_OUT_WORDS if word in base_canonical)
+    if len(additions) != len(removals):
+        raise ValueError(
+            "pirate remix must keep equal effective additions and deletions"
+        )
+
     # Pirate mode keeps inflections so the speech stays lively instead of clipped.
-    # The remix only adds flavor words; it otherwise behaves like the base vocabulary.
     return remix_wordlist(
         base,
-        name="pirate_250",
-        description="A base-vocabulary remix with pirate-style extras for playful outputs.",
-        add_words=PIRATE_EXTRA_WORDS,
-        source_name="Derived from the bundled common_250 wordlist with pirate-style additions",
+        name=f"pirate_{len(base.words)}",
+        description="A size-neutral base-vocabulary remix with pirate-style adjustments for playful outputs.",
+        add_words=additions,
+        remove_words=removals,
+        source_name=f"Derived from the bundled {base.name} wordlist with size-neutral pirate-style adjustments",
     )

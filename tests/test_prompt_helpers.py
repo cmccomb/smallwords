@@ -50,15 +50,15 @@ def test_template_prompt_catalog_points_at_public_helpers() -> None:
 
 def test_allow_input_words_reuses_base_spec_when_no_words_are_added() -> None:
     """Ensure task-word expansion returns the original spec when nothing changes."""
-    base = get_wordlist("common_50")
-    derived = allow_input_words(base, "The man can make it.")
+    base = get_wordlist("basic_850")
+    derived = allow_input_words(base, "The answer is clear.")
 
     assert derived is base
 
 
 def test_resource_helpers_write_gbnf_and_schema_files(tmp_path: Path) -> None:
     """Ensure portable resources can be saved to disk for downstream runtimes."""
-    resources = make_resources("common_50", max_words_per_line=2, max_lines=1)
+    resources = make_resources("basic_850", max_words_per_line=2, max_lines=1)
     assert isinstance(resources, OutputResources)
 
     gbnf_path = tmp_path / "tiny.gbnf"

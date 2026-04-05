@@ -1,7 +1,7 @@
 """Basic smoke tests for prompts, grammars, and validation helpers."""
 
 from smallwords import (
-    COMMON_50,
+    BASIC_850,
     WordFamily,
     WordlistSpec,
     allow_input_words,
@@ -13,36 +13,36 @@ from smallwords import (
 
 def test_prompt_mentions_wordlist() -> None:
     """Ensure the prompt text names the selected wordlist and lists allowed words."""
-    prompt = prompt_explain_simply("How does rain work?", wordlist="common_50")
-    assert "common_50" in prompt
-    assert "Allowed words (common_50):" in prompt
+    prompt = prompt_explain_simply("How does rain work?", wordlist="basic_850")
+    assert "basic_850" in prompt
+    assert "Allowed words (basic_850):" in prompt
     assert "goes" in prompt
 
 
 def test_allow_input_words_adds_question_terms() -> None:
     """Ensure task words can be added to the allowed vocabulary on demand."""
-    spec = allow_input_words("common_50", "How does a bridge work?")
-    prompt = prompt_explain_simply("How does a bridge work?", wordlist=spec)
-    assert "bridge" in prompt
-    assert is_compliant("A bridge does work.", spec)
+    spec = allow_input_words("basic_850", "How can a neighbor help?")
+    prompt = prompt_explain_simply("How can a neighbor help?", wordlist=spec)
+    assert "neighbor" in prompt
+    assert is_compliant("A neighbor can help.", spec)
 
 
 def test_gbnf_has_root() -> None:
     """Ensure prebuilt resources expose a top-level GBNF root rule."""
-    assert COMMON_50.gbnf.startswith("root ::= text")
+    assert BASIC_850.gbnf.startswith("root ::= text")
 
 
 def test_validation() -> None:
     """Ensure compliant and out-of-vocabulary text are distinguished."""
-    # The `common_50` list is intentionally strict, so `bridge` stays out.
-    assert is_compliant("The man can make it.", "common_50")
-    assert "bridge" in out_of_vocab("The man can make a bridge.", "common_50")
+    # The `basic_850` list is still constrained enough that `neighbor` stays out.
+    assert is_compliant("The answer is clear.", "basic_850")
+    assert "neighbor" in out_of_vocab("The neighbor can help.", "basic_850")
 
 
 def test_inflected_variants_are_allowed_by_default() -> None:
     """Ensure built-ins accept family variants like `goes` and `made`."""
-    assert is_compliant("He goes out.", "common_250")
-    assert is_compliant("The man made it.", "common_50")
+    assert is_compliant("He goes out.", "basic_850")
+    assert is_compliant("The boy made the bridge.", "basic_850")
 
 
 def test_surface_only_mode_stays_literal() -> None:

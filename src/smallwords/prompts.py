@@ -41,7 +41,7 @@ def _allowed_words_block(wordlist: str | WordlistSpec) -> str:
 
 
 def prompt_explain_simply(
-    topic: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
+    topic: str, *, wordlist: str | WordlistSpec = "basic_850", thinking: bool = False
 ) -> str:
     """Build an explanation prompt constrained to a named or inline word list.
 
@@ -68,7 +68,7 @@ def prompt_explain_simply(
 
 
 def prompt_summarize_simply(
-    text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
+    text: str, *, wordlist: str | WordlistSpec = "basic_850", thinking: bool = False
 ) -> str:
     """Build a summarization prompt constrained to a named or inline word list.
 
@@ -93,7 +93,7 @@ def prompt_summarize_simply(
 
 
 def prompt_rewrite_simply(
-    text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
+    text: str, *, wordlist: str | WordlistSpec = "basic_850", thinking: bool = False
 ) -> str:
     """Build a rewriting prompt constrained to a named or inline word list.
 
@@ -120,7 +120,7 @@ def prompt_rewrite_simply(
 def prompt_answer_simply(
     question: str,
     *,
-    wordlist: str | WordlistSpec = "common_250",
+    wordlist: str | WordlistSpec = "basic_850",
     thinking: bool = False,
 ) -> str:
     """Build a QA prompt constrained to a named or inline word list.

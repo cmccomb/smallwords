@@ -3,7 +3,7 @@
 import re
 
 from smallwords import (
-    COMMON_50,
+    BASIC_850,
     OutputResources,
     WordlistSpec,
     make_json_schema,
@@ -13,8 +13,8 @@ from smallwords import (
 
 def test_json_schema_is_single_key_and_strict() -> None:
     """Ensure default schemas stay strict and reject out-of-vocabulary text."""
-    assert isinstance(COMMON_50, OutputResources)
-    schema = COMMON_50.json_schema()
+    assert isinstance(BASIC_850, OutputResources)
+    schema = BASIC_850.json_schema()
 
     assert schema["type"] == "object"
     assert schema["required"] == ["text"]
@@ -22,15 +22,15 @@ def test_json_schema_is_single_key_and_strict() -> None:
 
     value_schema = schema["properties"]["text"]
     assert value_schema["type"] == "string"
-    assert re.fullmatch(value_schema["pattern"], "The man can make it.")
-    assert re.fullmatch(value_schema["pattern"], "The man made it.")
-    assert not re.fullmatch(value_schema["pattern"], "The man can make a bridge.")
+    assert re.fullmatch(value_schema["pattern"], "The answer is clear.")
+    assert re.fullmatch(value_schema["pattern"], "The boy made the bridge.")
+    assert not re.fullmatch(value_schema["pattern"], "The neighbor can help.")
 
 
 def test_json_schema_supports_custom_key_and_thinking_mode() -> None:
     """Ensure callers can customize both the key name and response wrapper."""
     schema = make_json_schema(
-        "reasoning_250",
+        "basic_850",
         key="answer",
         thinking_mode="plan_final",
         max_words_per_line=2,
@@ -40,7 +40,7 @@ def test_json_schema_supports_custom_key_and_thinking_mode() -> None:
     assert schema["required"] == ["answer"]
     assert re.fullmatch(
         schema["properties"]["answer"]["pattern"],
-        "PLAN:\nstep now.\n\nFINAL:\nfinal answer.",
+        "PLAN:\nwhy now.\n\nFINAL:\nanswer now.",
     )
 
 
