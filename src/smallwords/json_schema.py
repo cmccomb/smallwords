@@ -1,4 +1,10 @@
-"""JSON Schema builders for constrained structured outputs."""
+"""Mirror the package grammar constraints in JSON Schema form.
+
+The schema path is deliberately kept parallel to the GBNF builder so callers
+can target runtimes that prefer JSON Schema while keeping the same vocabulary
+and shape constraints. Most helpers here build small regex fragments that map
+closely to the grammar rules from ``grammar_builder``.
+"""
 
 from __future__ import annotations
 
@@ -39,6 +45,7 @@ def _word_pattern(spec: WordlistSpec) -> str:
     if not words:
         raise ValueError("Wordlist must contain at least one word")
 
+    # ``dict.fromkeys`` preserves order while removing duplicates from expansions.
     variants = list(dict.fromkeys(re.escape(word) for word in words))
     if spec.allow_capitalized_words:
         variants.extend(
@@ -62,6 +69,7 @@ def _line_pattern(spec: WordlistSpec, *, max_words_per_line: int) -> str:
         A regex fragment for one constrained output line.
     """
     word = _word_pattern(spec)
+    # Lines are modeled as one word followed by zero or more space-prefixed words.
     line = word + f"(?: {word}){{0,{max_words_per_line - 1}}}"
 
     if spec.line_prefixes:
@@ -89,6 +97,7 @@ def _text_pattern(
         A regex fragment for the full constrained text block.
     """
     line = _line_pattern(spec, max_words_per_line=max_words_per_line)
+    # Multi-line output is encoded directly in the regex so the schema stays self-contained.
     if spec.allow_newlines:
         return line + f"(?:\\n{line}){{0,{max_lines - 1}}}"
     return line
@@ -195,6 +204,7 @@ def _max_response_length(
     )
     if text_max is None:
         return None
+    # Wrapper labels contribute a fixed overhead on top of the text body length.
     if thinking_mode == "none":
         return text_max
     if thinking_mode == "plan_final":
@@ -238,6 +248,7 @@ def build_json_schema(
     if max_lines < 1:
         raise ValueError("max_lines must be >= 1")
 
+    # The value schema is built first so callers can override just the outer key/title.
     value_schema: dict[str, Any] = {
         "type": "string",
         "pattern": _response_pattern(
@@ -262,6 +273,7 @@ def build_json_schema(
     if max_length is not None:
         value_schema["maxLength"] = max_length
 
+    # The outer object stays strict so downstream structured-output APIs behave predictably.
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": title or f"{spec.name}_response",

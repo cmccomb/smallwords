@@ -1,4 +1,9 @@
-"""Bundled source-backed word lists and lookup helpers."""
+"""Bundle the source-backed vocabularies shipped with the library.
+
+This module is the catalog for every built-in wordlist. It loads the raw text
+resources, derives the short common-word tiers, and publishes the named specs
+that the rest of the package treats as canonical built-ins.
+"""
 
 from __future__ import annotations
 
@@ -22,6 +27,7 @@ def _load_bundled_words(filename: str) -> tuple[str, ...]:
         The normalized words found in the resource file.
     """
     words: list[str] = []
+    # The resource format stays intentionally simple so bundled data is easy to audit.
     for raw_line in (
         _DATA_ROOT.joinpath(filename).read_text(encoding="utf-8").splitlines()
     ):
@@ -181,6 +187,7 @@ def get_wordlist(name: str) -> WordlistSpec:
     try:
         return WORDLISTS[name]
     except KeyError as exc:
+        # Include the available names to make prompt-time mistakes easy to correct.
         raise KeyError(
             f"Unknown wordlist: {name!r}. Available: {sorted(WORDLISTS)}"
         ) from exc
@@ -192,4 +199,5 @@ def list_wordlists() -> tuple[str, ...]:
     Returns:
         The available bundled wordlist names.
     """
+    # Sorting keeps docs, tests, and UI pickers deterministic.
     return tuple(sorted(WORDLISTS))

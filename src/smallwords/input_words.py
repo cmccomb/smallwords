@@ -1,4 +1,10 @@
-"""Helpers for extending a base wordlist with words from a task prompt."""
+"""Let callers re-introduce task words without broadening the whole package.
+
+This module is the opt-in escape hatch for prompts like ``bridge`` or
+``neighbor`` that may not live in a compact base vocabulary. The helper returns
+a regular ``WordlistSpec`` so the rest of the package can treat the expanded
+spec exactly like any other vocabulary.
+"""
 
 from __future__ import annotations
 
@@ -26,6 +32,7 @@ def allow_input_words(
         A derived wordlist specification that includes the task words.
     """
     base = resolve_wordlist_spec(wordlist)
+    # Compare against the already-expanded surface forms so we do not add needless duplicates.
     allowed = set(base.allowed_words())
     extra_words: list[str] = []
 
@@ -36,6 +43,7 @@ def allow_input_words(
                 extra_words.append(token)
 
     if not extra_words:
+        # Reuse the original object when nothing new needs to be allowed.
         return base
 
     return remix_wordlist(

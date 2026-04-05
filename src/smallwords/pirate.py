@@ -1,4 +1,9 @@
-"""Pirate-flavored derived wordlist presets."""
+"""Define the bundled pirate-themed remix.
+
+Like the caveman preset, this module stays intentionally compact so the themed
+edits are easy to audit. Pirate mode keeps regular inflections enabled because
+the goal is playful speech, not broken or ultra-telegraphic language.
+"""
 
 from __future__ import annotations
 
@@ -34,6 +39,7 @@ def build_pirate_spec(base: WordlistSpec) -> WordlistSpec:
         A derived pirate-flavored wordlist specification.
     """
     # Pirate mode keeps inflections so the speech stays lively instead of clipped.
+    # The remix only adds flavor words; it otherwise behaves like the base vocabulary.
     return remix_wordlist(
         base,
         name="pirate_250",

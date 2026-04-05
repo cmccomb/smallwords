@@ -1,4 +1,10 @@
-"""Prompt templates that mirror the package's controlled-language modes."""
+"""Provide prompt templates that stay aligned with the vocabulary constraints.
+
+The package treats prompts as a soft steering layer rather than the only source
+of truth. These helpers still matter because they tell a model which word list
+is active and explicitly enumerate the allowed words, which often improves
+results even before the grammar or schema starts constraining output.
+"""
 
 from __future__ import annotations
 
@@ -15,6 +21,7 @@ def _resolve_spec(wordlist: str | WordlistSpec) -> WordlistSpec:
     Returns:
         The resolved wordlist specification object.
     """
+    # Prompt helpers accept the same flexible inputs as the resource helpers.
     return resolve_wordlist_spec(wordlist)
 
 
@@ -55,6 +62,7 @@ def prompt_explain_simply(
     )
     if thinking:
         prompt += " First write a short plan. Then give the final answer."
+    # The explicit vocabulary block helps both humans and models inspect the constraint.
     prompt += f"\n\n{_allowed_words_block(spec)}\n\nTopic: {topic}\n"
     return prompt
 
@@ -79,6 +87,7 @@ def prompt_summarize_simply(
     )
     if thinking:
         prompt += " First write a short plan. Then give the final summary."
+    # Source text is separated from the vocabulary block so the prompt stays scannable.
     prompt += f"\n\n{_allowed_words_block(spec)}\n\nText:\n{text}\n"
     return prompt
 
@@ -103,6 +112,7 @@ def prompt_rewrite_simply(
     )
     if thinking:
         prompt += " First write a short plan. Then give the final rewrite."
+    # Rewriters need the original text preserved verbatim after the constraint block.
     prompt += f"\n\n{_allowed_words_block(spec)}\n\nText:\n{text}\n"
     return prompt
 
@@ -130,6 +140,7 @@ def prompt_answer_simply(
     )
     if thinking:
         prompt += " First write a short plan. Then give the final answer."
+    # Questions sit last so the active task is the freshest thing in the prompt.
     prompt += f"\n\n{_allowed_words_block(spec)}\n\nQuestion: {question}\n"
     return prompt
 

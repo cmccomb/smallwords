@@ -1,4 +1,10 @@
-"""Portable constrained-output resources built from a word list."""
+"""Build the portable resource bundle that most callers actually consume.
+
+``OutputResources`` is the package's main runtime-facing abstraction. It keeps a
+wordlist and its output-shaping limits together, then lazily produces matching
+GBNF and JSON Schema artifacts so callers do not have to coordinate those
+formats by hand.
+"""
 
 from __future__ import annotations
 
@@ -46,6 +52,7 @@ class OutputResources:
         Returns:
             The generated GBNF grammar string for this resource bundle.
         """
+        # Grammar generation is cached because many callers read the property repeatedly.
         return build_gbnf(
             self.spec,
             thinking_mode=self.thinking_mode,
@@ -70,6 +77,7 @@ class OutputResources:
         Returns:
             A JSON Schema dictionary aligned with this resource bundle.
         """
+        # Schema generation stays parameterized so callers can rename the single value key.
         return build_json_schema(
             self.spec,
             key=key,
@@ -86,6 +94,7 @@ class OutputResources:
         Args:
             path: Destination path for the grammar file.
         """
+        # Persisting resources to disk makes them easy to hand off to other runtimes.
         with open(path, "w", encoding="utf-8") as handle:
             handle.write(self.gbnf)
 
@@ -105,6 +114,7 @@ class OutputResources:
             title: Optional schema title override.
             description: Optional schema description override for the value field.
         """
+        # JSON output is indented so checked-in artifacts stay readable in diffs.
         with open(path, "w", encoding="utf-8") as handle:
             json.dump(
                 self.json_schema(key=key, title=title, description=description),
@@ -159,6 +169,7 @@ def make_resources(
     """
     # Resolve named presets late so callers can also pass an inline spec object.
     spec = resolve_wordlist_spec(wordlist)
+    # The factory mirrors ``OutputResources`` directly so its behavior stays unsurprising.
     return OutputResources(
         spec=spec,
         thinking_mode=thinking_mode,
@@ -191,6 +202,7 @@ def make_json_schema(
     Returns:
         A JSON Schema dictionary aligned with the selected wordlist.
     """
+    # This helper keeps schema-only callers on the same code path as bundle users.
     return make_resources(
         wordlist,
         thinking_mode=thinking_mode,

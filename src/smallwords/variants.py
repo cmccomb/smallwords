@@ -1,4 +1,10 @@
-"""Word-family expansion helpers shared by validation, grammar, and schema."""
+"""Expand canonical vocabularies into conservative surface-form families.
+
+This module is where the package's “simple English, but not painfully literal”
+behavior lives. It keeps the automatic expansion logic centralized so prompts,
+grammars, schemas, and validators all agree about which inflected forms are
+allowed for a given vocabulary.
+"""
 
 from __future__ import annotations
 
@@ -301,6 +307,7 @@ def _normalize(words: tuple[str, ...] | list[str] | set[str]) -> tuple[str, ...]
     Returns:
         The normalized words in stable sorted order.
     """
+    # Deterministic ordering makes generated grammars, schemas, and diffs stable.
     return tuple(sorted({word.strip().lower() for word in words if word.strip()}))
 
 
@@ -417,6 +424,7 @@ def _auto_forms(word: str, *, variant_mode: str) -> set[str]:
         return {word}
 
     forms = {word}
+    # Irregular families win first because they are more precise than generic heuristics.
     if word in _IRREGULAR_FAMILIES:
         forms.update(_IRREGULAR_FAMILIES[word])
     elif word in _AUTO_VERB_BASES:
@@ -449,11 +457,13 @@ def expand_allowed_words(spec: WordlistSpec) -> tuple[str, ...]:
         # The canonical list remains the provenance source of truth for the spec.
         allowed.update(_auto_forms(word, variant_mode=spec.variant_mode))
         if word in families:
+            # Explicit family data layers on top of the automatic expansion rules.
             allowed.update(_family_forms(families[word]))
 
     for family in families.values():
         # Families can inject headwords that were not listed literally in `words`.
         allowed.update(_family_forms(family))
 
+    # Blocked forms are applied last so themed remixes can veto awkward expansions.
     allowed.difference_update(blocked)
     return _normalize(allowed)

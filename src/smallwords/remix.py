@@ -1,4 +1,10 @@
-"""Helpers for deriving playful or task-specific wordlists from a base vocab."""
+"""Derive new wordlists from an existing vocabulary with small targeted edits.
+
+The remix path is intentionally lightweight: it keeps provenance, constraints,
+and most behavior from the base spec while letting callers add or remove a few
+canonical words. That makes themed variants and task-specific tweaks easier to
+understand than hand-authoring a whole new spec from scratch.
+"""
 
 from __future__ import annotations
 
@@ -37,6 +43,7 @@ def remix_wordlist(
     Returns:
         A derived wordlist specification built from the supplied edits.
     """
+    # Work from canonical words so derived vocabularies stay stable and traceable.
     canonical = set(base.canonical_words())
     canonical.update(word.strip().lower() for word in add_words if word.strip())
     canonical.difference_update(
@@ -44,6 +51,7 @@ def remix_wordlist(
     )
 
     # Derived presets inherit the base constraints unless the caller overrides them.
+    # That inheritance is what makes themed remixes feel like small edits, not forks.
     return WordlistSpec(
         name=name,
         words=tuple(sorted(canonical)),

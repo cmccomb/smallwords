@@ -1,4 +1,10 @@
-"""Helpers for turning a word list specification into a GBNF grammar."""
+"""Turn a wordlist specification into a concrete GBNF grammar string.
+
+This module is the hard-constraint half of the package. It takes the normalized
+and expanded vocabulary surface from ``WordlistSpec`` and emits a grammar that
+mirrors the same line, punctuation, capitalization, and thinking-mode rules
+used by the rest of the stack.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +13,7 @@ from typing import Literal
 
 from .types import WordlistSpec
 
+# These wrapper modes let callers ask for visible planning blocks around the answer.
 ThinkingMode = Literal["none", "plan_final", "thinking_answer"]
 
 
@@ -54,6 +61,7 @@ def build_gbnf(
     if not words:
         raise ValueError("Wordlist must contain at least one word")
 
+    # Pre-rendering the alternatives keeps the final rule list easier to read.
     common_word_alts = " |\n  ".join(f'"{_esc(word)}"' for word in words)
 
     rules: list[str] = []
@@ -81,6 +89,7 @@ def build_gbnf(
     if spec.allowed_punctuation:
         line_rule += " punct?"
 
+    # The word rule is assembled dynamically so optional features stay aligned.
     word_rules = ["common-word"]
     if spec.allow_capitalized_words:
         word_rules.append("capitalized-word")
@@ -91,6 +100,7 @@ def build_gbnf(
 
     rules.extend(
         [
+            # Text is either a single line or a repeated newline-separated line block.
             f"text ::= line (newline line){{0,{max_lines - 1}}}"
             if spec.allow_newlines
             else "text ::= line",
@@ -103,10 +113,12 @@ def build_gbnf(
     )
 
     if spec.allow_capitalized_words:
+        # Capitalized words are generated explicitly so grammar engines do not infer casing.
         cap_alts = " |\n  ".join(f'"{_esc(word.capitalize())}"' for word in words)
         rules.append(f"capitalized-word ::=\n  {cap_alts}")
 
     if spec.allow_numbers:
+        # Numbers stay intentionally broad because the validator/schema treat them the same way.
         rules.append("number ::= [0-9]+")
 
     if spec.allowed_punctuation:

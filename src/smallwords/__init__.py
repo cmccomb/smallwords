@@ -1,4 +1,10 @@
-"""Public package exports for the smallwords API."""
+"""Expose the small, stable public API for ``smallwords``.
+
+This module deliberately re-exports only the high-level helpers that a caller
+is most likely to need from the package root. Lower-level builder functions and
+internal utilities stay in their home modules so the root namespace remains
+predictable for people, editors, and future AI agents.
+"""
 
 # Re-export the small, high-level entry points so callers can stay on the package root.
 from .input_words import allow_input_words
@@ -29,6 +35,7 @@ from .types import WordFamily, WordlistSpec
 from .validation import is_compliant, out_of_vocab
 from .wordlists import get_wordlist, list_wordlists
 
+# Keep low-level builders off the package root so the top-level API stays clean.
 # Keep the export list explicit so generated docs and editors stay predictable.
 __all__ = [
     "BASIC_850",

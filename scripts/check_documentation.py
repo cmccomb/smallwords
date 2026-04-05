@@ -15,6 +15,8 @@ TARGET_DIRS = ("src", "examples", "tests", "scripts")
 IGNORED_COMMENT_PREFIXES = ("fmt:", "noqa", "nosec", "pragma:", "type:")
 # Library code and repo scripts must use sectioned function docstrings.
 STRUCTURED_DOCSTRING_DIRS = (("src", "smallwords"), ("scripts",))
+# Library modules should carry a denser comment trail than tests or examples.
+LIBRARY_DIR_PREFIX = ("src", "smallwords")
 
 
 def iter_python_files() -> list[Path]:
@@ -165,14 +167,42 @@ def has_meaningful_comment(path: Path) -> bool:
     Returns:
         True when the file contains a substantive inline comment.
     """
+    return meaningful_comment_count(path) > 0
+
+
+def meaningful_comment_count(path: Path) -> int:
+    """Return the number of substantive inline comments in one file.
+
+    Args:
+        path: Python file to inspect.
+
+    Returns:
+        The count of substantive inline comments in the file.
+    """
     text = path.read_text(encoding="utf-8")
+    count = 0
     for token in tokenize.generate_tokens(io.StringIO(text).readline):
         if token.type != tokenize.COMMENT:
             continue
         content = token.string.lstrip("#").strip()
         if content and not content.startswith(IGNORED_COMMENT_PREFIXES):
-            return True
-    return False
+            count += 1
+    return count
+
+
+def minimum_comment_count(path: Path) -> int:
+    """Return the minimum number of meaningful comments required for a file.
+
+    Args:
+        path: Python file to inspect.
+
+    Returns:
+        The required number of substantive inline comments for the file.
+    """
+    parts = _relative_parts(path)
+    if parts[: len(LIBRARY_DIR_PREFIX)] == LIBRARY_DIR_PREFIX:
+        return 2
+    return 1
 
 
 def _has_leading_comment(lines: list[str], lineno: int) -> bool:
@@ -237,8 +267,13 @@ def main() -> int:
             errors.append(f"{path.relative_to(ROOT)}: {issue}")
         for issue in constant_comment_issues(path):
             errors.append(f"{path.relative_to(ROOT)}: {issue}")
-        if not has_meaningful_comment(path):
-            errors.append(f"{path.relative_to(ROOT)}: missing inline comment")
+        comment_count = meaningful_comment_count(path)
+        required_comment_count = minimum_comment_count(path)
+        if comment_count < required_comment_count:
+            errors.append(
+                f"{path.relative_to(ROOT)}: needs at least {required_comment_count} inline comments "
+                f"(found {comment_count})"
+            )
 
     if errors:
         print("Documentation policy violations:")

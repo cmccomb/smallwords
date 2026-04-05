@@ -1,4 +1,10 @@
-"""Caveman-flavored derived wordlist presets."""
+"""Define the bundled caveman-themed remix.
+
+This module is intentionally small and discoverable so future maintainers can
+see exactly how the playful preset differs from its base vocabulary. The style
+leans clipped and telegraphic, so it both adds themed words and removes some of
+the helper words that make ordinary English sound polished.
+"""
 
 from __future__ import annotations
 
@@ -65,6 +71,7 @@ def build_caveman_spec(base: WordlistSpec) -> WordlistSpec:
         A derived caveman-flavored wordlist specification.
     """
     # Surface-only forms keep the output choppy and intentionally less polished.
+    # A few blocked inflections keep the voice from drifting back toward ordinary prose.
     return remix_wordlist(
         base,
         name="caveman_250",
