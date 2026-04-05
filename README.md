@@ -92,6 +92,8 @@ and compliant sample outputs built from the bundled wordlists.
 ## Development
 
 ```bash
+ruff check .
+ruff format .
 pytest
 python scripts/check_documentation.py
 python -m build

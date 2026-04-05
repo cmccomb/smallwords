@@ -17,9 +17,7 @@ def main() -> None:
         wordlist=WORDLIST,
     )
     sample_reply = (
-        "Good day.\n"
-        "I feel good to see new people.\n"
-        "This place can feel like home."
+        "Good day.\nI feel good to see new people.\nThis place can feel like home."
     )
 
     # Keep the sample reply self-validating so the example doubles as a guard.
@@ -30,7 +28,9 @@ def main() -> None:
     print("=== GBNF ===")
     print(resources.gbnf)
     print("=== JSON Schema ===")
-    print(json.dumps(resources.json_schema(key="reply", title="neighbor_reply"), indent=2))
+    print(
+        json.dumps(resources.json_schema(key="reply", title="neighbor_reply"), indent=2)
+    )
     print("=== Sample Reply ===")
     print(sample_reply)
 

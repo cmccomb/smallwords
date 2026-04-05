@@ -12,7 +12,9 @@ _DATA_ROOT = files("smallwords").joinpath("data")
 def _load_bundled_words(filename: str) -> tuple[str, ...]:
     """Load a normalized one-word-per-line resource file from the package."""
     words: list[str] = []
-    for raw_line in _DATA_ROOT.joinpath(filename).read_text(encoding="utf-8").splitlines():
+    for raw_line in (
+        _DATA_ROOT.joinpath(filename).read_text(encoding="utf-8").splitlines()
+    ):
         line = raw_line.strip().lower()
         if not line or line.startswith("#"):
             continue
@@ -27,7 +29,9 @@ SPECIAL_ENGLISH_WORDS = _load_bundled_words("special_english_1477.txt")
 # The short `common_*` tiers keep the broad frequency ordering from Moby while
 # filtering through Special English so the built-ins stay simple and general.
 SPECIAL_ENGLISH_SET = set(SPECIAL_ENGLISH_WORDS)
-COMMON_SOURCE_WORDS = tuple(word for word in MOBY_FREQ_WORDS if word in SPECIAL_ENGLISH_SET)
+COMMON_SOURCE_WORDS = tuple(
+    word for word in MOBY_FREQ_WORDS if word in SPECIAL_ENGLISH_SET
+)
 
 COMMON_50_WORDS = COMMON_SOURCE_WORDS[:50]
 COMMON_100_WORDS = COMMON_SOURCE_WORDS[:100]
@@ -92,7 +96,9 @@ BASIC_850_SPEC = WordlistSpec(
     words=BASIC_850_WORDS,
     description="Charles Ogden's Basic English 850, bundled as a normalized built-in list.",
     source_name="Basic English 850 via the J. Burkardt dataset mirror",
-    source_urls=("https://people.sc.fsu.edu/~jburkardt/datasets/words/basic_english_850.txt",),
+    source_urls=(
+        "https://people.sc.fsu.edu/~jburkardt/datasets/words/basic_english_850.txt",
+    ),
     license_name="MIT",
 )
 
@@ -101,7 +107,9 @@ SPECIAL_ENGLISH_SPEC = WordlistSpec(
     words=SPECIAL_ENGLISH_WORDS,
     description="Voice of America Special English, bundled as a normalized built-in list.",
     source_name="Voice of America Special English via the J. Burkardt dataset mirror",
-    source_urls=("https://people.sc.fsu.edu/~jburkardt/datasets/words/special_english.txt",),
+    source_urls=(
+        "https://people.sc.fsu.edu/~jburkardt/datasets/words/special_english.txt",
+    ),
     license_name="MIT",
 )
 
@@ -130,4 +138,6 @@ def get_wordlist(name: str) -> WordlistSpec:
     try:
         return WORDLISTS[name]
     except KeyError as exc:
-        raise KeyError(f"Unknown wordlist: {name!r}. Available: {sorted(WORDLISTS)}") from exc
+        raise KeyError(
+            f"Unknown wordlist: {name!r}. Available: {sorted(WORDLISTS)}"
+        ) from exc

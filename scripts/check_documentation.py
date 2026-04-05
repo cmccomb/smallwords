@@ -7,7 +7,6 @@ import io
 import tokenize
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 TARGET_DIRS = ("src", "examples", "tests", "scripts")
 IGNORED_COMMENT_PREFIXES = ("fmt:", "noqa", "nosec", "pragma:", "type:")
@@ -33,10 +32,14 @@ def missing_docstrings(path: Path) -> list[str]:
     for node in ast.walk(tree):
         if isinstance(node, ast.ClassDef):
             if ast.get_docstring(node) is None:
-                issues.append(f"missing class docstring: {node.name} (line {node.lineno})")
+                issues.append(
+                    f"missing class docstring: {node.name} (line {node.lineno})"
+                )
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             if ast.get_docstring(node) is None:
-                issues.append(f"missing function docstring: {node.name} (line {node.lineno})")
+                issues.append(
+                    f"missing function docstring: {node.name} (line {node.lineno})"
+                )
 
     return issues
 

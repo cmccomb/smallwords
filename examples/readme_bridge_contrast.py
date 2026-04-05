@@ -10,7 +10,6 @@ import sys
 
 from smallwords import is_compliant, out_of_vocab, prompt_explain_simply
 
-
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
     "bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF:q4_k_m",
@@ -45,7 +44,9 @@ def _extract_answer(raw_output: str, prompt: str) -> str:
     text = _clean_terminal_output(raw_output)
     anchor = f"> {prompt}"
     if anchor not in text:
-        raise RuntimeError(f"Could not find prompt anchor in llama.cpp output for: {prompt!r}")
+        raise RuntimeError(
+            f"Could not find prompt anchor in llama.cpp output for: {prompt!r}"
+        )
 
     answer = text.split(anchor, 1)[1].strip()
     for marker in ("llama_memory_breakdown_print:", "[ Prompt:", "Exiting..."):

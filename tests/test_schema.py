@@ -2,7 +2,14 @@
 
 import re
 
-from smallwords import COMMON_50, OutputResources, WordlistSpec, build_json_schema, make_json_schema, make_resources
+from smallwords import (
+    COMMON_50,
+    OutputResources,
+    WordlistSpec,
+    build_json_schema,
+    make_json_schema,
+    make_resources,
+)
 
 
 def test_json_schema_is_single_key_and_strict() -> None:

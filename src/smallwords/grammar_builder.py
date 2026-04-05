@@ -39,20 +39,26 @@ def build_gbnf(
     # The root rule determines whether the caller wants a plain response or a
     # two-block format that exposes a short planning/thinking section first.
     if thinking_mode == "none":
-        rules.append('root ::= text')
+        rules.append("root ::= text")
     elif thinking_mode == "plan_final":
-        rules.append('root ::= "PLAN:" newline text newline newline "FINAL:" newline text')
+        rules.append(
+            'root ::= "PLAN:" newline text newline newline "FINAL:" newline text'
+        )
     elif thinking_mode == "thinking_answer":
-        rules.append('root ::= "THINKING:" newline text newline newline "ANSWER:" newline text')
+        rules.append(
+            'root ::= "THINKING:" newline text newline newline "ANSWER:" newline text'
+        )
     else:
         raise ValueError(f"Unsupported thinking_mode: {thinking_mode}")
 
     if spec.line_prefixes:
-        line_rule = f'line ::= line-prefix? word (space word){{0,{max_words_per_line - 1}}}'
+        line_rule = (
+            f"line ::= line-prefix? word (space word){{0,{max_words_per_line - 1}}}"
+        )
     else:
-        line_rule = f'line ::= word (space word){{0,{max_words_per_line - 1}}}'
+        line_rule = f"line ::= word (space word){{0,{max_words_per_line - 1}}}"
     if spec.allowed_punctuation:
-        line_rule += ' punct?'
+        line_rule += " punct?"
 
     word_rules = ["common-word"]
     if spec.allow_capitalized_words:
@@ -64,30 +70,32 @@ def build_gbnf(
 
     rules.extend(
         [
-            f'text ::= line (newline line){{0,{max_lines - 1}}}' if spec.allow_newlines else 'text ::= line',
+            f"text ::= line (newline line){{0,{max_lines - 1}}}"
+            if spec.allow_newlines
+            else "text ::= line",
             line_rule,
             'space ::= " "',
             'newline ::= "\\n"',
-            f'word ::=\n  {word_rule}',
-            f'common-word ::=\n  {common_word_alts}',
+            f"word ::=\n  {word_rule}",
+            f"common-word ::=\n  {common_word_alts}",
         ]
     )
 
     if spec.allow_capitalized_words:
         cap_alts = " |\n  ".join(f'"{_esc(word.capitalize())}"' for word in words)
-        rules.append(f'capitalized-word ::=\n  {cap_alts}')
+        rules.append(f"capitalized-word ::=\n  {cap_alts}")
 
     if spec.allow_numbers:
-        rules.append('number ::= [0-9]+')
+        rules.append("number ::= [0-9]+")
 
     if spec.allowed_punctuation:
         punct_alts = " | ".join(f'"{_esc(ch)}"' for ch in spec.allowed_punctuation)
-        rules.append(f'punct ::= {punct_alts}')
+        rules.append(f"punct ::= {punct_alts}")
 
     # Prefixes stay optional in `line`, but defining the rule keeps the grammar
     # shape consistent for callers that want bullets or numbered steps.
     if spec.line_prefixes:
         prefix_alts = " | ".join(f'"{_esc(prefix)}"' for prefix in spec.line_prefixes)
-        rules.append(f'line-prefix ::= {prefix_alts}')
+        rules.append(f"line-prefix ::= {prefix_alts}")
 
     return "\n\n".join(rules) + "\n"

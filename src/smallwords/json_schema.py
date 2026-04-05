@@ -50,7 +50,9 @@ def _line_pattern(spec: WordlistSpec, *, max_words_per_line: int) -> str:
     return line
 
 
-def _text_pattern(spec: WordlistSpec, *, max_words_per_line: int, max_lines: int) -> str:
+def _text_pattern(
+    spec: WordlistSpec, *, max_words_per_line: int, max_lines: int
+) -> str:
     """Build the regex fragment for the full text block."""
     line = _line_pattern(spec, max_words_per_line=max_words_per_line)
     if spec.allow_newlines:
@@ -66,7 +68,9 @@ def _response_pattern(
     max_lines: int,
 ) -> str:
     """Wrap the text pattern for the selected thinking mode."""
-    text = _text_pattern(spec, max_words_per_line=max_words_per_line, max_lines=max_lines)
+    text = _text_pattern(
+        spec, max_words_per_line=max_words_per_line, max_lines=max_lines
+    )
     if thinking_mode == "none":
         body = text
     elif thinking_mode == "plan_final":
@@ -78,7 +82,9 @@ def _response_pattern(
     return f"^{body}$"
 
 
-def _max_text_length(spec: WordlistSpec, *, max_words_per_line: int, max_lines: int) -> int | None:
+def _max_text_length(
+    spec: WordlistSpec, *, max_words_per_line: int, max_lines: int
+) -> int | None:
     """Compute a finite maximum length when the word set is finite."""
     if spec.allow_numbers:
         return None
@@ -112,7 +118,9 @@ def _max_response_length(
     max_lines: int,
 ) -> int | None:
     """Compute the maximum serialized response length for the selected mode."""
-    text_max = _max_text_length(spec, max_words_per_line=max_words_per_line, max_lines=max_lines)
+    text_max = _max_text_length(
+        spec, max_words_per_line=max_words_per_line, max_lines=max_lines
+    )
     if text_max is None:
         return None
     if thinking_mode == "none":
@@ -151,7 +159,8 @@ def build_json_schema(
             max_lines=max_lines,
         ),
         "minLength": 1,
-        "description": description or f"Response text constrained to the {spec.name} word list.",
+        "description": description
+        or f"Response text constrained to the {spec.name} word list.",
     }
 
     max_length = _max_response_length(

@@ -1,19 +1,6 @@
 """Public package exports for the smallwords API."""
 
 # Re-export the common entry points so callers can stay on the package root.
-from .resources import (
-    BASIC_850,
-    COMMON_50,
-    COMMON_50_THINKING,
-    COMMON_100,
-    COMMON_100_THINKING,
-    COMMON_250,
-    COMMON_250_THINKING,
-    OutputResources,
-    SPECIAL_ENGLISH,
-    make_json_schema,
-    make_resources,
-)
 from .grammar_builder import build_gbnf
 from .json_schema import build_json_schema
 from .prompts import (
@@ -22,6 +9,19 @@ from .prompts import (
     prompt_explain_simply,
     prompt_rewrite_simply,
     prompt_summarize_simply,
+)
+from .resources import (
+    BASIC_850,
+    COMMON_50,
+    COMMON_50_THINKING,
+    COMMON_100,
+    COMMON_100_THINKING,
+    COMMON_250,
+    COMMON_250_THINKING,
+    SPECIAL_ENGLISH,
+    OutputResources,
+    make_json_schema,
+    make_resources,
 )
 from .types import WordlistSpec
 from .validation import is_compliant, out_of_vocab

@@ -5,7 +5,14 @@ from smallwords import WORDLISTS, get_wordlist
 
 def test_source_backed_wordlists_are_available() -> None:
     """Ensure the bundled catalog exposes the documented built-in names."""
-    assert {"common_50", "common_100", "common_250", "basic_850", "special_english", "reasoning_250"} <= WORDLISTS.keys()
+    assert {
+        "common_50",
+        "common_100",
+        "common_250",
+        "basic_850",
+        "special_english",
+        "reasoning_250",
+    } <= WORDLISTS.keys()
 
 
 def test_wordlist_provenance_and_sizes() -> None:

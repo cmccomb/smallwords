@@ -27,7 +27,11 @@ def main() -> None:
     print("=== GBNF ===")
     print(resources.gbnf)
     print("=== JSON Schema ===")
-    print(json.dumps(resources.json_schema(key="answer", title="bridge_explanation"), indent=2))
+    print(
+        json.dumps(
+            resources.json_schema(key="answer", title="bridge_explanation"), indent=2
+        )
+    )
     print("=== Sample Reply ===")
     print(sample_reply)
 

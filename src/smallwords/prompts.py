@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from .types import WordlistSpec
-from .wordlists import get_wordlist
 
 
 def _resolve_name(wordlist: str | WordlistSpec) -> str:
@@ -11,7 +10,9 @@ def _resolve_name(wordlist: str | WordlistSpec) -> str:
     return wordlist if isinstance(wordlist, str) else wordlist.name
 
 
-def prompt_explain_simply(topic: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+def prompt_explain_simply(
+    topic: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
+) -> str:
     """Build an explanation prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     # Keep the prompt text explicit about the wordlist name so it can be reused
@@ -26,8 +27,9 @@ def prompt_explain_simply(topic: str, *, wordlist: str | WordlistSpec = "common_
     return prompt
 
 
-
-def prompt_summarize_simply(text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+def prompt_summarize_simply(
+    text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
+) -> str:
     """Build a summarization prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (
@@ -40,8 +42,9 @@ def prompt_summarize_simply(text: str, *, wordlist: str | WordlistSpec = "common
     return prompt
 
 
-
-def prompt_rewrite_simply(text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+def prompt_rewrite_simply(
+    text: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False
+) -> str:
     """Build a rewriting prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (
@@ -54,8 +57,12 @@ def prompt_rewrite_simply(text: str, *, wordlist: str | WordlistSpec = "common_2
     return prompt
 
 
-
-def prompt_answer_simply(question: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
+def prompt_answer_simply(
+    question: str,
+    *,
+    wordlist: str | WordlistSpec = "common_250",
+    thinking: bool = False,
+) -> str:
     """Build a QA prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
     prompt = (

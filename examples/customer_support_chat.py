@@ -12,7 +12,9 @@ WORDLIST = "reasoning_250"
 def main() -> None:
     """Print a support-oriented prompt, resources, and compliant sample reply."""
     resources = make_resources(WORDLIST, max_words_per_line=8, max_lines=3)
-    prompt = prompt_answer_simply("My order is late. What can I do now?", wordlist=WORDLIST)
+    prompt = prompt_answer_simply(
+        "My order is late. What can I do now?", wordlist=WORDLIST
+    )
     sample_reply = (
         "Ask for help now.\n"
         "Tell the story in a clear way.\n"
@@ -27,7 +29,9 @@ def main() -> None:
     print("=== GBNF ===")
     print(resources.gbnf)
     print("=== JSON Schema ===")
-    print(json.dumps(resources.json_schema(key="reply", title="support_reply"), indent=2))
+    print(
+        json.dumps(resources.json_schema(key="reply", title="support_reply"), indent=2)
+    )
     print("=== Sample Reply ===")
     print(sample_reply)
 

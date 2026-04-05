@@ -73,7 +73,11 @@ class OutputResources:
     ) -> None:
         """Write the generated JSON Schema resource to disk."""
         with open(path, "w", encoding="utf-8") as handle:
-            json.dump(self.json_schema(key=key, title=title, description=description), handle, indent=2)
+            json.dump(
+                self.json_schema(key=key, title=title, description=description),
+                handle,
+                indent=2,
+            )
             handle.write("\n")
 
 
@@ -86,7 +90,9 @@ SPECIAL_ENGLISH = OutputResources(SPECIAL_ENGLISH_SPEC)
 
 COMMON_50_THINKING = OutputResources(REASONING_250_SPEC, thinking_mode="plan_final")
 COMMON_100_THINKING = OutputResources(REASONING_250_SPEC, thinking_mode="plan_final")
-COMMON_250_THINKING = OutputResources(REASONING_250_SPEC, thinking_mode="thinking_answer")
+COMMON_250_THINKING = OutputResources(
+    REASONING_250_SPEC, thinking_mode="thinking_answer"
+)
 
 
 def make_resources(
