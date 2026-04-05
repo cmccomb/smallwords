@@ -77,23 +77,25 @@ The themed remixes live in `src/smallwords/caveman.py` and
 ## Contrastive Example
 
 This is the clearest way to see what `smallwords` is trying to do. Both blocks
-below are genuine local Qwen outputs from April 4, 2026. The first uses a plain
+below are genuine local Qwen outputs from April 5, 2026. The first uses a plain
 prompt. The second uses the same base prompt plus an explicit `basic_850`
 vocabulary list, the topic word `bridge`, and the generated GBNF.
 
 A plain prompt stays fairly natural:
 
-> A bridge provides a structure that spans a gap, such as a river or valley,
-> to allow safe passage over it.
+> A bridge connects two points, usually across a body of water or a gap,
+> allowing people and vehicles to cross safely.
 
-A constrained `basic_850 + topic words` run is simpler, though still stiffer:
+A constrained `basic_850 + topic words` run stays simpler while still sounding
+reasonably natural:
 
-> A bridge is a structure that goes across a river or road to connection.
+> A bridge is a structure that helps people and things move across a river or a
+> deep place.
 
 These runs use `llama.cpp` and
-[`Qwen/Qwen3-4B-Instruct-2507`](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507)
+[`Qwen/Qwen3-8B-GGUF`](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
 via
-[`bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF`](https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF).
+[`bartowski/Qwen_Qwen3-8B-GGUF`](https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF).
 
 Reproduce that comparison from a clone of the repository with:
 

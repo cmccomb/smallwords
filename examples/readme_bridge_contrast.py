@@ -18,10 +18,10 @@ from smallwords import (
     out_of_vocab,
 )
 
-# This Hugging Face model reference powers the live README comparison.
+# This larger Qwen3 checkpoint gives the README contrast a cleaner side-by-side.
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
-    "bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF:q4_k_m",
+    "bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m",
 )
 
 # This is the shared plain-language bridge prompt used in both runs.
