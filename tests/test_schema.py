@@ -24,6 +24,7 @@ def test_json_schema_is_single_key_and_strict() -> None:
     value_schema = schema["properties"]["text"]
     assert value_schema["type"] == "string"
     assert re.fullmatch(value_schema["pattern"], "The man can make it.")
+    assert re.fullmatch(value_schema["pattern"], "The man made it.")
     assert not re.fullmatch(value_schema["pattern"], "The man can make a bridge.")
 
 
@@ -78,3 +79,11 @@ def test_allow_numbers_are_supported_in_both_builders() -> None:
 
     assert "number ::= [0-9]+" in resources.gbnf
     assert re.fullmatch(schema["properties"]["text"]["pattern"], "123")
+
+
+def test_schema_can_match_generated_family_variants() -> None:
+    """Ensure regex schemas accept expanded word-family variants."""
+    spec = WordlistSpec(name="places", words=("city",))
+    schema = build_json_schema(spec, max_words_per_line=1, max_lines=1)
+
+    assert re.fullmatch(schema["properties"]["text"]["pattern"], "cities")

@@ -12,9 +12,11 @@ from .json_schema import build_json_schema
 from .types import WordlistSpec
 from .wordlists import (
     BASIC_850_SPEC,
+    CAVEMAN_250_SPEC,
     COMMON_50_SPEC,
     COMMON_100_SPEC,
     COMMON_250_SPEC,
+    PIRATE_250_SPEC,
     REASONING_250_SPEC,
     SPECIAL_ENGLISH_SPEC,
     get_wordlist,
@@ -86,6 +88,8 @@ COMMON_50 = OutputResources(COMMON_50_SPEC)
 COMMON_100 = OutputResources(COMMON_100_SPEC)
 COMMON_250 = OutputResources(COMMON_250_SPEC)
 BASIC_850 = OutputResources(BASIC_850_SPEC)
+CAVEMAN_250 = OutputResources(CAVEMAN_250_SPEC)
+PIRATE_250 = OutputResources(PIRATE_250_SPEC)
 REASONING_250 = OutputResources(REASONING_250_SPEC)
 SPECIAL_ENGLISH = OutputResources(SPECIAL_ENGLISH_SPEC)
 

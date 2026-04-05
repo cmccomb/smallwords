@@ -21,7 +21,7 @@ def out_of_vocab(text: str, wordlist: str | WordlistSpec) -> list[str]:
     spec = get_wordlist(wordlist) if isinstance(wordlist, str) else wordlist
     # Membership checks happen against the normalized set so punctuation and
     # capitalization never create false negatives.
-    allowed = set(spec.normalized_words())
+    allowed = set(spec.allowed_words())
     return sorted({token for token in normalize_tokens(text) if token not in allowed})
 
 

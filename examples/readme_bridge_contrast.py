@@ -33,7 +33,7 @@ SMALLWORDS_REQUEST = build_example_request(
     title="bridge_explanation",
 )
 SMALLWORDS_REFERENCE = (
-    "A way can go over water.\n"
+    "A way goes over water.\n"
     "Each part hold people up.\n"
     "The force move down through each side."
 )

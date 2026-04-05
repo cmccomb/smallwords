@@ -18,7 +18,7 @@ def _pattern_alt(parts: list[str]) -> str:
 
 def _word_pattern(spec: WordlistSpec) -> str:
     """Build the regex fragment for a single allowed token."""
-    words = spec.normalized_words()
+    words = spec.allowed_words()
     if not words:
         raise ValueError("Wordlist must contain at least one word")
 
@@ -89,7 +89,7 @@ def _max_text_length(
     if spec.allow_numbers:
         return None
 
-    words = spec.normalized_words()
+    words = spec.allowed_words()
     if not words:
         raise ValueError("Wordlist must contain at least one word")
 

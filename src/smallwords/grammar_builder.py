@@ -29,7 +29,7 @@ def build_gbnf(
     if max_lines < 1:
         raise ValueError("max_lines must be >= 1")
 
-    words = spec.normalized_words()
+    words = spec.allowed_words()
     if not words:
         raise ValueError("Wordlist must contain at least one word")
 

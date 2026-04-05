@@ -21,7 +21,7 @@ def main() -> None:
         title="bridge_explanation",
     )
     sample_reply = (
-        "A way can go over water.\n"
+        "A way goes over water.\n"
         "Each part hold people up.\n"
         "The force move down through each side."
     )

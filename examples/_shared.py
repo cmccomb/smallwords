@@ -3,10 +3,18 @@
 from __future__ import annotations
 
 import re
+import sys
 from dataclasses import dataclass
-from typing import Any
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
-from smallwords import OutputResources
+# Keep repo-local example runs pointed at `src/` instead of an older installed build.
+SRC_ROOT = Path(__file__).resolve().parents[1] / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+if TYPE_CHECKING:
+    from smallwords import OutputResources
 
 
 @dataclass(frozen=True)

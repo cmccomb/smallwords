@@ -7,6 +7,8 @@ want an extra offline check.
 
 The package ships with bundled source-backed wordlists, including short
 frequency-based lists plus fuller `basic_850` and `special_english` presets.
+By default, the built-ins also allow slight family variants such as `go`,
+`goes`, and `going`.
 
 ## Installation
 
@@ -31,9 +33,9 @@ resources = make_resources("common_250", max_words_per_line=9, max_lines=3)
 gbnf = resources.gbnf
 schema = resources.json_schema(key="answer")
 
-text = "A way can go over water."
+text = "A way goes over water."
 ok = is_compliant(text, "common_250")
-missing = out_of_vocab("A bridge can go over water.", "common_250")
+missing = out_of_vocab("A bridge goes over water.", "common_250")
 ```
 
 ## Built-In Wordlists
@@ -44,11 +46,17 @@ missing = out_of_vocab("A bridge can go over water.", "common_250")
 - `basic_850`: Charles Ogden's Basic English 850
 - `special_english`: Voice of America Special English
 - `reasoning_250`: `common_250` plus a small planning supplement for visible plan blocks
+- `caveman_250`: a surface-only `common_250` remix with caveman extras and fewer helper words
+- `pirate_250`: a playful `common_250` remix with pirate extras
 
 The bundled text files live in `src/smallwords/data/`. The `common_*` lists are
 derived from Project Gutenberg's Moby Words II frequency list and filtered
 through Special English. `basic_850` and `special_english` are bundled from the
 MIT-licensed J. Burkardt dataset mirror.
+
+The themed remixes live in `src/smallwords/caveman.py` and
+`src/smallwords/pirate.py`. If you want to build your own, use
+`remix_wordlist(...)` with a base list plus curated additions and removals.
 
 ## Contrastive Example
 
@@ -65,7 +73,7 @@ A real local Qwen response to a normal prompt is still fairly technical:
 
 A `smallwords`-style `common_250` target for the same idea is much plainer:
 
-> A way can go over water.
+> A way goes over water.
 > Each part hold people up.
 > The force move down through each side.
 

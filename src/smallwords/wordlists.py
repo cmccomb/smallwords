@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from importlib.resources import files
 
+from .caveman import build_caveman_spec
+from .pirate import build_pirate_spec
 from .types import WordlistSpec
 
 _DATA_ROOT = files("smallwords").joinpath("data")
@@ -123,6 +125,9 @@ REASONING_250_SPEC = WordlistSpec(
     line_prefixes=("- ", "1. ", "2. ", "3. "),
 )
 
+CAVEMAN_250_SPEC = build_caveman_spec(COMMON_250_SPEC)
+PIRATE_250_SPEC = build_pirate_spec(COMMON_250_SPEC)
+
 WORDLISTS: dict[str, WordlistSpec] = {
     COMMON_50_SPEC.name: COMMON_50_SPEC,
     COMMON_100_SPEC.name: COMMON_100_SPEC,
@@ -130,6 +135,8 @@ WORDLISTS: dict[str, WordlistSpec] = {
     BASIC_850_SPEC.name: BASIC_850_SPEC,
     SPECIAL_ENGLISH_SPEC.name: SPECIAL_ENGLISH_SPEC,
     REASONING_250_SPEC.name: REASONING_250_SPEC,
+    CAVEMAN_250_SPEC.name: CAVEMAN_250_SPEC,
+    PIRATE_250_SPEC.name: PIRATE_250_SPEC,
 }
 
 
