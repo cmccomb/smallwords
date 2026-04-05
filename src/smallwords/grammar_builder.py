@@ -25,9 +25,7 @@ def build_gbnf(spec: WordlistSpec, *, shape: OutputShape) -> str:
         )
 
     repeat_range = (
-        "{"
-        + f"{shape.min_words_per_line - 1},{shape.max_words_per_line - 1}"
-        + "}"
+        "{" + f"{shape.min_words_per_line - 1},{shape.max_words_per_line - 1}" + "}"
     )
     if spec.line_prefixes:
         line_rule = f"line ::= line-prefix? word (space word){repeat_range}"
@@ -57,7 +55,9 @@ def build_gbnf(spec: WordlistSpec, *, shape: OutputShape) -> str:
     )
 
     if constraints.words:
-        common_word_alts = " |\n  ".join(f'"{_esc(word)}"' for word in constraints.words)
+        common_word_alts = " |\n  ".join(
+            f'"{_esc(word)}"' for word in constraints.words
+        )
         rules.append(f"common-word ::=\n  {common_word_alts}")
 
     if constraints.capitalized_words:

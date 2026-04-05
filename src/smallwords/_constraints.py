@@ -116,7 +116,9 @@ def compile_constraints(spec: WordlistSpec, shape: OutputShape) -> CompiledConst
     capitalized_words = ()
     if spec.allow_capitalized_words:
         capitalized_words = tuple(
-            dict.fromkeys(word.capitalize() for word in words if word.capitalize() != word)
+            dict.fromkeys(
+                word.capitalize() for word in words if word.capitalize() != word
+            )
         )
 
     word_parts = [re.escape(word) for word in words]
@@ -140,7 +142,9 @@ def compile_constraints(spec: WordlistSpec, shape: OutputShape) -> CompiledConst
         line_pattern += f"(?:{punct})?"
 
     if spec.allow_newlines:
-        text_pattern = line_pattern + f"(?:\\n{line_pattern}){{0,{shape.max_lines - 1}}}"
+        text_pattern = (
+            line_pattern + f"(?:\\n{line_pattern}){{0,{shape.max_lines - 1}}}"
+        )
     else:
         text_pattern = line_pattern
 

@@ -13,7 +13,9 @@ def test_output_shape_rejects_invalid_limits_and_modes() -> None:
         OutputShape(min_words_per_line=0)
     with pytest.raises(ValueError, match="max_words_per_line must be >= 1"):
         OutputShape(max_words_per_line=0)
-    with pytest.raises(ValueError, match="min_words_per_line must be <= max_words_per_line"):
+    with pytest.raises(
+        ValueError, match="min_words_per_line must be <= max_words_per_line"
+    ):
         OutputShape(min_words_per_line=2, max_words_per_line=1)
     with pytest.raises(ValueError, match="max_lines must be >= 1"):
         OutputShape(max_lines=0)
@@ -85,7 +87,10 @@ def test_plan_final_shape_wraps_both_serializers() -> None:
     resources = OutputResources.from_wordlist(spec, shape=shape)
     schema = resources.json_schema(key="answer")
 
-    assert 'root ::= "PLAN:" newline text newline newline "FINAL:" newline text' in resources.gbnf
+    assert (
+        'root ::= "PLAN:" newline text newline newline "FINAL:" newline text'
+        in resources.gbnf
+    )
     assert re.fullmatch(
         schema["properties"]["answer"]["pattern"],
         "PLAN:\nwhy now.\n\nFINAL:\nanswer now.",
