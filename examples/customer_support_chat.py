@@ -10,6 +10,7 @@ WORDLIST = "reasoning_250"
 
 
 def main() -> None:
+    """Print a support-oriented prompt, resources, and compliant sample reply."""
     resources = make_resources(WORDLIST, max_words_per_line=8, max_lines=3)
     prompt = prompt_answer_simply("My order is late. What can I do now?", wordlist=WORDLIST)
     sample_reply = (
@@ -18,6 +19,7 @@ def main() -> None:
         "Make a plan for the next step."
     )
 
+    # Keep the sample reply self-validating so the example doubles as a guard.
     assert is_compliant(sample_reply, WORDLIST), out_of_vocab(sample_reply, WORDLIST)
 
     print("=== Prompt ===")

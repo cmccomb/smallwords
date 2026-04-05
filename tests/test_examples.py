@@ -1,3 +1,5 @@
+"""Smoke tests for the example scripts shipped with the repository."""
+
 from __future__ import annotations
 
 import subprocess
@@ -14,6 +16,7 @@ EXAMPLES = [
 
 
 def test_examples_run() -> None:
+    """Ensure the lightweight examples still execute from the repo root."""
     for example in EXAMPLES:
         completed = subprocess.run(
             [sys.executable, str(example)],
@@ -22,4 +25,5 @@ def test_examples_run() -> None:
             capture_output=True,
             text=True,
         )
+        # Each example prints the same headings, which makes this a stable check.
         assert "=== Prompt ===" in completed.stdout

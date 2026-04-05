@@ -77,6 +77,7 @@ class OutputResources:
             handle.write("\n")
 
 
+# These shared presets cover the named built-ins most callers reach for first.
 COMMON_50 = OutputResources(COMMON_50_SPEC)
 COMMON_100 = OutputResources(COMMON_100_SPEC)
 COMMON_250 = OutputResources(COMMON_250_SPEC)
@@ -96,6 +97,7 @@ def make_resources(
     max_lines: int = 8,
 ) -> OutputResources:
     """Build output resources from either a named or inline word list spec."""
+    # Resolve named presets late so callers can also pass an inline spec object.
     spec = get_wordlist(wordlist) if isinstance(wordlist, str) else wordlist
     return OutputResources(
         spec=spec,

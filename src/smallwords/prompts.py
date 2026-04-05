@@ -14,6 +14,8 @@ def _resolve_name(wordlist: str | WordlistSpec) -> str:
 def prompt_explain_simply(topic: str, *, wordlist: str | WordlistSpec = "common_250", thinking: bool = False) -> str:
     """Build an explanation prompt constrained to a named or inline word list."""
     name = _resolve_name(wordlist)
+    # Keep the prompt text explicit about the wordlist name so it can be reused
+    # even when the caller is not also passing a grammar or schema.
     prompt = (
         f"Explain the topic in plain English. Use only words from the {name} word list. "
         "Use short sentences and concrete language."
@@ -66,6 +68,7 @@ def prompt_answer_simply(question: str, *, wordlist: str | WordlistSpec = "commo
     return prompt
 
 
+# Expose the templates as data so downstream code can build simple UIs on top.
 TEMPLATE_PROMPTS = {
     "explain": prompt_explain_simply,
     "summarize": prompt_summarize_simply,

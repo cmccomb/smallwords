@@ -23,4 +23,5 @@ class WordlistSpec:
 
     def normalized_words(self) -> tuple[str, ...]:
         """Return de-duplicated lowercase words sorted for stable grammar output."""
+        # Stable ordering keeps generated grammars and schemas reproducible.
         return tuple(sorted({w.strip().lower() for w in self.words if w.strip()}))

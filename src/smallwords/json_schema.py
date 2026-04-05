@@ -17,6 +17,7 @@ def _pattern_alt(parts: list[str]) -> str:
 
 
 def _word_pattern(spec: WordlistSpec) -> str:
+    """Build the regex fragment for a single allowed token."""
     words = spec.normalized_words()
     if not words:
         raise ValueError("Wordlist must contain at least one word")
@@ -34,6 +35,7 @@ def _word_pattern(spec: WordlistSpec) -> str:
 
 
 def _line_pattern(spec: WordlistSpec, *, max_words_per_line: int) -> str:
+    """Build the regex fragment for one constrained output line."""
     word = _word_pattern(spec)
     line = word + f"(?: {word}){{0,{max_words_per_line - 1}}}"
 
@@ -49,6 +51,7 @@ def _line_pattern(spec: WordlistSpec, *, max_words_per_line: int) -> str:
 
 
 def _text_pattern(spec: WordlistSpec, *, max_words_per_line: int, max_lines: int) -> str:
+    """Build the regex fragment for the full text block."""
     line = _line_pattern(spec, max_words_per_line=max_words_per_line)
     if spec.allow_newlines:
         return line + f"(?:\\n{line}){{0,{max_lines - 1}}}"
@@ -62,6 +65,7 @@ def _response_pattern(
     max_words_per_line: int,
     max_lines: int,
 ) -> str:
+    """Wrap the text pattern for the selected thinking mode."""
     text = _text_pattern(spec, max_words_per_line=max_words_per_line, max_lines=max_lines)
     if thinking_mode == "none":
         body = text
@@ -107,6 +111,7 @@ def _max_response_length(
     max_words_per_line: int,
     max_lines: int,
 ) -> int | None:
+    """Compute the maximum serialized response length for the selected mode."""
     text_max = _max_text_length(spec, max_words_per_line=max_words_per_line, max_lines=max_lines)
     if text_max is None:
         return None
@@ -155,6 +160,8 @@ def build_json_schema(
         max_words_per_line=max_words_per_line,
         max_lines=max_lines,
     )
+    # `maxLength` is omitted when numbers are allowed because the regex then
+    # permits arbitrarily long numeric tokens.
     if max_length is not None:
         value_schema["maxLength"] = max_length
 

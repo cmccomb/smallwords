@@ -181,6 +181,12 @@ Run the local test suite:
 pytest
 ```
 
+Run the documentation policy check:
+
+```bash
+python scripts/check_documentation.py
+```
+
 Build a source distribution and wheel:
 
 ```bash

@@ -19,9 +19,11 @@ SIMPLE_PROMPT = "Explain how a bridge works to a kid in exactly three short sent
 
 
 def _clean_terminal_output(text: str) -> str:
+    """Strip terminal control noise from llama.cpp output."""
     text = text.replace("\r", "")
     text = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", text)
 
+    # Some terminals emit backspace redraw sequences instead of ANSI escapes.
     previous = None
     while previous != text:
         previous = text
@@ -31,6 +33,7 @@ def _clean_terminal_output(text: str) -> str:
 
 
 def _extract_answer(raw_output: str, prompt: str) -> str:
+    """Extract the generated answer body from a llama.cpp transcript."""
     text = _clean_terminal_output(raw_output)
     anchor = f"> {prompt}"
     if anchor not in text:
@@ -44,6 +47,7 @@ def _extract_answer(raw_output: str, prompt: str) -> str:
 
 
 def _run_prompt(prompt: str, *, seed: int) -> str:
+    """Run one prompt through llama.cpp and return the cleaned answer text."""
     llama_cli = shutil.which("llama-cli")
     if not llama_cli:
         raise RuntimeError("llama-cli is not installed or not on PATH.")
@@ -82,6 +86,7 @@ def _run_prompt(prompt: str, *, seed: int) -> str:
 
 
 def main() -> None:
+    """Print the README's standard-vs-simple bridge comparison."""
     print("=== Model ===")
     print(MODEL_REPO)
 
@@ -102,5 +107,6 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
+        # Keep failures concise when the script is used in docs or CI logs.
         print(f"error: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc

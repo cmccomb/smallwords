@@ -10,6 +10,7 @@ WORDLIST = "common_250"
 
 
 def main() -> None:
+    """Print a bridge prompt, resources, and compliant sample explanation."""
     resources = make_resources(WORDLIST, max_words_per_line=9, max_lines=3)
     prompt = prompt_explain_simply("How does a bridge work?", wordlist=WORDLIST)
     sample_reply = (
@@ -18,6 +19,7 @@ def main() -> None:
         "The force move down through each side."
     )
 
+    # Keep the sample reply self-validating so the example doubles as a guard.
     assert is_compliant(sample_reply, WORDLIST), out_of_vocab(sample_reply, WORDLIST)
 
     print("=== Prompt ===")

@@ -10,6 +10,7 @@ WORDLIST = "common_250"
 
 
 def main() -> None:
+    """Print a small-talk prompt, resources, and compliant sample reply."""
     resources = make_resources(WORDLIST, max_words_per_line=8, max_lines=3)
     prompt = prompt_answer_simply(
         "Write a short friendly reply when you meet a new neighbor.",
@@ -21,6 +22,7 @@ def main() -> None:
         "This place can feel like home."
     )
 
+    # Keep the sample reply self-validating so the example doubles as a guard.
     assert is_compliant(sample_reply, WORDLIST), out_of_vocab(sample_reply, WORDLIST)
 
     print("=== Prompt ===")

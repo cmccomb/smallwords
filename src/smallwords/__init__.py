@@ -1,5 +1,6 @@
 """Public package exports for the smallwords API."""
 
+# Re-export the common entry points so callers can stay on the package root.
 from .resources import (
     BASIC_850,
     COMMON_50,
@@ -26,6 +27,7 @@ from .types import WordlistSpec
 from .validation import is_compliant, out_of_vocab
 from .wordlists import WORDLISTS, get_wordlist
 
+# Keep the export list explicit so generated docs and editors stay predictable.
 __all__ = [
     "BASIC_850",
     "COMMON_50",
