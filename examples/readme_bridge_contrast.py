@@ -21,7 +21,7 @@ from smallwords import (
     make_resources,
     out_of_vocab,
 )
-from smallwords._llama_server import generate_text, server_base_url
+from smallwords.integrations import generate_text, server_base_url
 
 # This expected model keeps the example aligned with the README contrast.
 MODEL_REPO = os.environ.get(

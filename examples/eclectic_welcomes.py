@@ -17,7 +17,7 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from smallwords import is_compliant, make_resources, out_of_vocab, prompt_answer_simply
-from smallwords._llama_server import generate_text, server_base_url
+from smallwords.integrations import generate_text, server_base_url
 
 # This expected model keeps the example aligned with the other live examples.
 MODEL_REPO = os.environ.get(

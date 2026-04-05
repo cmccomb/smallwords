@@ -8,8 +8,8 @@ word-count and ordinary English inflection behavior.
 
 from __future__ import annotations
 
-from .remix import remix_wordlist
-from .types import WordlistSpec
+from ..remix import remix_wordlist
+from ..types import WordlistSpec
 
 # These additions give the pirate remix its playful nautical vocabulary.
 PIRATE_EXTRA_WORDS = (

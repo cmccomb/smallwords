@@ -9,8 +9,7 @@ from __future__ import annotations
 
 from importlib.resources import files
 
-from .caveman import build_caveman_spec
-from .pirate import build_pirate_spec
+from .themes import build_caveman_spec, build_pirate_spec
 from .types import WordlistSpec
 
 # This resource root holds the bundled wordlist text files shipped with the package.

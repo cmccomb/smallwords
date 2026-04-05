@@ -8,8 +8,8 @@ additions and deletions while also tightening inflection behavior.
 
 from __future__ import annotations
 
-from .remix import remix_wordlist
-from .types import WordlistSpec
+from ..remix import remix_wordlist
+from ..types import WordlistSpec
 
 # These additions give the caveman remix its rougher themed vocabulary.
 CAVEMAN_EXTRA_WORDS = (

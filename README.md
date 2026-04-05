@@ -69,9 +69,14 @@ The bundled text files live in `src/smallwords/data/`. `moby_898`,
 `moby_898`. Output formatting modes such as visible planning blocks are
 configured through `thinking_mode`; they are not separate wordlists.
 
-The themed remixes live in `src/smallwords/caveman.py` and
-`src/smallwords/pirate.py`. If you want to build your own, use
+The themed remixes live in `src/smallwords/themes/caveman.py` and
+`src/smallwords/themes/pirate.py`. If you want to build your own, use
 `remix_wordlist(...)` with a base list plus curated additions and removals.
+
+For source-tree navigation, `src/smallwords/` is now organized into a few
+clear groups: core runtime-agnostic modules at the package root, bundled data
+files in `data/`, themed remixes in `themes/`, and optional runtime helpers in
+`integrations/`.
 
 ## Contrastive Example
 
