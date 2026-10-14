@@ -1,7 +1,5 @@
 """Rewrite a technical passage with a live llama.cpp model and grammar."""
 
-# ruff: noqa: E402
-
 from __future__ import annotations
 
 import json

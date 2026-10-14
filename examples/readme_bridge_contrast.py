@@ -1,7 +1,5 @@
 """Reproduce the README bridge contrast with a live llama.cpp model."""
 
-# ruff: noqa: E402
-
 from __future__ import annotations
 
 import json
@@ -33,7 +31,7 @@ BASE_URL = server_base_url()
 BASE_PROMPT = "Explain what a bridge does in one short sentence."
 STANDARD_PROMPT = BASE_PROMPT
 TOPIC = "How does a bridge work?"
-WORDLIST = allow_input_words("basic_850", TOPIC)
+WORDLIST = allow_input_words("basic_850", "bridge")
 SHAPE = OutputShape(max_words_per_line=24, max_lines=1)
 TEMPERATURE = 0.0
 SEED = 7

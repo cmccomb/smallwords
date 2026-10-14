@@ -15,13 +15,27 @@ EXAMPLES = [
     ROOT / "examples" / "pirate_greeting.py",
     ROOT / "examples" / "rewrite_technical_passage.py",
 ]
+OFFLINE_EXAMPLE = ROOT / "examples" / "offline_quickstart.py"
 
 
 def test_example_files_exist() -> None:
     """Ensure the expected example files stay present in the repository."""
     for example in EXAMPLES:
         assert example.exists()
+    assert OFFLINE_EXAMPLE.exists()
     assert (ROOT / "examples" / "_shared.py").exists()
+
+
+def test_offline_quickstart_runs() -> None:
+    """Keep the first-run example usable without a model server."""
+    completed = subprocess.run(
+        [sys.executable, str(OFFLINE_EXAMPLE)],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert "Sample valid: True" in completed.stdout
 
 
 @pytest.mark.skipif(
