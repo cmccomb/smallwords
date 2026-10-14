@@ -1,6 +1,12 @@
 # Examples
 
-This directory keeps three live llama.cpp examples:
+Start with the offline example; it needs no model server:
+
+```bash
+python examples/offline_quickstart.py
+```
+
+This directory also keeps three live llama.cpp examples:
 
 - `readme_bridge_contrast.py`: the bridge comparison used in the root README
 - `pirate_greeting.py`: a focused pirate greeting built from `pirate_898`

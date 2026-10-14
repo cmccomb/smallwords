@@ -1,7 +1,5 @@
 """Generate one pirate-style greeting with a live llama.cpp model."""
 
-# ruff: noqa: E402
-
 from __future__ import annotations
 
 import json

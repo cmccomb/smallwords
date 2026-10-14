@@ -11,26 +11,34 @@ PromptKind = Literal["answer", "explain", "rewrite", "summarize"]
 
 _PROMPT_SPECS: dict[PromptKind, tuple[str, str, str]] = {
     "answer": (
-        "Answer the question in plain English. Use only words from the {name} word list. "
-        "Be direct, brief, and clear.",
+        (
+            "Answer the question in plain English. Use only words from the {name} word list. "
+            "Be direct, brief, and clear."
+        ),
         "Question",
         "answer",
     ),
     "explain": (
-        "Explain the topic in plain English. Use only words from the {name} word list. "
-        "Use short sentences and concrete language.",
+        (
+            "Explain the topic in plain English. Use only words from the {name} word list. "
+            "Use short sentences and concrete language."
+        ),
         "Topic",
         "answer",
     ),
     "rewrite": (
-        "Rewrite the text in plain English. Use only words from the {name} word list. "
-        "Keep the meaning, but make the wording easier.",
+        (
+            "Rewrite the text in plain English. Use only words from the {name} word list. "
+            "Keep the meaning, but make the wording easier."
+        ),
         "Text",
         "rewrite",
     ),
     "summarize": (
-        "Summarize the text in plain English. Use only words from the {name} word list. "
-        "Keep the key points and cut extra detail.",
+        (
+            "Summarize the text in plain English. Use only words from the {name} word list. "
+            "Keep the key points and cut extra detail."
+        ),
         "Text",
         "summary",
     ),

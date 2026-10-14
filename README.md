@@ -38,26 +38,35 @@ python -m pip install -e ".[dev]"
 ## Quick Start
 
 ```python
-from smallwords import OutputResources, OutputShape, allow_input_words, is_compliant
+from smallwords import OutputResources, OutputShape, allow_input_words
 from smallwords.prompts import build_prompt
 
 shape = OutputShape(max_words_per_line=24, max_lines=1)
-spec = allow_input_words("basic_850", "How does a bridge work?")
+spec = allow_input_words("basic_850", "bridge")
 resources = OutputResources.from_wordlist(spec, shape=shape)
 prompt = build_prompt("explain", "How does a bridge work?", wordlist=spec)
 schema = resources.json_schema(key="answer", title="bridge_explanation")
 
 text = "A bridge is a structure that helps people and things move across a river or a deep place."
-ok = is_compliant(text, spec)
+result = resources.validate(text)
+assert result.valid, result.issues
 ```
 
 The contrast is the point. `build_prompt(...)` is the soft instruction layer.
 `OutputResources` gives you the matching hard constraints in both GBNF and JSON
-Schema form. `is_compliant(...)` is the lightweight offline check.
+Schema form. `resources.validate(...)` checks a response against the same
+vocabulary and output shape. The older `is_compliant(...)` helper remains a
+vocabulary-only check; it does not check punctuation or output shape.
 
-If you want the model to be able to repeat topic or question terms such as
-`bridge`, `neighbor`, or `order`, use `allow_input_words(...)` once and pass
-that derived spec into the prompt, resources, and validation helpers together.
+Run the complete offline example without a model server:
+
+```bash
+python examples/offline_quickstart.py
+```
+
+If you want the model to be able to repeat an essential topic term such as
+`bridge`, pass just that term to `allow_input_words(...)`. Passing an entire
+technical passage will also allow every technical word in it.
 
 ## Built-In Wordlists
 
@@ -109,12 +118,10 @@ python examples/readme_bridge_contrast.py
 
 ## Examples
 
-See the repository's
+Start with the offline quick start above. For live-model examples, see the repository's
 [`examples/README.md`](https://github.com/cmccomb/smallwords/blob/main/examples/README.md)
-for the runnable examples. The current example set is live-model based:
-the README bridge contrast, a focused pirate greeting, and a focused technical
-rewrite all call a live `llama-server` model with a prompt plus generated
-grammar.
+for the runnable examples. The bridge contrast, pirate greeting, and technical
+rewrite call a live `llama-server` model with a prompt plus generated grammar.
 
 ## Development
 

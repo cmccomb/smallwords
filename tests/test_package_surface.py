@@ -15,14 +15,17 @@ def test_package_exposes_expected_root_api() -> None:
     for name in (
         "OutputResources",
         "OutputShape",
+        "OutputValidation",
         "WordFamily",
         "WordlistSpec",
         "allow_input_words",
         "get_wordlist",
         "is_compliant",
+        "is_in_vocabulary",
         "list_wordlists",
         "out_of_vocab",
         "remix_wordlist",
+        "validate_output",
     ):
         assert hasattr(smallwords, name)
 

@@ -10,7 +10,7 @@ same constraint logic in a different format.
 
 ``smallwords`` addresses that gap by keeping one controlled vocabulary at the
 center of the workflow. From that single specification, the package can build
-prompt text, GBNF, JSON Schema, and validation checks that stay aligned.
+prompt text, GBNF, JSON Schema, and full output validation that stay aligned.
 
 Install
 -------
@@ -26,6 +26,11 @@ Most integrations follow the same chain: choose a vocabulary, optionally add
 task words, build the matching prompt and portable resources, then validate the
 result.
 
+For a first run without a model server, use
+``python examples/offline_quickstart.py`` from a repository checkout.
+Pass only essential terms to ``allow_input_words``: supplying an entire source
+passage allows all its uncommon words in the generated response.
+
 .. autofunction:: smallwords.allow_input_words
 
 .. autofunction:: smallwords.get_wordlist
@@ -38,11 +43,22 @@ result.
 .. autoclass:: smallwords.OutputResources
    :members:
 
+.. autoclass:: smallwords.OutputValidation
+
+.. autofunction:: smallwords.validate_output
+
 .. autofunction:: smallwords.prompts.build_prompt
 
 .. autofunction:: smallwords.is_compliant
 
+.. autofunction:: smallwords.is_in_vocabulary
+
 .. autofunction:: smallwords.out_of_vocab
+
+``OutputResources.validate`` and ``validate_output`` check the full vocabulary
+and output shape. ``is_compliant`` and ``out_of_vocab`` check alphabetic word
+membership only; they ignore numbers, punctuation, capitalization, and line
+limits.
 
 Built-ins
 ---------
@@ -78,7 +94,7 @@ the prompt, and applies the matching grammar.
    from smallwords import OutputResources, OutputShape, allow_input_words
    from smallwords.prompts import build_prompt
 
-   spec = allow_input_words("basic_850", "How does a bridge work?")
+   spec = allow_input_words("basic_850", "bridge")
    shape = OutputShape(max_words_per_line=24, max_lines=1)
    prompt = build_prompt("explain", "How does a bridge work?", wordlist=spec)
    resources = OutputResources.from_wordlist(spec, shape=shape)

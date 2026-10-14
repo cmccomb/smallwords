@@ -44,13 +44,14 @@ def docstring_issues(path: Path) -> list[str]:
                     f"missing public class docstring: {node.name} (line {node.lineno})"
                 )
             issues.extend(_public_method_issues(node))
-        if isinstance(
-            node, (ast.FunctionDef, ast.AsyncFunctionDef)
-        ) and not node.name.startswith("_"):
-            if ast.get_docstring(node) is None:
-                issues.append(
-                    f"missing public function docstring: {node.name} (line {node.lineno})"
-                )
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and not node.name.startswith("_")
+            and ast.get_docstring(node) is None
+        ):
+            issues.append(
+                f"missing public function docstring: {node.name} (line {node.lineno})"
+            )
 
     return issues
 

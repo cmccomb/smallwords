@@ -6,7 +6,13 @@ from .input_words import allow_input_words
 from .remix import remix_wordlist
 from .resources import OutputResources
 from .types import OutputShape, WordFamily, WordlistSpec
-from .validation import is_compliant, out_of_vocab
+from .validation import (
+    OutputValidation,
+    is_compliant,
+    is_in_vocabulary,
+    out_of_vocab,
+    validate_output,
+)
 from .wordlists import get_wordlist, list_wordlists
 
 try:
@@ -17,13 +23,16 @@ except PackageNotFoundError:
 __all__ = [
     "OutputResources",
     "OutputShape",
+    "OutputValidation",
     "WordFamily",
     "WordlistSpec",
     "__version__",
     "allow_input_words",
     "get_wordlist",
     "is_compliant",
+    "is_in_vocabulary",
     "list_wordlists",
     "out_of_vocab",
     "remix_wordlist",
+    "validate_output",
 ]

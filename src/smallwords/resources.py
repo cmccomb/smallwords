@@ -12,6 +12,7 @@ from ._spec_utils import resolve_wordlist_spec
 from .grammar_builder import build_gbnf
 from .json_schema import build_json_schema
 from .types import OutputShape, WordlistSpec
+from .validation import OutputValidation, validate_output
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,10 @@ class OutputResources:
             title=title,
             description=description,
         )
+
+    def validate(self, text: str) -> OutputValidation:
+        """Check text against this resource bundle's vocabulary and shape."""
+        return validate_output(text, self.spec, shape=self.shape)
 
     def save_gbnf(self, path: str | PathLike[str]) -> None:
         """Write the generated GBNF resource to disk."""
