@@ -98,27 +98,26 @@ sample lines without a model server. The remixes live in
 This paired example shows how the same meaning changes across natural, simple,
 pirate, and cowboy wording. Each line below is an unedited local model output
 from October 15, 2026. The runs used
-`ibm-granite/granite-3.3-8b-instruct-GGUF` through `llama-server` from
+`ibm-granite/granite-4.2-8b-GGUF` through `llama-server` from
 `llama.cpp`.
 
-The original run was unconstrained. The simple run used generated `moby_898`
-GBNF. The pirate and cowboy runs were prompted for their respective styles and
-then checked against the v0.2.0 themed wordlists.
+The original run was unconstrained. The other three used generated GBNF from a
+task-focused subset of the named preset. Each constrained result also passes
+the same output-shape check against its full v0.2.0 preset.
 
-The shared meaning was: *It is getting late, so we should head home.*
+The shared request was: *Greet a friend and say where you are.*
 
 | Mode | Model output | v0.2.0 validation |
 | --- | --- | --- |
-| Original | “It's nearing dusk, let's head home soon to avoid the dark.” | Unconstrained |
-| Simple (`moby_898`) | “It is time to go back home now.” | Passes |
-| Pirate | “Ahoy matey, the sun dips low, I must sail home before night falls.” | Fails: `sun` and `dips` are outside `pirate_898` |
-| Cowboy | “Howdy, need to ride home to the ranch before nightfall.” | Fails: `nightfall` is outside `cowboy_898` |
+| Original | “Hi, I'm home.” | Unconstrained |
+| Simple (`moby_898`) | “Good day friend I am at home” | Passes |
+| Pirate (`pirate_898`) | “Ahoy matey I am on the ship near the island.” | Passes |
+| Cowboy (`cowboy_898`) | “Howdy friend I am at the ranch near the prairie” | Passes |
 
-The themed prompts produce recognizable voices, but this comparison also makes
-the remaining limitation visible. The natural pirate and cowboy lines use a few
-words outside their controlled vocabularies, and both use internal commas that
-the current line grammar rejects. The simple line passes its complete vocabulary
-and output-shape check.
+The focused subsets keep the generated grammar compact for a specific task;
+they do not introduce words outside the underlying presets. The resulting lines
+therefore demonstrate constrained generation rather than prompt-only style
+guidance followed by validation.
 
 ## Examples
 
