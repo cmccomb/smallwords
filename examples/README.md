@@ -4,6 +4,7 @@ Start with the offline example; it needs no model server:
 
 ```bash
 python examples/offline_quickstart.py
+python examples/themed_presets.py
 ```
 
 This directory also keeps three live llama.cpp examples:

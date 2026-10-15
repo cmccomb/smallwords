@@ -1,0 +1,60 @@
+"""Keep useful spoken forms and low-value swap candidates in one place."""
+
+# Moby 898 omits several everyday pronouns. The story presets add these forms
+# so their small vocabularies can still make natural sentences.
+SPOKEN_EXTRA_WORDS = (
+    "her",
+    "his",
+    "its",
+    "me",
+    "my",
+    "our",
+    "their",
+    "us",
+    "your",
+)
+
+# Replace abstract news and institutional terms while retaining Moby's common
+# verbs, connectors, and concrete words. Both story presets use this same set.
+ABSTRACT_SWAP_OUT_WORDS = (
+    "administration",
+    "analysis",
+    "association",
+    "authority",
+    "commission",
+    "committee",
+    "conference",
+    "congress",
+    "democratic",
+    "department",
+    "development",
+    "director",
+    "economic",
+    "election",
+    "element",
+    "employee",
+    "experiment",
+    "facility",
+    "factor",
+    "federal",
+    "fiscal",
+    "function",
+    "industrial",
+    "individual",
+    "institution",
+    "interact",
+    "international",
+    "organization",
+    "political",
+    "population",
+    "procedure",
+    "production",
+    "project",
+    "research",
+    "responsibility",
+    "science",
+    "society",
+    "technical",
+    "university",
+    "various",
+)

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from importlib.resources import files
 
-from .themes import build_caveman_spec, build_pirate_spec
+from .themes import build_caveman_spec, build_cowboy_spec, build_pirate_spec
 from .types import WordlistSpec
 
 # This resource root holds the bundled wordlist text files shipped with the package.
@@ -80,6 +80,8 @@ SPECIAL_ENGLISH_1475_SPEC = WordlistSpec(
 
 # This bundled spec exposes the caveman remix preset.
 CAVEMAN_898_SPEC = build_caveman_spec(MOBY_898_SPEC)
+# This bundled spec exposes the cowboy remix preset.
+COWBOY_898_SPEC = build_cowboy_spec(MOBY_898_SPEC)
 # This bundled spec exposes the pirate remix preset.
 PIRATE_898_SPEC = build_pirate_spec(MOBY_898_SPEC)
 
@@ -89,6 +91,7 @@ WORDLISTS: dict[str, WordlistSpec] = {
     BASIC_850_SPEC.name: BASIC_850_SPEC,
     SPECIAL_ENGLISH_1475_SPEC.name: SPECIAL_ENGLISH_1475_SPEC,
     CAVEMAN_898_SPEC.name: CAVEMAN_898_SPEC,
+    COWBOY_898_SPEC.name: COWBOY_898_SPEC,
     PIRATE_898_SPEC.name: PIRATE_898_SPEC,
 }
 

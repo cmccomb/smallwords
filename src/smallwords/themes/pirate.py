@@ -1,55 +1,52 @@
-"""Define the bundled pirate-themed remix.
-
-This module keeps the themed adjustments intentionally compact so the pirate
-vocabulary is easy to audit. Pirate mode is designed as a size-neutral remix:
-it makes equal-sized additions and deletions while preserving the base
-word-count and ordinary English inflection behavior.
-"""
+"""Define the bundled storybook-pirate vocabulary remix."""
 
 from __future__ import annotations
 
 from ..remix import remix_wordlist
 from ..types import WordlistSpec
+from ._shared import ABSTRACT_SWAP_OUT_WORDS, SPOKEN_EXTRA_WORDS
 
-# These additions give the pirate remix its playful nautical vocabulary.
+# A practical mix of greetings, people, places, gear, and actions. The preset is
+# playful rather than a claim about how historical pirates actually spoke.
 PIRATE_EXTRA_WORDS = (
     "ahoy",
     "anchor",
     "aye",
+    "booty",
+    "cannon",
+    "compass",
     "crew",
     "deck",
+    "flag",
+    "gold",
     "harbor",
+    "island",
+    "loot",
+    "map",
+    "mast",
     "matey",
+    "mutiny",
     "parrot",
+    "pirate",
+    "plank",
     "plunder",
+    "port",
+    "rope",
     "rum",
     "sail",
+    "sailor",
     "sea",
     "shore",
-    "booty",
+    "storm",
+    "treasure",
+    "voyage",
 )
 
-# These deletions balance the pirate additions so the remix stays size-neutral.
-PIRATE_SWAP_OUT_WORDS = (
-    "authority",
-    "publish",
-    "settle",
-    "marriage",
-    "fiscal",
-    "interact",
-    "democratic",
-    "generally",
-    "select",
-    "importance",
-    "march",
-    "forget",
-    "bank",
-    "finish",
-)
+PIRATE_SWAP_OUT_WORDS = ABSTRACT_SWAP_OUT_WORDS
 
 
 def build_pirate_spec(base: WordlistSpec) -> WordlistSpec:
-    """Build a size-neutral pirate remix from a base vocabulary.
+    """Build a size-neutral pirate remix with useful spoken words.
 
     Args:
         base: Base wordlist specification to remix.
@@ -58,19 +55,34 @@ def build_pirate_spec(base: WordlistSpec) -> WordlistSpec:
         A derived pirate-flavored wordlist specification.
     """
     base_canonical = set(base.canonical_words())
-    additions = tuple(word for word in PIRATE_EXTRA_WORDS if word not in base_canonical)
+    additions = tuple(
+        word
+        for word in (*SPOKEN_EXTRA_WORDS, *PIRATE_EXTRA_WORDS)
+        if word not in base_canonical
+    )
     removals = tuple(word for word in PIRATE_SWAP_OUT_WORDS if word in base_canonical)
     if len(additions) != len(removals):
         raise ValueError(
             "pirate remix must keep equal effective additions and deletions"
         )
 
-    # Pirate mode keeps inflections so the speech stays lively instead of clipped.
     return remix_wordlist(
         base,
         name=f"pirate_{len(base.words)}",
-        description="A size-neutral base-vocabulary remix with pirate-style adjustments for playful outputs.",
+        description="A size-neutral Moby remix for clear, playful pirate stories and greetings.",
         add_words=additions,
         remove_words=removals,
-        source_name=f"Derived from the bundled {base.name} wordlist with size-neutral pirate-style adjustments",
+        source_name=f"Derived from {base.name} with curated storybook pirate terms",
+        source_urls=tuple(
+            dict.fromkeys(
+                (
+                    *base.source_urls,
+                    "https://www.rmg.co.uk/press-release/international-talk-pirate-weekend",
+                )
+            )
+        ),
+        style_hint=(
+            "Use a playful pirate voice when it fits the task. "
+            "Choose ship and sea words naturally, and keep the meaning clear."
+        ),
     )

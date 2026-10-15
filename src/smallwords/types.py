@@ -70,6 +70,8 @@ class WordlistSpec:
         variant_mode: Automatic expansion mode for inflected surface forms.
         word_families: Explicit families that supplement automatic expansion.
         blocked_forms: Surface forms that should be excluded after expansion.
+        style_hint: Optional instruction used by prompt builders for a themed
+            voice. It does not change the allowed vocabulary.
     """
 
     name: str
@@ -86,6 +88,7 @@ class WordlistSpec:
     variant_mode: VariantMode = "english_inflections"
     word_families: tuple[WordFamily, ...] = field(default_factory=tuple)
     blocked_forms: tuple[str, ...] = field(default_factory=tuple)
+    style_hint: str = ""
 
     def canonical_words(self) -> tuple[str, ...]:
         """Return the normalized canonical word list as authored in the spec.

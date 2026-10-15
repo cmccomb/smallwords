@@ -16,6 +16,7 @@ EXAMPLES = [
     ROOT / "examples" / "rewrite_technical_passage.py",
 ]
 OFFLINE_EXAMPLE = ROOT / "examples" / "offline_quickstart.py"
+THEMED_EXAMPLE = ROOT / "examples" / "themed_presets.py"
 
 
 def test_example_files_exist() -> None:
@@ -23,6 +24,7 @@ def test_example_files_exist() -> None:
     for example in EXAMPLES:
         assert example.exists()
     assert OFFLINE_EXAMPLE.exists()
+    assert THEMED_EXAMPLE.exists()
     assert (ROOT / "examples" / "_shared.py").exists()
 
 
@@ -36,6 +38,20 @@ def test_offline_quickstart_runs() -> None:
         text=True,
     )
     assert "Sample valid: True" in completed.stdout
+
+
+def test_themed_presets_example_runs() -> None:
+    """Show two valid themed lines without a model server."""
+    completed = subprocess.run(
+        [sys.executable, str(THEMED_EXAMPLE)],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert "pirate_898" in completed.stdout
+    assert "cowboy_898" in completed.stdout
+    assert completed.stdout.count("Valid: True") == 2
 
 
 @pytest.mark.skipif(

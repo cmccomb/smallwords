@@ -60,6 +60,8 @@ def build_prompt(
         raise ValueError(f"Unsupported prompt kind: {kind}") from exc
 
     prompt = instruction_template.format(name=spec.name)
+    if spec.style_hint:
+        prompt += f" {spec.style_hint}"
     if thinking:
         prompt += f" First write a short plan. Then give the final {deliverable}."
 
