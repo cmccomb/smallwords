@@ -44,6 +44,7 @@ WORDLIST = WordlistSpec(
     license_name=BASE_WORDLIST.license_name,
     allowed_punctuation=(".",),
     variant_mode="surface_only",
+    style_hint="Use a friendly pirate greeting.",
 )
 SHAPE = OutputShape(min_words_per_line=6, max_words_per_line=6, max_lines=1)
 PROMPT = build_prompt(

@@ -12,8 +12,8 @@ so prompt text, GBNF, JSON Schema, and post-generation validation all stay in
 sync.
 
 The package ships with a small set of bundled wordlists: direct source-backed
-lists such as `moby_898`, `basic_850`, and `special_english_1475`, plus a
-couple of intentionally themed remixes. By default, the built-ins also allow
+lists such as `moby_898`, `basic_850`, and `special_english_1475`, plus three
+intentionally themed remixes. By default, the built-ins also allow
 slight family variants such as `go`, `goes`, and `going`.
 
 It supports Python 3.10 and newer.
@@ -74,16 +74,24 @@ technical passage will also allow every technical word in it.
 - `basic_850`: Charles Ogden's Basic English 850
 - `special_english_1475`: Voice of America Special English
 - `caveman_898`: a size-neutral surface-only `moby_898` remix with caveman adjustments
-- `pirate_898`: a size-neutral `moby_898` remix with pirate adjustments
+- `cowboy_898`: a size-neutral `moby_898` remix for ranch and trail stories
+- `pirate_898`: a size-neutral `moby_898` remix for playful sea stories
 
 The bundled text files live in `src/smallwords/data/`. `moby_898`,
 `basic_850`, and `special_english_1475` are direct source-backed lists.
-`caveman_898` and `pirate_898` are derived size-neutral remixes built on top of
-`moby_898`.
+`caveman_898`, `cowboy_898`, and `pirate_898` are derived size-neutral remixes
+built on top of `moby_898`.
 
-The themed remixes live in `src/smallwords/themes/caveman.py` and
-`src/smallwords/themes/pirate.py`. If you want to build your own, use
-`remix_wordlist(...)` with a base list plus curated additions and removals.
+The cowboy and pirate presets each swap 40 abstract base words for themed terms
+and everyday pronouns missing from `moby_898`. Their `style_hint` values guide
+`build_prompt(...)`; the generated grammar and schema still enforce the
+vocabulary and output shape. These are playful voices, not historical dialect
+models. The terms draw on [National Park Service cowboy history](https://www.nps.gov/tapr/learn/historyculture/cowboys.htm)
+and [Royal Museums Greenwich's pirate word guide](https://www.rmg.co.uk/press-release/international-talk-pirate-weekend).
+
+Run `python examples/themed_presets.py` to inspect both prompts and validate
+sample lines without a model server. The remixes live in
+`src/smallwords/themes/`. Use `remix_wordlist(...)` to build your own.
 
 ## Contrastive Example
 

@@ -24,6 +24,7 @@ def remix_wordlist(
     variant_mode: VariantMode | None = None,
     line_prefixes: tuple[str, ...] | None = None,
     blocked_forms: tuple[str, ...] = (),
+    style_hint: str | None = None,
 ) -> WordlistSpec:
     """Build a derived wordlist from a base list plus curated additions/removals.
 
@@ -39,6 +40,7 @@ def remix_wordlist(
         variant_mode: Optional variant expansion mode for the derived wordlist.
         line_prefixes: Optional replacement line prefixes for the derived wordlist.
         blocked_forms: Optional surface forms to exclude after variant expansion.
+        style_hint: Optional replacement prompt guidance for the derived list.
 
     Returns:
         A derived wordlist specification built from the supplied edits.
@@ -70,4 +72,5 @@ def remix_wordlist(
         variant_mode=variant_mode or base.variant_mode,
         word_families=base.word_families,
         blocked_forms=tuple(dict.fromkeys(base.blocked_forms + blocked_forms)),
+        style_hint=base.style_hint if style_hint is None else style_hint,
     )

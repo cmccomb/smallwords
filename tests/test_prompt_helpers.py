@@ -44,6 +44,17 @@ def test_allow_input_words_reuses_base_spec_when_no_words_are_added() -> None:
     assert derived is base
 
 
+def test_themed_prompt_guidance_survives_input_word_expansion() -> None:
+    """Keep a theme's voice guidance when adding a task-specific word."""
+    pirate = allow_input_words("pirate_898", "sextant")
+    prompt = build_prompt("answer", "Where is the ship?", wordlist=pirate)
+    assert "sextant" in pirate.words
+    assert "playful pirate voice" in prompt
+    assert "playful pirate voice" not in build_prompt(
+        "answer", "Where is the ship?", wordlist="moby_898"
+    )
+
+
 def test_resource_helpers_write_gbnf_and_schema_files(tmp_path: Path) -> None:
     """Ensure portable resources can be saved to disk for downstream runtimes."""
     shape = OutputShape(max_words_per_line=2, max_lines=1)

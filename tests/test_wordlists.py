@@ -12,6 +12,7 @@ def test_documented_wordlists_are_available() -> None:
         "basic_850",
         "special_english_1475",
         "caveman_898",
+        "cowboy_898",
         "pirate_898",
     } == set(list_wordlists())
 
@@ -46,16 +47,27 @@ def test_themed_wordlists_are_size_neutral_moby_remixes() -> None:
     """Ensure the themed presets stay size-neutral relative to the Moby base."""
     moby = get_wordlist("moby_898")
     caveman = get_wordlist("caveman_898")
+    cowboy = get_wordlist("cowboy_898")
     pirate = get_wordlist("pirate_898")
 
     assert len(caveman.words) == len(moby.words) == 898
+    assert len(cowboy.words) == len(moby.words) == 898
     assert len(pirate.words) == len(moby.words) == 898
     assert caveman.variant_mode == "surface_only"
     assert "ugh" in caveman.words
     assert "without" not in caveman.words
-    assert "matey" in pirate.words
+    assert {"cattle", "howdy", "ranch", "trail", "vaquero"} <= set(cowboy.words)
+    assert {"ahoy", "crew", "island", "matey", "treasure"} <= set(pirate.words)
+    assert {"me", "my", "your", "our"} <= set(cowboy.words)
+    assert {"me", "my", "your", "our"} <= set(pirate.words)
+    assert {"finish", "forget", "bank", "settle"} <= set(pirate.words)
     assert pirate.variant_mode == "english_inflections"
     assert "authority" not in pirate.words
+    assert "authority" not in cowboy.words
+    assert "pirate" in pirate.style_hint
+    assert "ranch-hand" in cowboy.style_hint
+    assert any("rmg.co.uk" in url for url in pirate.source_urls)
+    assert any("nps.gov" in url for url in cowboy.source_urls)
 
 
 def test_default_family_expansion_stays_conservative() -> None:

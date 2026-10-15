@@ -7,7 +7,8 @@ catalog modules.
 
 # These re-exports keep the themed remix builders discoverable inside the package.
 from .caveman import build_caveman_spec
+from .cowboy import build_cowboy_spec
 from .pirate import build_pirate_spec
 
 # Keep the subpackage surface explicit for readers and tooling.
-__all__ = ["build_caveman_spec", "build_pirate_spec"]
+__all__ = ["build_caveman_spec", "build_cowboy_spec", "build_pirate_spec"]

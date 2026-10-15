@@ -69,11 +69,22 @@ The installed catalog currently includes:
 - ``basic_850``
 - ``special_english_1475``
 - ``caveman_898``
+- ``cowboy_898``
 - ``pirate_898``
 
 Use :func:`smallwords.list_wordlists` to inspect the installed catalog. Use
 :func:`smallwords.get_wordlist` when a workflow needs the underlying
 specification object directly.
+
+The ``cowboy_898`` and ``pirate_898`` presets each replace 40 abstract base
+words with themed terms and everyday pronouns. ``build_prompt`` includes their
+voice guidance; GBNF and JSON Schema enforce vocabulary and output shape only.
+These are playful styles rather than historical dialect models. See the
+`National Park Service cowboy history <https://www.nps.gov/tapr/learn/historyculture/cowboys.htm>`_
+and `Royal Museums Greenwich pirate word guide <https://www.rmg.co.uk/press-release/international-talk-pirate-weekend>`_
+for source context.
+
+Run ``python examples/themed_presets.py`` for offline samples of both presets.
 
 Examples With Results
 ---------------------
@@ -129,6 +140,7 @@ greeting-focused vocabulary, and then applies a matching grammar.
        license_name=base.license_name,
        allowed_punctuation=(".",),
        variant_mode="surface_only",
+       style_hint="Use a friendly pirate greeting.",
    )
    shape = OutputShape(min_words_per_line=6, max_words_per_line=6, max_lines=1)
    prompt = build_prompt(
