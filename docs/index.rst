@@ -89,36 +89,57 @@ Run ``python examples/themed_presets.py`` for offline samples of both presets.
 Examples With Results
 ---------------------
 
-The examples below were produced locally on April 5, 2026 with
-``llama-server`` and ``bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m``.
+The comparison below was produced locally on October 15, 2026 with
+``llama-server`` and ``ibm-granite/granite-4.2-8b-GGUF``.
 
-Bridge Contrast
-~~~~~~~~~~~~~~~
+Missile Guidance Contrast
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This comparison isolates the package's core claim. A plain prompt can already
-produce a reasonable answer. However, it does not expose an explicit response
-contract. The constrained run uses the same task, adds the active vocabulary to
-the prompt, and applies the matching grammar.
+This comparison starts with a compressed line from the familiar missile-guidance
+monologue. Three constrained rewrites express the same idea as a current place,
+a target place, and the difference between them.
 
 .. code-block:: python
 
    from smallwords import OutputResources, OutputShape, allow_input_words
    from smallwords.prompts import build_prompt
 
-   spec = allow_input_words("basic_850", "bridge")
-   shape = OutputShape(max_words_per_line=24, max_lines=1)
-   prompt = build_prompt("explain", "How does a bridge work?", wordlist=spec)
+   source = (
+       "By subtracting where it is from where it isn't, or where it isn't from "
+       "where it is, it obtains a difference, or deviation."
+   )
+   spec = allow_input_words("moby_898", "missile")
+   shape = OutputShape(min_words_per_line=6, max_words_per_line=11, max_lines=3)
+   prompt = build_prompt("explain", source, wordlist=spec)
    resources = OutputResources.from_wordlist(spec, shape=shape)
 
-Plain prompt result:
+Original source::
 
-   A bridge connects two points, usually across a body of water or a gap, allowing people and vehicles to cross safely.
+   By subtracting where it is from where it isn't, or where it isn't from where it is, it obtains a difference, or deviation.
 
-Constrained result:
+Simple, constrained with ``moby_898`` plus ``missile``::
 
-   A bridge is a structure that helps people and things move across a river or a deep place.
+   The missile is now where it is.
+   The missile should be where it should be.
+   The difference tells the missile how far to move.
 
-See ``examples/readme_bridge_contrast.py`` for the full prompt-plus-grammar run.
+Pirate, constrained with ``pirate_898``::
+
+   First place is where the ship is now.
+   Second place is where it should be.
+   Difference tells the crew which way to sail.
+
+Cowboy, constrained with ``cowboy_898``::
+
+   Where the cattle are now is the first place.
+   Where the ranch is is the second place.
+   The difference tells the cowboy which way to ride.
+
+The live run uses a compact task-focused subset for each grammar. It then checks
+the result against both that subset and the complete preset. Only the simple
+case adds a topic word, ``missile``. See
+``examples/readme_missile_contrast.py`` for all three prompts, grammars, schemas,
+model calls, and validation reports.
 
 Pirate Greeting
 ~~~~~~~~~~~~~~~
