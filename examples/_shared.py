@@ -59,6 +59,7 @@ def generate_text(
         "max_tokens": max_tokens,
         "temperature": temperature,
         "seed": seed,
+        "cache_prompt": False,
     }
     if grammar is not None:
         payload["grammar"] = grammar

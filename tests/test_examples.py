@@ -11,7 +11,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = [
-    ROOT / "examples" / "readme_bridge_contrast.py",
+    ROOT / "examples" / "readme_missile_contrast.py",
     ROOT / "examples" / "pirate_greeting.py",
     ROOT / "examples" / "rewrite_technical_passage.py",
 ]
@@ -71,5 +71,5 @@ def test_examples_run() -> None:
         assert "=== Server ===" in completed.stdout
         assert (
             "=== Generation Request ===" in completed.stdout
-            or "=== Standard Generation Request ===" in completed.stdout
+            or "=== Simple Generation Request ===" in completed.stdout
         )

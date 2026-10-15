@@ -123,7 +123,7 @@ current place, a target place, and the difference between them.
 
 Start with the offline quick start above. For live-model examples, see the repository's
 [`examples/README.md`](https://github.com/cmccomb/smallwords/blob/main/examples/README.md)
-for the runnable examples. The bridge contrast, pirate greeting, and technical
+for the runnable examples. The missile contrast, pirate greeting, and technical
 rewrite call a live `llama-server` model with a prompt plus generated grammar.
 
 ## Development
