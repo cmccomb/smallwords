@@ -1,0 +1,203 @@
+"""Generate the README's simple, pirate, and cowboy missile rewrites."""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+from dataclasses import asdict, dataclass
+from pathlib import Path
+
+SRC_ROOT = Path(__file__).resolve().parents[1] / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from _shared import generate_text, server_base_url
+from smallwords import (
+    OutputResources,
+    OutputShape,
+    WordlistSpec,
+    allow_input_words,
+    get_wordlist,
+    validate_output,
+)
+from smallwords.prompts import build_prompt
+
+MODEL_REPO = os.environ.get(
+    "SMALLWORDS_LLAMA_MODEL",
+    "ibm-granite/granite-4.2-8b-GGUF:Q4_K_M",
+)
+BASE_URL = server_base_url()
+SOURCE = (
+    "By subtracting where it is from where it isn't, or where it isn't from "
+    "where it is, it obtains a difference, or deviation."
+)
+SHAPE = OutputShape(min_words_per_line=6, max_words_per_line=11, max_lines=3)
+MAX_TOKENS = 58
+TEMPERATURE = 0.55
+
+
+@dataclass(frozen=True)
+class ContrastCase:
+    """Hold one focused generation case and its full validation preset."""
+
+    label: str
+    full_wordlist: WordlistSpec
+    focused_wordlist: WordlistSpec
+    instruction: str
+    seed: int
+
+
+def focused_wordlist(
+    name: str,
+    full_wordlist: WordlistSpec,
+    words: str,
+) -> WordlistSpec:
+    """Select a compact surface vocabulary from a complete preset."""
+    allowed = set(full_wordlist.allowed_words())
+    selected = tuple(word for word in words.split() if word in allowed)
+    return WordlistSpec(
+        name=name,
+        words=selected,
+        description=f"A task-focused subset of {full_wordlist.name}.",
+        source_name=f"Selected surface forms from {full_wordlist.name}",
+        source_urls=full_wordlist.source_urls,
+        license_name=full_wordlist.license_name,
+        allowed_punctuation=(".",),
+        variant_mode="surface_only",
+        style_hint=full_wordlist.style_hint,
+    )
+
+
+SIMPLE_FULL = allow_input_words("moby_898", "missile")
+PIRATE_FULL = get_wordlist("pirate_898")
+COWBOY_FULL = get_wordlist("cowboy_898")
+CASES = (
+    ContrastCase(
+        label="Simple",
+        full_wordlist=SIMPLE_FULL,
+        focused_wordlist=focused_wordlist(
+            "simple_position_focus",
+            SIMPLE_FULL,
+            "the first second place where missile is now it should be difference "
+            "tells how far to move",
+        ),
+        instruction=(
+            "Explain in exactly three short sentences. Sentence one names the first "
+            "place as where the missile is now. Sentence two names the second place "
+            "as where it should be. Sentence three says the difference tells the "
+            "missile how far to move."
+        ),
+        seed=3,
+    ),
+    ContrastCase(
+        label="Pirate",
+        full_wordlist=PIRATE_FULL,
+        focused_wordlist=focused_wordlist(
+            "pirate_position_focus",
+            PIRATE_FULL,
+            "the first second place where ship is now it should be difference tells "
+            "crew which way to sail",
+        ),
+        instruction=(
+            "Explain in exactly three short pirate sentences. Sentence one names the "
+            "first place as where the ship is now. Sentence two names the second "
+            "place as where it should be. Sentence three says the difference tells "
+            "the crew which way to sail."
+        ),
+        seed=6,
+    ),
+    ContrastCase(
+        label="Cowboy",
+        full_wordlist=COWBOY_FULL,
+        focused_wordlist=focused_wordlist(
+            "cowboy_position_focus",
+            COWBOY_FULL,
+            "the first second place where cattle are now ranch is difference tells "
+            "cowboy which way to ride",
+        ),
+        instruction=(
+            "Explain in exactly three short cowboy sentences. Sentence one names "
+            "the first place as where the cattle are now. Sentence two names the "
+            "second place as where the ranch is. Sentence three says the difference "
+            "tells the cowboy which way to ride."
+        ),
+        seed=0,
+    ),
+)
+
+
+def generate_case(case: ContrastCase) -> None:
+    """Generate and report one constrained rewrite."""
+    resources = OutputResources.from_wordlist(case.focused_wordlist, shape=SHAPE)
+    schema_key = case.label.lower()
+    schema = resources.json_schema(
+        key=schema_key,
+        title=f"{schema_key}_missile_rewrite",
+    )
+    prompt = (
+        build_prompt("explain", SOURCE, wordlist=case.focused_wordlist)
+        + "\nWrite exactly three lines. Put one complete sentence on each line.\n"
+        + case.instruction
+        + "\n"
+    )
+    request = {
+        "focused_wordlist": case.focused_wordlist.name,
+        "full_validation_wordlist": case.full_wordlist.name,
+        "shape": asdict(SHAPE),
+        "seed": case.seed,
+        "temperature": TEMPERATURE,
+        "n_predict": MAX_TOKENS,
+        "cache_prompt": False,
+        "schema_key": schema_key,
+        "grammar_rule_count": resources.gbnf.count("::="),
+    }
+    response = generate_text(
+        BASE_URL,
+        prompt,
+        grammar=resources.gbnf,
+        max_tokens=MAX_TOKENS,
+        temperature=TEMPERATURE,
+        seed=case.seed,
+    )
+    focused_result = validate_output(
+        response,
+        case.focused_wordlist,
+        shape=SHAPE,
+    )
+    full_result = validate_output(response, case.full_wordlist, shape=SHAPE)
+
+    print(f"=== {case.label} Generation Request ===")
+    print(json.dumps(request, indent=2))
+    print(f"=== {case.label} Prompt ===")
+    print(prompt)
+    print(f"=== {case.label} GBNF ===")
+    print(resources.gbnf)
+    print(f"=== {case.label} JSON Schema ===")
+    print(json.dumps(schema, indent=2))
+    print(f"=== {case.label} Model Response ===")
+    print(response)
+    print(f"=== {case.label} Focused Validation ===")
+    print(json.dumps(asdict(focused_result), indent=2))
+    print(f"=== {case.label} Full Preset Validation ===")
+    print(json.dumps(asdict(full_result), indent=2))
+
+
+def main() -> None:
+    """Print the source and all three live constrained rewrites."""
+    print("=== Server ===")
+    print(BASE_URL)
+    print("=== Expected Model ===")
+    print(MODEL_REPO)
+    print("=== Original ===")
+    print(SOURCE)
+    for case in CASES:
+        generate_case(case)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        raise SystemExit(1) from exc
