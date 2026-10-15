@@ -26,7 +26,7 @@ from smallwords.prompts import build_prompt
 
 MODEL_REPO = os.environ.get(
     "SMALLWORDS_LLAMA_MODEL",
-    "bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m",
+    "ibm-granite/granite-4.2-8b-GGUF:Q4_K_M",
 )
 BASE_URL = server_base_url()
 BASE_WORDLIST = get_wordlist("pirate_898")
@@ -64,6 +64,7 @@ REQUEST_SUMMARY = {
     "seed": SEED,
     "temperature": TEMPERATURE,
     "n_predict": MAX_TOKENS,
+    "cache_prompt": False,
     "schema_key": SCHEMA_KEY,
     "grammar_rule_count": RESOURCES.gbnf.count("::="),
 }
