@@ -95,34 +95,30 @@ sample lines without a model server. The remixes live in
 
 ## Contrastive Example
 
-This is the clearest way to see what `smallwords` is trying to do. Both blocks
-below are genuine local Qwen outputs from April 5, 2026. The first uses a plain
-prompt. The second uses the same base prompt plus an explicit `basic_850`
-vocabulary list, the topic word `bridge`, and the generated GBNF.
+This paired example shows how the same meaning changes across natural, simple,
+pirate, and cowboy wording. Each line below is an unedited local model output
+from October 15, 2026. The runs used
+`ibm-granite/granite-3.3-8b-instruct-GGUF` through `llama-server` from
+`llama.cpp`.
 
-A plain prompt stays fairly natural:
+The original run was unconstrained. The simple run used generated `moby_898`
+GBNF. The pirate and cowboy runs were prompted for their respective styles and
+then checked against the v0.2.0 themed wordlists.
 
-> A bridge connects two points, usually across a body of water or a gap,
-> allowing people and vehicles to cross safely.
+The shared meaning was: *It is getting late, so we should head home.*
 
-A constrained `basic_850 + topic words` run stays simpler while still sounding
-reasonably natural:
+| Mode | Model output | v0.2.0 validation |
+| --- | --- | --- |
+| Original | “It's nearing dusk, let's head home soon to avoid the dark.” | Unconstrained |
+| Simple (`moby_898`) | “It is time to go back home now.” | Passes |
+| Pirate | “Ahoy matey, the sun dips low, I must sail home before night falls.” | Fails: `sun` and `dips` are outside `pirate_898` |
+| Cowboy | “Howdy, need to ride home to the ranch before nightfall.” | Fails: `nightfall` is outside `cowboy_898` |
 
-> A bridge is a structure that helps people and things move across a river or a
-> deep place.
-
-These runs use `llama-server` from `llama.cpp` and
-[`Qwen/Qwen3-8B-GGUF`](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
-via
-[`bartowski/Qwen_Qwen3-8B-GGUF`](https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF).
-
-Reproduce that comparison from a clone of the repository with an activated
-virtualenv:
-
-```bash
-llama-server -hf bartowski/Qwen_Qwen3-8B-GGUF:q4_k_m --host 127.0.0.1 --port 8080 --reasoning-budget 0 --log-disable
-python examples/readme_bridge_contrast.py
-```
+The themed prompts produce recognizable voices, but this comparison also makes
+the remaining limitation visible. The natural pirate and cowboy lines use a few
+words outside their controlled vocabularies, and both use internal commas that
+the current line grammar rejects. The simple line passes its complete vocabulary
+and output-shape check.
 
 ## Examples
 
