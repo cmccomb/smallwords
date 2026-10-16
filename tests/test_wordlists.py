@@ -43,23 +43,31 @@ def test_output_resources_build_from_catalog_names() -> None:
     assert resources.spec.name == "basic_850"
 
 
-def test_themed_wordlists_are_size_neutral_moby_remixes() -> None:
-    """Ensure the themed presets stay size-neutral relative to the Moby base."""
+def test_themed_wordlists_use_the_documented_vocabularies() -> None:
+    """Check the stricter caveman vocabulary and size-neutral sea/ranch remixes."""
     moby = get_wordlist("moby_898")
     caveman = get_wordlist("caveman_898")
     cowboy = get_wordlist("cowboy_898")
     pirate = get_wordlist("pirate_898")
 
-    assert len(caveman.words) == len(moby.words) == 898
+    assert len(moby.words) == 898
+    assert len(caveman.words) == 348
     assert len(cowboy.words) == len(moby.words) == 898
     assert len(pirate.words) == len(moby.words) == 898
     assert caveman.variant_mode == "surface_only"
-    assert "ugh" in caveman.words
+    assert {"ash", "axe", "bone", "gap", "stone", "spear", "wolf"} <= set(caveman.words)
     assert "without" not in caveman.words
+    assert {
+        "cave",
+        "church",
+        "difference",
+        "distance",
+        "rock",
+        "school",
+        "street",
+        "ugh",
+    }.isdisjoint(caveman.words)
     assert all(len(word) < 10 for word in caveman.allowed_words())
-    assert all(len(word) <= 5 for word in set(caveman.words) - set(moby.words))
-    assert {"ash", "axe", "cat", "claw", "sun", "wolf"} <= set(caveman.words)
-    assert "difference" not in caveman.words
     assert {"cattle", "howdy", "ranch", "trail", "vaquero"} <= set(cowboy.words)
     assert {"ahoy", "crew", "island", "matey", "treasure"} <= set(pirate.words)
     assert {"me", "my", "your", "our"} <= set(cowboy.words)

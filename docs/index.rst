@@ -76,6 +76,10 @@ Use :func:`smallwords.list_wordlists` to inspect the installed catalog. Use
 :func:`smallwords.get_wordlist` when a workflow needs the underlying
 specification object directly.
 
+``caveman_898`` now contains 348 hand-curated, one-syllable words with
+Germanic roots. Its name refers to its ``moby_898`` starting point. The
+complete removed-word list is in ``docs/caveman_removed_words.txt``.
+
 The ``cowboy_898`` and ``pirate_898`` presets each replace 40 abstract base
 words with themed terms and everyday pronouns. ``build_prompt`` includes their
 voice guidance; GBNF and JSON Schema enforce vocabulary and output shape only.
@@ -95,9 +99,9 @@ The comparison below was produced locally on October 15, 2026 with
 Missile Guidance Contrast
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This comparison starts with a compressed line from the familiar missile-guidance
-monologue. Three constrained rewrites express the same idea as a current place,
-a target place, and the difference between them.
+This comparison starts with the opening sentence and a compressed later line
+from the missile-guidance monologue. Six constrained rewrites express the same
+idea as a current place, a target place, and the gap between them.
 
 .. code-block:: python
 
@@ -105,6 +109,7 @@ a target place, and the difference between them.
    from smallwords.prompts import build_prompt
 
    source = (
+       "The missile knows where it is at all times. "
        "By subtracting where it is from where it isn't, or where it isn't from "
        "where it is, it obtains a difference, or deviation."
    )
@@ -115,30 +120,48 @@ a target place, and the difference between them.
 
 Original source::
 
-   By subtracting where it is from where it isn't, or where it isn't from where it is, it obtains a difference, or deviation.
+   The missile knows where it is at all times. By subtracting where it is from where it isn't, or where it isn't from where it is, it obtains a difference, or deviation.
 
 Simple, constrained with ``moby_898`` plus ``missile``::
 
-   The missile is now where it is.
-   The missile should be where it should be.
-   The difference tells the missile how far to move.
+   The missile knows where it is at all times.
+   It knows where it should be next.
+   The difference tells it how far to move.
+
+Caveman, constrained with ``caveman_898``::
+
+   Stone know where it be now.
+   Stone know where it should be.
+   Gap tell stone how far to go.
+
+Basic English, constrained with ``basic_850``::
+
+   The thing has knowledge of where the thing is now.
+   The thing is to be at the other place.
+   The distance from here to there is how far to move.
+
+Special English, constrained with ``special_english_1475``::
+
+   The missile knows where it is at all times.
+   It should be at the second place.
+   The distance tells how far to move from here to there.
 
 Pirate, constrained with ``pirate_898``::
 
-   First place is where the ship is now.
-   Second place is where it should be.
-   Difference tells the crew which way to sail.
+   The ship knows where it is now.
+   The crew knows where the ship should be.
+   The difference tells the crew which way to sail.
 
 Cowboy, constrained with ``cowboy_898``::
 
-   Where the cattle are now is the first place.
-   Where the ranch is is the second place.
+   The cowboy knows where the cattle are now.
+   The ranch is where the cattle should be.
    The difference tells the cowboy which way to ride.
 
 The live run uses a compact task-focused subset for each grammar. It then checks
 the result against both that subset and the complete preset. Only the simple
 case adds a topic word, ``missile``. See
-``examples/readme_missile_contrast.py`` for all three prompts, grammars, schemas,
+``examples/readme_missile_contrast.py`` for all six prompts, grammars, schemas,
 model calls, and validation reports.
 
 Pirate Greeting

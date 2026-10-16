@@ -1,126 +1,40 @@
-"""Define the bundled caveman-themed remix.
-
-This module stays intentionally small and discoverable so future maintainers
-can see exactly how the caveman preset differs from its base vocabulary.
-Caveman mode is designed as a size-neutral remix: it makes equal-sized
-additions and deletions while also tightening inflection behavior. Long words
-are swapped for short, concrete words.
-"""
+"""Build the short, Germanic-rooted caveman vocabulary."""
 
 from __future__ import annotations
+
+from importlib.resources import files
 
 from ..remix import remix_wordlist
 from ..types import WordlistSpec
 
-# These additions give the caveman remix its rougher themed vocabulary.
-CAVEMAN_EXTRA_WORDS = (
-    "bone",
-    "cave",
-    "grub",
-    "hunt",
-    "meat",
-    "rock",
-    "smash",
-    "spear",
-    "stone",
-    "ugh",
-)
-
-# These deletions balance the caveman additions so the remix stays size-neutral.
-CAVEMAN_SWAP_OUT_WORDS = (
-    "about",
-    "among",
-    "between",
-    "during",
-    "however",
-    "include",
-    "only",
-    "several",
-    "toward",
-    "without",
-)
-
-# Short, concrete replacements for base words with ten or more letters.
-CAVEMAN_SHORT_REPLACEMENT_WORDS = (
-    "ash",
-    "axe",
-    "bark",
-    "bat",
-    "bee",
-    "bug",
-    "cat",
-    "claw",
-    "cow",
-    "cub",
-    "den",
-    "dirt",
-    "duck",
-    "egg",
-    "fish",
-    "fox",
-    "frog",
-    "fur",
-    "goat",
-    "hen",
-    "hut",
-    "ice",
-    "leaf",
-    "log",
-    "milk",
-    "moon",
-    "mud",
-    "nest",
-    "nut",
-    "owl",
-    "pig",
-    "rain",
-    "rope",
-    "smoke",
-    "snow",
-    "sun",
-    "tent",
-    "wolf",
-    "wood",
-)
-
 
 def build_caveman_spec(base: WordlistSpec) -> WordlistSpec:
-    """Build a size-neutral caveman remix from a base vocabulary.
-
-    Args:
-        base: Base wordlist specification to remix.
-
-    Returns:
-        A derived caveman-flavored wordlist specification.
-    """
-    base_canonical = set(base.canonical_words())
-    additions = tuple(
-        word
-        for word in CAVEMAN_EXTRA_WORDS + CAVEMAN_SHORT_REPLACEMENT_WORDS
-        if word not in base_canonical
+    """Keep curated one-syllable words and add short Germanic words."""
+    resource = files("smallwords").joinpath(
+        "data", "caveman_germanic_monosyllables.txt"
     )
-    long_base_words = tuple(word for word in base.canonical_words() if len(word) >= 10)
-    removals = tuple(
-        dict.fromkeys(
-            word
-            for word in CAVEMAN_SWAP_OUT_WORDS + long_base_words
-            if word in base_canonical
-        )
-    )
-    if len(additions) != len(removals):
-        raise ValueError(
-            "caveman remix must keep equal effective additions and deletions"
-        )
+    curated = {
+        line.strip()
+        for line in resource.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.startswith("#")
+    }
+    base_words = set(base.canonical_words())
 
-    # Surface-only forms keep the output choppy and intentionally less polished.
-    # A few blocked inflections keep the voice from drifting back toward ordinary prose.
+    # Retain the existing public name: 898 identifies the source list, not the
+    # smaller vocabulary produced by this stricter filter.
     return remix_wordlist(
         base,
         name=f"caveman_{len(base.words)}",
-        description="A size-neutral base-vocabulary remix with short, concrete words and rougher surface forms.",
-        add_words=additions,
-        remove_words=removals,
-        source_name=f"Derived from the bundled {base.name} wordlist with size-neutral caveman-style adjustments",
+        description="A curated set of one-syllable, Germanic-rooted words for a blunt caveman voice.",
+        add_words=tuple(sorted(curated - base_words)),
+        remove_words=tuple(sorted(base_words - curated)),
+        source_name=f"Curated from the bundled {base.name} list using pronunciation and etymology checks",
+        source_urls=base.source_urls
+        + (
+            "https://github.com/cmusphinx/cmudict",
+            "https://github.com/cavedave/EnglishWords",
+            "https://en.wiktionary.org/wiki/Help:Etymology",
+        ),
         variant_mode="surface_only",
-        blocked_forms=("goes", "going", "made", "running"),
+        style_hint="Use short, blunt sentences with simple Germanic-rooted words.",
     )

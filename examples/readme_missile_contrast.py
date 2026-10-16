@@ -53,16 +53,10 @@ def focused_wordlist(
     name: str,
     full_wordlist: WordlistSpec,
     words: str,
-    *,
-    max_word_length: int | None = None,
 ) -> WordlistSpec:
     """Select a compact surface vocabulary from a complete preset."""
     allowed = set(full_wordlist.allowed_words())
-    selected = tuple(
-        word
-        for word in words.split()
-        if word in allowed and (max_word_length is None or len(word) <= max_word_length)
-    )
+    selected = tuple(word for word in words.split() if word in allowed)
     return WordlistSpec(
         name=name,
         words=selected,
@@ -107,16 +101,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "caveman_position_focus",
             CAVEMAN_FULL,
-            "rock know where it be now here should there far place distance "
-            "tell how must go from to at",
-            max_word_length=9,
+            "stone know where it be now here should there far gap tell how "
+            "must go from to at",
         ),
         instruction=(
-            "Explain in exactly three short, rough caveman sentences. Use a rock "
-            "as the thing that moves. Sentence one says rock knows where it is "
-            "now. Sentence two says rock knows where it should be. Sentence three "
-            "says the distance tells how far rock must go from here to there. "
-            "Begin the sentences with 'Rock know', 'Rock know', and 'Distance tell'."
+            "Explain in exactly three short, rough caveman sentences. Use a stone "
+            "as the thing that moves. Sentence one says stone knows where it is "
+            "now. Sentence two says stone knows where it should be. Sentence three "
+            "says the gap tells stone how far to go. Begin the sentences with "
+            "'Stone know', 'Stone know', and 'Gap tell stone'."
         ),
         seed=4,
     ),
