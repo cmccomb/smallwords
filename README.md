@@ -73,7 +73,7 @@ technical passage will also allow every technical word in it.
 - `moby_898`: the full normalized alpha-only Moby Words II frequency list
 - `basic_850`: Charles Ogden's Basic English 850
 - `special_english_1475`: Voice of America Special English
-- `caveman_898`: a size-neutral surface-only `moby_898` remix with caveman adjustments
+- `caveman_898`: a size-neutral surface-only `moby_898` remix with short, concrete words in place of words with ten or more letters
 - `cowboy_898`: a size-neutral `moby_898` remix for ranch and trail stories
 - `pirate_898`: a size-neutral `moby_898` remix for playful sea stories
 
@@ -81,6 +81,9 @@ The bundled text files live in `src/smallwords/data/`. `moby_898`,
 `basic_850`, and `special_english_1475` are direct source-backed lists.
 `caveman_898`, `cowboy_898`, and `pirate_898` are derived size-neutral remixes
 built on top of `moby_898`.
+
+The caveman preset swaps all 39 base words with ten or more letters for short,
+simple words such as `ash`, `cat`, and `sun`. It still contains 898 words.
 
 The cowboy and pirate presets each swap 40 abstract base words for themed terms
 and everyday pronouns missing from `moby_898`. Their `style_hint` values guide
@@ -95,8 +98,9 @@ sample lines without a model server. The remixes live in
 
 ## Contrastive Example
 
-This paired example starts with a compressed line from the familiar
-missile-guidance monologue, then asks for six controlled-vocabulary versions.
+This paired example starts with the opening sentence and a compressed later
+line from the familiar [missile-guidance monologue](https://www.reddit.com/r/copypasta/comments/p1us5i/the_missile_knows_where_it_is_at_all_times/),
+then asks for six controlled-vocabulary versions.
 The six rewrites below are unedited local model outputs from October 15,
 2026. The runs used
 `ibm-granite/granite-4.2-8b-GGUF` through `llama-server` from
@@ -108,12 +112,12 @@ also passes the same output-shape check against its full v0.2.0 preset.
 
 | Mode | Model output | v0.2.0 validation |
 | --- | --- | --- |
-| Original | “By subtracting where it is from where it isn't, or where it isn't from where it is, it obtains a difference, or deviation.” | Source text |
+| Original | “The missile knows where it is at all times. By subtracting where it is from where it isn't, or where it isn't from where it is, it obtains a difference, or deviation.” | Source text |
 | Simple (`moby_898`) | “First place is where it is now.<br>Second place is where it should be.<br>Difference tells the thing how far to move.” | Passes |
-| Caveman (`caveman_898`) | “Rock be here now at place.<br>Rock should be there at second place.<br>Difference tell how far rock must go from here to there.” | Passes |
+| Caveman (`caveman_898`) | “Rock be here now at place.<br>Rock should be there at far place.<br>Distance tell how far rock must go from here to there.” | Passes |
 | Basic English (`basic_850`) | “The thing is here now at the place.<br>The thing is to be at the other place.<br>The distance from here to there is how far to move.” | Passes |
 | Special English (`special_english_1475`) | “It is at the first place now.<br>It should be at the second place.<br>The distance tells how far to move from here to there.” | Passes |
-| Pirate (`pirate_898`) | “First place is where the ship is now.<br>Second place is where it should be.<br>Difference tells the crew which way to sail.” | Passes |
+| Pirate (`pirate_898`) | “First place is where the ship is now.<br>Second place is where the ship should be.<br>Difference tells the crew which way to sail.” | Passes |
 | Cowboy (`cowboy_898`) | “Where the cattle are now is the first place.<br>Where the ranch is is the second place.<br>The difference tells the cowboy which way to ride.” | Passes |
 
 The focused subsets keep the generated grammar compact for a specific task;

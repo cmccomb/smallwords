@@ -28,6 +28,7 @@ MODEL_REPO = os.environ.get(
 )
 BASE_URL = server_base_url()
 SOURCE = (
+    "The missile knows where it is at all times. "
     "By subtracting where it is from where it isn't, or where it isn't from "
     "where it is, it obtains a difference, or deviation."
 )
@@ -51,10 +52,16 @@ def focused_wordlist(
     name: str,
     full_wordlist: WordlistSpec,
     words: str,
+    *,
+    max_word_length: int | None = None,
 ) -> WordlistSpec:
     """Select a compact surface vocabulary from a complete preset."""
     allowed = set(full_wordlist.allowed_words())
-    selected = tuple(word for word in words.split() if word in allowed)
+    selected = tuple(
+        word
+        for word in words.split()
+        if word in allowed and (max_word_length is None or len(word) <= max_word_length)
+    )
     return WordlistSpec(
         name=name,
         words=selected,
@@ -88,7 +95,8 @@ CASES = (
             "Explain in exactly three short sentences. Sentence one names the first "
             "place as where it is now. Sentence two names the second place "
             "as where it should be. Sentence three says the difference tells the "
-            "thing how far to move. Begin each sentence with a capital letter."
+            "thing how far to move. Begin the sentences with 'First place', "
+            "'Second place', and 'Difference'."
         ),
         seed=3,
     ),
@@ -98,15 +106,17 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "caveman_position_focus",
             CAVEMAN_FULL,
-            "rock the first second place where it is now should be difference "
+            "rock the first second place where it is now should be distance "
             "tell how far to go here there in must move from to at",
+            max_word_length=9,
         ),
         instruction=(
             "Explain in exactly three short, rough caveman sentences. Use a rock "
             "as the thing that moves. Sentence one says rock is here now. "
             "Sentence two says rock should be there. Sentence three says the "
-            "difference tells how far rock must go from here to there. "
-            "Begin the last sentence with 'Difference'."
+            "distance tells how far rock must go from here to there. "
+            "Begin the sentences with 'Rock be', 'Rock should', and "
+            "'Distance tell'."
         ),
         seed=4,
     ),
@@ -124,7 +134,8 @@ CASES = (
             "subject of the first two sentences. Sentence one says the thing "
             "is here now. Sentence two says the thing is to be at the other "
             "place. Sentence three says the distance from here to there is "
-            "how far to move. Begin each sentence with a capital letter."
+            "how far to move. Begin the sentences with 'The thing is', "
+            "'The thing is to', and 'The distance'."
         ),
         seed=5,
     ),
@@ -160,7 +171,8 @@ CASES = (
             "Explain in exactly three short pirate sentences. Sentence one names the "
             "first place as where the ship is now. Sentence two names the second "
             "place as where it should be. Sentence three says the difference tells "
-            "the crew which way to sail."
+            "the crew which way to sail. Begin the sentences with 'First "
+            "place', 'Second place', and 'Difference'."
         ),
         seed=6,
     ),
@@ -177,7 +189,10 @@ CASES = (
             "Explain in exactly three short cowboy sentences. Sentence one names "
             "the first place as where the cattle are now. Sentence two names the "
             "second place as where the ranch is. Sentence three says the difference "
-            "tells the cowboy which way to ride."
+            "tells the cowboy which way to ride. Begin the sentences with "
+            "'Where the cattle', 'Where the ranch', and 'The difference'. "
+            "Use 'cowboy' only in the third sentence. End the first sentence "
+            "with 'first place' and the second with 'second place'."
         ),
         seed=0,
     ),

@@ -56,6 +56,10 @@ def test_themed_wordlists_are_size_neutral_moby_remixes() -> None:
     assert caveman.variant_mode == "surface_only"
     assert "ugh" in caveman.words
     assert "without" not in caveman.words
+    assert all(len(word) < 10 for word in caveman.allowed_words())
+    assert all(len(word) <= 5 for word in set(caveman.words) - set(moby.words))
+    assert {"ash", "axe", "cat", "claw", "sun", "wolf"} <= set(caveman.words)
+    assert "difference" not in caveman.words
     assert {"cattle", "howdy", "ranch", "trail", "vaquero"} <= set(cowboy.words)
     assert {"ahoy", "crew", "island", "matey", "treasure"} <= set(pirate.words)
     assert {"me", "my", "your", "our"} <= set(cowboy.words)
