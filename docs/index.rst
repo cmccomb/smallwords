@@ -76,9 +76,11 @@ Use :func:`smallwords.list_wordlists` to inspect the installed catalog. Use
 :func:`smallwords.get_wordlist` when a workflow needs the underlying
 specification object directly.
 
-``caveman_898`` now contains 348 hand-curated, one-syllable words with
-Germanic roots. Its name refers to its ``moby_898`` starting point. The
-complete removed-word list is in ``docs/caveman_removed_words.txt``.
+``caveman_898`` now contains 355 hand-curated, one-syllable words with chiefly
+Germanic roots. It retains eight plain exceptions for usefulness: ``fur``,
+``leach``, ``oil``, ``rock``, ``tent``, ``wall``, ``war``, and ``plant``. Its
+name refers to its ``moby_898`` starting point. The complete removed-word list
+is in ``docs/caveman_removed_words.txt``.
 
 The ``cowboy_898`` and ``pirate_898`` presets each replace 40 abstract base
 words with themed terms and everyday pronouns. ``build_prompt`` includes their
@@ -101,7 +103,7 @@ Missile Guidance Contrast
 
 This comparison starts with the opening sentence and a compressed later line
 from the missile-guidance monologue. Six constrained rewrites express the same
-idea as a current place, a target place, and the gap between them.
+idea as a current place, a target place, and the span between them.
 
 .. code-block:: python
 
@@ -130,9 +132,9 @@ Simple, constrained with ``moby_898`` plus ``missile``::
 
 Caveman, constrained with ``caveman_898``::
 
-   Stone know where it be now.
-   Stone know where it should be.
-   Gap tell stone how far to go.
+   Rock know where it be now.
+   Rock know where it should be.
+   Rock know how far it must go.
 
 Basic English, constrained with ``basic_850``::
 

@@ -1,4 +1,5 @@
-# Hand-curated, one-syllable words with Germanic roots.
+# Hand-curated one-syllable words, chiefly with Germanic roots.
+# A few simple, concrete exceptions are kept for the voice.
 # The caveman_898 name refers to its Moby 898 starting point.
 a
 all
@@ -94,8 +95,8 @@ friend
 frog
 from
 full
+fur
 game
-gap
 get
 girl
 give
@@ -151,6 +152,7 @@ last
 late
 law
 lay
+leach
 lead
 leaf
 learn
@@ -208,6 +210,7 @@ nut
 of
 off
 old
+oil
 on
 once
 one
@@ -217,6 +220,7 @@ owl
 own
 pick
 pig
+plant
 play
 pool
 pull
@@ -231,6 +235,7 @@ ride
 right
 rise
 road
+rock
 room
 rope
 run
@@ -283,6 +288,7 @@ take
 talk
 tell
 ten
+tent
 than
 that
 the
@@ -313,6 +319,8 @@ truth
 two
 up
 walk
+wall
+war
 want
 watch
 way

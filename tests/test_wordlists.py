@@ -51,18 +51,33 @@ def test_themed_wordlists_use_the_documented_vocabularies() -> None:
     pirate = get_wordlist("pirate_898")
 
     assert len(moby.words) == 898
-    assert len(caveman.words) == 348
+    assert len(caveman.words) == 355
     assert len(cowboy.words) == len(moby.words) == 898
     assert len(pirate.words) == len(moby.words) == 898
     assert caveman.variant_mode == "surface_only"
-    assert {"ash", "axe", "bone", "gap", "stone", "spear", "wolf"} <= set(caveman.words)
+    assert {
+        "ash",
+        "axe",
+        "bone",
+        "fur",
+        "leach",
+        "oil",
+        "plant",
+        "rock",
+        "spear",
+        "stone",
+        "tent",
+        "wall",
+        "war",
+        "wolf",
+    } <= set(caveman.words)
     assert "without" not in caveman.words
     assert {
         "cave",
         "church",
         "difference",
         "distance",
-        "rock",
+        "gap",
         "school",
         "street",
         "ugh",

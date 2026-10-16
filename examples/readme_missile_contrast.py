@@ -101,15 +101,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "caveman_position_focus",
             CAVEMAN_FULL,
-            "stone know where it be now here should there far gap tell how "
+            "rock know where it be now here should there far tell how "
             "must go from to at",
         ),
         instruction=(
-            "Explain in exactly three short, rough caveman sentences. Use a stone "
-            "as the thing that moves. Sentence one says stone knows where it is "
-            "now. Sentence two says stone knows where it should be. Sentence three "
-            "says the gap tells stone how far to go. Begin the sentences with "
-            "'Stone know', 'Stone know', and 'Gap tell stone'."
+            "Explain in exactly three short, rough caveman sentences. Use a rock "
+            "as the thing that moves. Sentence one says rock knows where it is "
+            "now. Sentence two says rock knows where it should be. Sentence three "
+            "says rock knows how far it must go. Begin each sentence with "
+            "'Rock know'."
         ),
         seed=4,
     ),
