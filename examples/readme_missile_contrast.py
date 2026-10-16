@@ -17,6 +17,7 @@ from smallwords import (
     OutputResources,
     OutputShape,
     WordlistSpec,
+    allow_input_words,
     get_wordlist,
     validate_output,
 )
@@ -75,7 +76,7 @@ def focused_wordlist(
     )
 
 
-SIMPLE_FULL = get_wordlist("moby_898")
+SIMPLE_FULL = allow_input_words("moby_898", "missile")
 CAVEMAN_FULL = get_wordlist("caveman_898")
 BASIC_FULL = get_wordlist("basic_850")
 SPECIAL_FULL = get_wordlist("special_english_1475")
@@ -88,15 +89,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "simple_position_focus",
             SIMPLE_FULL,
-            "the first second place where it is now should be difference thing "
-            "tells how far to move at",
+            "the missile knows where it is at all times now should be next "
+            "difference tells how far to move",
         ),
         instruction=(
-            "Explain in exactly three short sentences. Sentence one names the first "
-            "place as where it is now. Sentence two names the second place "
-            "as where it should be. Sentence three says the difference tells the "
-            "thing how far to move. Begin the sentences with 'First place', "
-            "'Second place', and 'Difference'."
+            "Explain in exactly three short sentences. Sentence one says the "
+            "missile knows where it is at all times. Sentence two says it knows "
+            "where it should be next. Sentence three says the difference tells "
+            "it how far to move. Begin the sentences with 'The missile knows', "
+            "'It knows', and 'The difference'."
         ),
         seed=3,
     ),
@@ -106,17 +107,16 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "caveman_position_focus",
             CAVEMAN_FULL,
-            "rock the first second place where it is now should be distance "
-            "tell how far to go here there in must move from to at",
+            "rock know where it be now here should there far place distance "
+            "tell how must go from to at",
             max_word_length=9,
         ),
         instruction=(
             "Explain in exactly three short, rough caveman sentences. Use a rock "
-            "as the thing that moves. Sentence one says rock is here now. "
-            "Sentence two says rock should be there. Sentence three says the "
-            "distance tells how far rock must go from here to there. "
-            "Begin the sentences with 'Rock be', 'Rock should', and "
-            "'Distance tell'."
+            "as the thing that moves. Sentence one says rock knows where it is "
+            "now. Sentence two says rock knows where it should be. Sentence three "
+            "says the distance tells how far rock must go from here to there. "
+            "Begin the sentences with 'Rock know', 'Rock know', and 'Distance tell'."
         ),
         seed=4,
     ),
@@ -126,16 +126,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "basic_position_focus",
             BASIC_FULL,
-            "the first second place is now be how far to move thing "
-            "other there here from at distance",
+            "the thing has knowledge of where is now be how far to move "
+            "other place there here from at distance",
         ),
         instruction=(
-            "Explain in exactly three short sentences. Use 'the thing' as the "
-            "subject of the first two sentences. Sentence one says the thing "
-            "is here now. Sentence two says the thing is to be at the other "
-            "place. Sentence three says the distance from here to there is "
-            "how far to move. Begin the sentences with 'The thing is', "
-            "'The thing is to', and 'The distance'."
+            "Explain in exactly three short sentences. Sentence one says the "
+            "thing has knowledge of where the thing is now. Sentence two says "
+            "the thing is to be at the other place. Sentence three says the "
+            "distance from here to there is how far to move. Begin the sentences "
+            "with 'The thing has', 'The thing is to', and 'The distance'."
         ),
         seed=5,
     ),
@@ -145,16 +144,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "special_position_focus",
             SPECIAL_FULL,
-            "the first second place it is now should be distance "
-            "tells how far to move from there here at",
+            "the missile knows where it is at all times now should be first "
+            "second place distance tells how far to move from there here",
         ),
         instruction=(
-            "Explain in exactly three short sentences. Use 'first place' and "
-            "'second place' as the only locations. Sentence one says it is at "
-            "the first place now. Sentence two says it should be at the second "
-            "place. Sentence three says the distance tells how far to move "
-            "from here to there. Begin the sentences with 'It is', 'It should', "
-            "and 'The distance'."
+            "Explain in exactly three short sentences. Sentence one says the "
+            "missile knows where it is at all times. Sentence two says it "
+            "should be at the second place. Sentence three says the distance "
+            "tells how far to move from here to there. Begin the sentences "
+            "with 'The missile knows', 'It should', and 'The distance'."
         ),
         seed=7,
     ),
@@ -164,15 +162,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "pirate_position_focus",
             PIRATE_FULL,
-            "the first second place where ship is now it should be difference tells "
-            "crew which way to sail",
+            "the ship knows where it is now at all times crew should be "
+            "difference tells which way to sail",
         ),
         instruction=(
-            "Explain in exactly three short pirate sentences. Sentence one names the "
-            "first place as where the ship is now. Sentence two names the second "
-            "place as where it should be. Sentence three says the difference tells "
-            "the crew which way to sail. Begin the sentences with 'First "
-            "place', 'Second place', and 'Difference'."
+            "Explain in exactly three short pirate sentences. Sentence one says "
+            "the ship knows where it is now. Sentence two says the crew knows "
+            "where the ship should be. Sentence three says the difference tells "
+            "the crew which way to sail. Begin the sentences with 'The ship "
+            "knows', 'The crew knows', and 'The difference'."
         ),
         seed=6,
     ),
@@ -182,17 +180,15 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "cowboy_position_focus",
             COWBOY_FULL,
-            "the first second place where cattle are now ranch is difference tells "
-            "cowboy which way to ride",
+            "the cowboy knows where cattle are now ranch is should be difference "
+            "tells which way to ride",
         ),
         instruction=(
-            "Explain in exactly three short cowboy sentences. Sentence one names "
-            "the first place as where the cattle are now. Sentence two names the "
-            "second place as where the ranch is. Sentence three says the difference "
-            "tells the cowboy which way to ride. Begin the sentences with "
-            "'Where the cattle', 'Where the ranch', and 'The difference'. "
-            "Use 'cowboy' only in the third sentence. End the first sentence "
-            "with 'first place' and the second with 'second place'."
+            "Explain in exactly three short cowboy sentences. Sentence one says "
+            "the cowboy knows where the cattle are now. Sentence two says the "
+            "ranch is where the cattle should be. Sentence three says the "
+            "difference tells the cowboy which way to ride. Begin the sentences "
+            "with 'The cowboy knows', 'The ranch is', and 'The difference'."
         ),
         seed=0,
     ),
