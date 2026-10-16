@@ -9,7 +9,7 @@ python examples/themed_presets.py
 
 This directory also keeps three live llama.cpp examples:
 
-- `readme_missile_contrast.py`: the four-part comparison used in the root README
+- `readme_missile_contrast.py`: the seven-part comparison used in the root README
 - `pirate_greeting.py`: a focused pirate greeting built from `pirate_898`
 - `rewrite_technical_passage.py`: a focused technical rewrite built from `basic_850`
 

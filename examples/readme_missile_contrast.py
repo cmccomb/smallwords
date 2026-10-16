@@ -1,4 +1,4 @@
-"""Generate the README's simple, pirate, and cowboy missile rewrites."""
+"""Generate the README's six controlled-vocabulary missile rewrites."""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ from smallwords import (
     OutputResources,
     OutputShape,
     WordlistSpec,
-    allow_input_words,
     get_wordlist,
     validate_output,
 )
@@ -33,7 +32,7 @@ SOURCE = (
     "where it is, it obtains a difference, or deviation."
 )
 SHAPE = OutputShape(min_words_per_line=6, max_words_per_line=11, max_lines=3)
-MAX_TOKENS = 58
+MAX_TOKENS = 128
 TEMPERATURE = 0.55
 
 
@@ -69,7 +68,10 @@ def focused_wordlist(
     )
 
 
-SIMPLE_FULL = allow_input_words("moby_898", "missile")
+SIMPLE_FULL = get_wordlist("moby_898")
+CAVEMAN_FULL = get_wordlist("caveman_898")
+BASIC_FULL = get_wordlist("basic_850")
+SPECIAL_FULL = get_wordlist("special_english_1475")
 PIRATE_FULL = get_wordlist("pirate_898")
 COWBOY_FULL = get_wordlist("cowboy_898")
 CASES = (
@@ -79,16 +81,71 @@ CASES = (
         focused_wordlist=focused_wordlist(
             "simple_position_focus",
             SIMPLE_FULL,
-            "the first second place where missile is now it should be difference "
-            "tells how far to move",
+            "the first second place where it is now should be difference thing "
+            "tells how far to move at",
         ),
         instruction=(
             "Explain in exactly three short sentences. Sentence one names the first "
-            "place as where the missile is now. Sentence two names the second place "
+            "place as where it is now. Sentence two names the second place "
             "as where it should be. Sentence three says the difference tells the "
-            "missile how far to move."
+            "thing how far to move. Begin each sentence with a capital letter."
         ),
         seed=3,
+    ),
+    ContrastCase(
+        label="Caveman",
+        full_wordlist=CAVEMAN_FULL,
+        focused_wordlist=focused_wordlist(
+            "caveman_position_focus",
+            CAVEMAN_FULL,
+            "rock the first second place where it is now should be difference "
+            "tell how far to go here there in must move from to at",
+        ),
+        instruction=(
+            "Explain in exactly three short, rough caveman sentences. Use a rock "
+            "as the thing that moves. Sentence one says rock is here now. "
+            "Sentence two says rock should be there. Sentence three says the "
+            "difference tells how far rock must go from here to there. "
+            "Begin the last sentence with 'Difference'."
+        ),
+        seed=4,
+    ),
+    ContrastCase(
+        label="Basic",
+        full_wordlist=BASIC_FULL,
+        focused_wordlist=focused_wordlist(
+            "basic_position_focus",
+            BASIC_FULL,
+            "the first second place is now be how far to move thing "
+            "other there here from at distance",
+        ),
+        instruction=(
+            "Explain in exactly three short sentences. Use 'the thing' as the "
+            "subject of the first two sentences. Sentence one says the thing "
+            "is here now. Sentence two says the thing is to be at the other "
+            "place. Sentence three says the distance from here to there is "
+            "how far to move. Begin each sentence with a capital letter."
+        ),
+        seed=5,
+    ),
+    ContrastCase(
+        label="Special",
+        full_wordlist=SPECIAL_FULL,
+        focused_wordlist=focused_wordlist(
+            "special_position_focus",
+            SPECIAL_FULL,
+            "the first second place it is now should be distance "
+            "tells how far to move from there here at",
+        ),
+        instruction=(
+            "Explain in exactly three short sentences. Use 'first place' and "
+            "'second place' as the only locations. Sentence one says it is at "
+            "the first place now. Sentence two says it should be at the second "
+            "place. Sentence three says the distance tells how far to move "
+            "from here to there. Begin the sentences with 'It is', 'It should', "
+            "and 'The distance'."
+        ),
+        seed=7,
     ),
     ContrastCase(
         label="Pirate",
@@ -184,7 +241,7 @@ def generate_case(case: ContrastCase) -> None:
 
 
 def main() -> None:
-    """Print the source and all three live constrained rewrites."""
+    """Print the source and all six live constrained rewrites."""
     print("=== Server ===")
     print(BASE_URL)
     print("=== Expected Model ===")

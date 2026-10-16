@@ -96,28 +96,30 @@ sample lines without a model server. The remixes live in
 ## Contrastive Example
 
 This paired example starts with a compressed line from the familiar
-missile-guidance monologue, then asks for simple, pirate, and cowboy versions.
-The three rewrites below are unedited local model outputs from October 15,
+missile-guidance monologue, then asks for six controlled-vocabulary versions.
+The six rewrites below are unedited local model outputs from October 15,
 2026. The runs used
 `ibm-granite/granite-4.2-8b-GGUF` through `llama-server` from
 `llama.cpp`.
 
 Each rewrite used generated GBNF from a task-focused subset of the named
-preset. The simple run adds only the essential topic word `missile`. Every
-constrained result also passes the same output-shape check against its full
-v0.2.0 preset.
+preset. No extra topic word was added to any preset. Every constrained result
+also passes the same output-shape check against its full v0.2.0 preset.
 
 | Mode | Model output | v0.2.0 validation |
 | --- | --- | --- |
 | Original | “By subtracting where it is from where it isn't, or where it isn't from where it is, it obtains a difference, or deviation.” | Source text |
-| Simple (`moby_898` + `missile`) | “The missile is now where it is.<br>The missile should be where it should be.<br>The difference tells the missile how far to move.” | Passes |
+| Simple (`moby_898`) | “First place is where it is now.<br>Second place is where it should be.<br>Difference tells the thing how far to move.” | Passes |
+| Caveman (`caveman_898`) | “Rock be here now at place.<br>Rock should be there at second place.<br>Difference tell how far rock must go from here to there.” | Passes |
+| Basic English (`basic_850`) | “The thing is here now at the place.<br>The thing is to be at the other place.<br>The distance from here to there is how far to move.” | Passes |
+| Special English (`special_english_1475`) | “It is at the first place now.<br>It should be at the second place.<br>The distance tells how far to move from here to there.” | Passes |
 | Pirate (`pirate_898`) | “First place is where the ship is now.<br>Second place is where it should be.<br>Difference tells the crew which way to sail.” | Passes |
 | Cowboy (`cowboy_898`) | “Where the cattle are now is the first place.<br>Where the ranch is is the second place.<br>The difference tells the cowboy which way to ride.” | Passes |
 
 The focused subsets keep the generated grammar compact for a specific task;
-they do not introduce words outside the underlying presets apart from the
-explicit `missile` topic term. The rewrites unpack the compressed source into a
-current place, a target place, and the difference between them.
+they do not introduce words outside the underlying presets. The themed prompts
+use a rock, ship, or cattle as an analogy. The rewrites unpack the compressed
+source into a current place, a target place, and the difference between them.
 
 ## Examples
 
