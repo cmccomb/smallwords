@@ -100,6 +100,18 @@ If you want the model to be able to repeat an essential topic term such as
 `bridge`, pass just that term to `allow_input_words(...)`. Passing an entire
 technical passage will also allow every technical word in it.
 
+`allow_input_words(...)` extracts lowercase runs of Unicode letters and
+combining marks between delimiters. It keeps `café` and an unspaced `東京` run
+intact, but it does not perform language-specific word segmentation or
+inflection. Unicode spellings are matched exactly after lowercasing; for
+example, precomposed `é` and `e` followed by a combining accent remain
+distinct. Explicit `WordlistSpec` literals use the same exact-match policy.
+
+For meaning-sensitive rewrites, make sure the focused vocabulary can express
+each fact that must survive, including negation, causes, and time order.
+Vocabulary and shape validation checks the output contract; it does not assess
+whether a rewrite preserves the source meaning.
+
 ## Built-In Wordlists
 
 - `moby_898`: the full normalized alpha-only Moby Words II frequency list

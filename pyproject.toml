@@ -38,6 +38,7 @@ Changelog = "https://github.com/cmccomb/smallwords/releases"
 [project.optional-dependencies]
 dev = [
   "build>=1.2",
+  "jsonschema>=4.23",
   "pydata-sphinx-theme>=0.16",
   "pytest>=8.0",
   "pytest-cov>=7.1",
