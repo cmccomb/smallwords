@@ -3,6 +3,7 @@
 import re
 
 import pytest
+from jsonschema import Draft202012Validator
 
 from smallwords import OutputResources, OutputShape, WordlistSpec
 
@@ -143,3 +144,56 @@ def test_json_schema_rejects_empty_keys() -> None:
     resources = OutputResources.from_wordlist("basic_850")
     with pytest.raises(ValueError, match="key must be a non-empty string"):
         resources.json_schema(key="")
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("go", True),
+        ("go?", False),
+        ("go\n", False),
+        ("Go", False),
+        ("café", True),
+        ("東京", True),
+    ],
+)
+def test_unicode_and_terminal_newline_agree_with_json_schema(
+    text: str, expected: bool
+) -> None:
+    """Named JSON Schema and package validators should accept the same text."""
+    spec = WordlistSpec(
+        name="unicode",
+        words=("go", "café", "東京"),
+        variant_mode="surface_only",
+        allow_capitalized_words=False,
+        allow_newlines=False,
+        allowed_punctuation=(),
+    )
+    resources = OutputResources.from_wordlist(
+        spec, shape=OutputShape(max_words_per_line=1, max_lines=1)
+    )
+    assert resources.validate(text).valid is expected
+    assert (
+        Draft202012Validator(resources.json_schema()).is_valid({"text": text})
+        is expected
+    )
+    assert '"café"' in resources.gbnf
+    assert '"東京"' in resources.gbnf
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [("123", True), ("１２３", False)],
+)
+def test_ascii_number_policy_agrees_with_json_schema(text: str, expected: bool) -> None:
+    """The generated schema must follow the GBNF's ASCII digit policy."""
+    spec = WordlistSpec(name="digits", words=(), allow_numbers=True)
+    resources = OutputResources.from_wordlist(
+        spec, shape=OutputShape(max_words_per_line=1, max_lines=1)
+    )
+    assert resources.validate(text).valid is expected
+    assert (
+        Draft202012Validator(resources.json_schema()).is_valid({"text": text})
+        is expected
+    )
+    assert "number ::= [0-9]+" in resources.gbnf

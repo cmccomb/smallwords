@@ -20,7 +20,11 @@ def allow_input_words(
     name: str | None = None,
     description: str | None = None,
 ) -> WordlistSpec:
-    """Return a derived spec that also permits normalized words from task text.
+    """Return a derived spec that also permits extracted words from task text.
+
+    Extraction groups Unicode letters and combining marks between delimiters.
+    It does not segment unspaced languages or normalize equivalent Unicode
+    spellings; added words retain the input's code-point sequence.
 
     Args:
         wordlist: Built-in wordlist name or inline wordlist specification.

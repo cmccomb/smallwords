@@ -60,6 +60,13 @@ and output shape. ``is_compliant`` and ``out_of_vocab`` check alphabetic word
 membership only; they ignore numbers, punctuation, capitalization, and line
 limits.
 
+``allow_input_words`` extracts runs of Unicode letters and combining marks
+between delimiters. An unspaced Japanese run is treated as one literal; the
+helper does not perform language-specific word segmentation or inflection.
+Unicode spellings are exact after lowercasing, so precomposed and decomposed
+accents remain distinct. A valid full-contract response has no out-of-vocabulary
+issue; diagnostics for invalid output are best-effort token reports.
+
 Built-ins
 ---------
 

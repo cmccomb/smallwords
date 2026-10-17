@@ -124,7 +124,7 @@ def compile_constraints(spec: WordlistSpec, shape: OutputShape) -> CompiledConst
     word_parts = [re.escape(word) for word in words]
     word_parts.extend(re.escape(word) for word in capitalized_words)
     if spec.allow_numbers:
-        word_parts.append(r"\d+")
+        word_parts.append(r"[0-9]+")
     word_pattern = _pattern_alt(word_parts)
 
     line_pattern = (
@@ -149,11 +149,16 @@ def compile_constraints(spec: WordlistSpec, shape: OutputShape) -> CompiledConst
         text_pattern = line_pattern
 
     wrapper_labels = _WRAPPER_LABELS[shape.thinking_mode]
+    # JSON Schema regexes are searched by consumers. A plain $ can match just
+    # before a final newline in Python, so require the actual end of the string.
+    strict_end = r"(?![\s\S])"
     if not wrapper_labels:
-        response_pattern = f"^{text_pattern}$"
+        response_pattern = f"^{text_pattern}{strict_end}"
     else:
         first, second = wrapper_labels
-        response_pattern = f"^{first}\\n{text_pattern}\\n\\n{second}\\n{text_pattern}$"
+        response_pattern = (
+            f"^{first}\\n{text_pattern}\\n\\n{second}\\n{text_pattern}{strict_end}"
+        )
 
     min_text_length = _min_text_length(spec, shape=shape, words=words)
     max_text_length = _max_text_length(spec, shape=shape, words=words)

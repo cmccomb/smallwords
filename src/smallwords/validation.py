@@ -8,14 +8,12 @@ JSON Schema resources.
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 
 from ._constraints import compile_constraints
 from ._spec_utils import resolve_wordlist_spec
 from .types import OutputShape, WordlistSpec
-
-# Keep tokenization deliberately simple so validation matches prompt wording.
-WORD_RE = re.compile(r"[A-Za-z']+")
 
 
 @dataclass(frozen=True)
@@ -24,8 +22,8 @@ class OutputValidation:
 
     Attributes:
         valid: Whether the full vocabulary and output shape match.
-        out_of_vocab: Words outside the selected vocabulary, excluding valid
-            wrapper labels such as ``PLAN:`` and ``FINAL:``.
+        out_of_vocab: Best-effort word diagnostics for invalid output, excluding
+            valid wrapper labels such as ``PLAN:`` and ``FINAL:``.
         issues: Human-readable reasons for an invalid response.
     """
 
@@ -35,7 +33,11 @@ class OutputValidation:
 
 
 def normalize_tokens(text: str) -> list[str]:
-    """Extract lowercase word tokens from free-form text.
+    """Extract lowercase Unicode letter runs from free-form text.
+
+    Combining marks stay with their letters, and an apostrophe between letters
+    stays within a token. This is delimiter-based extraction, not language-aware
+    segmentation or Unicode normalization.
 
     Args:
         text: Free-form text to tokenize.
@@ -43,8 +45,31 @@ def normalize_tokens(text: str) -> list[str]:
     Returns:
         The lowercase word tokens found in the input text.
     """
-    # The validator ignores punctuation so callers can check ordinary prose directly.
-    return [token.lower() for token in WORD_RE.findall(text)]
+    tokens: list[str] = []
+    current: list[str] = []
+
+    def flush() -> None:
+        if current:
+            tokens.append("".join(current).lower())
+            current.clear()
+
+    for index, char in enumerate(text):
+        category = unicodedata.category(char)[0]
+        if (
+            category == "L"
+            or (category == "M" and current)
+            or (
+                char in ("'", "’")
+                and current
+                and index + 1 < len(text)
+                and unicodedata.category(text[index + 1])[0] == "L"
+            )
+        ):
+            current.append(char)
+        else:
+            flush()
+    flush()
+    return tokens
 
 
 def out_of_vocab(text: str, wordlist: str | WordlistSpec) -> list[str]:
@@ -121,8 +146,10 @@ def validate_output(
     spec = resolve_wordlist_spec(wordlist)
     constraints = compile_constraints(spec, shape or OutputShape())
     body = _body_text(text, constraints.wrapper_labels)
-    missing = tuple(out_of_vocab(body, spec))
-    valid = re.fullmatch(constraints.response_pattern, text, flags=re.ASCII) is not None
+    valid = re.fullmatch(constraints.response_pattern, text) is not None
+    # A full-contract match proves that every emitted literal was permitted,
+    # even if diagnostic tokenization would split a caller's unusual literal.
+    missing = () if valid else tuple(out_of_vocab(body, spec))
 
     issues: list[str] = []
     if missing:

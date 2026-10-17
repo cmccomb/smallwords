@@ -10,10 +10,12 @@ from smallwords import (
     OutputResources,
     OutputShape,
     WordlistSpec,
+    allow_input_words,
     is_compliant,
     is_in_vocabulary,
     validate_output,
 )
+from smallwords.validation import normalize_tokens
 
 
 @pytest.fixture
@@ -100,3 +102,40 @@ def test_vocabulary_only_helpers_remain_compatible(
     assert is_compliant("123", tiny_resources.spec)
     assert is_in_vocabulary("123", tiny_resources.spec)
     assert not is_compliant("go stop", tiny_resources.spec)
+
+
+def test_unicode_extraction_and_diagnostics_preserve_complete_literals() -> None:
+    """Unicode letter runs must not become partial or invisible words."""
+    assert normalize_tokens("café 東京 cafe\u0301 don't") == [
+        "café",
+        "東京",
+        "cafe\u0301",
+        "don't",
+    ]
+
+    base = WordlistSpec(name="unicode", words=("go",), variant_mode="surface_only")
+    derived = allow_input_words(base, "café 東京")
+    assert {"café", "東京"} <= set(derived.allowed_words())
+
+    for text in ("café", "東京"):
+        result = validate_output(text, derived)
+        assert result.valid
+        assert result.out_of_vocab == ()
+        assert result.issues == ()
+
+
+def test_unicode_spelling_is_exact_without_canonical_normalization() -> None:
+    """A decomposed accent is distinct from a precomposed literal."""
+    spec = WordlistSpec(name="unicode", words=("café",), variant_mode="surface_only")
+    result = validate_output("cafe\u0301", spec)
+    assert not result.valid
+    assert result.out_of_vocab == ("cafe\u0301",)
+
+
+def test_valid_literal_cannot_have_out_of_vocab_issue() -> None:
+    """Contract acceptance takes precedence over approximate diagnostics."""
+    spec = WordlistSpec(name="literal", words=("co-op",), variant_mode="surface_only")
+    result = validate_output("co-op", spec)
+    assert result.valid
+    assert result.out_of_vocab == ()
+    assert result.issues == ()
